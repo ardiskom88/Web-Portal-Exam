@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+
+<html lang="id"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"background":"#f8f9ff","surface-bright":"#f8f9ff","on-error":"#ffffff","on-tertiary-fixed-variant":"#005236","on-secondary":"#ffffff","secondary":"#565e74","tertiary-fixed-dim":"#4edea3","tertiary-container":"#006e4b","outline":"#777587","surface-container-high":"#dce9ff","inverse-surface":"#213145","on-primary-container":"#dad7ff","outline-variant":"#c7c4d8","surface-container":"#e5eeff","surface-container-highest":"#d3e4fe","surface-dim":"#cbdbf5","on-surface":"#0b1c30","on-surface-variant":"#464555","on-primary-fixed-variant":"#3323cc","surface-container-low":"#eff4ff","tertiary-fixed":"#6ffbbe","primary-container":"#4f46e5","inverse-primary":"#c3c0ff","on-primary":"#ffffff","inverse-on-surface":"#eaf1ff","on-error-container":"#93000a","error":"#ba1a1a","secondary-fixed-dim":"#bec6e0","surface-variant":"#d3e4fe","surface":"#f8f9ff","on-secondary-fixed-variant":"#3f465c","primary-fixed-dim":"#c3c0ff","secondary-container":"#dae2fd","tertiary":"#005338","on-tertiary":"#ffffff","primary-fixed":"#e2dfff","primary":"#3525cd","surface-tint":"#4d44e3","on-tertiary-container":"#67f4b7","on-secondary-fixed":"#131b2e","on-background":"#0b1c30","error-container":"#ffdad6","on-tertiary-fixed":"#002113","secondary-fixed":"#dae2fd","surface-container-lowest":"#ffffff","on-secondary-container":"#5c647a","on-primary-fixed":"#0f0069"},borderRadius:{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},spacing:{"margin":"2rem","gutter-mobile":"1rem","margin-mobile":"1rem","space-lg":"1.5rem","space-xs":"0.25rem","gutter":"1.5rem","space-md":"1rem","space-sm":"0.5rem","space-xl":"2.5rem"},fontFamily:{"body-lg":["Inter"],"headline-sm":["Plus Jakarta Sans"],"body-sm":["Inter"],"headline-md":["Plus Jakarta Sans"],"label-lg":["Inter"],"body-md":["Inter"],"headline-xl":["Plus Jakarta Sans"],"timer-display":["JetBrains Mono"],"headline-lg":["Plus Jakarta Sans"],"headline-lg-mobile":["Plus Jakarta Sans"],"headline-xl-mobile":["Plus Jakarta Sans"],"label-md":["Inter"],"code-mono":["JetBrains Mono"]},fontSize:{"body-lg":["16px",{"lineHeight":"26px","fontWeight":"400"}],"headline-sm":["16px",{"lineHeight":"24px","fontWeight":"600"}],"body-sm":["12px",{"lineHeight":"18px","fontWeight":"400"}],"headline-md":["20px",{"lineHeight":"28px","letterSpacing":"-0.005em","fontWeight":"600"}],"label-lg":["14px",{"lineHeight":"20px","fontWeight":"600"}],"body-md":["14px",{"lineHeight":"22px","fontWeight":"400"}],"headline-xl":["36px",{"lineHeight":"44px","letterSpacing":"-0.02em","fontWeight":"700"}],"timer-display":["24px",{"lineHeight":"28px","letterSpacing":"-0.02em","fontWeight":"700"}],"headline-lg":["28px",{"lineHeight":"36px","letterSpacing":"-0.01em","fontWeight":"600"}],"headline-lg-mobile":["22px",{"lineHeight":"30px","letterSpacing":"-0.01em","fontWeight":"600"}],"headline-xl-mobile":["28px",{"lineHeight":"36px","letterSpacing":"-0.01em","fontWeight":"700"}],"label-md":["12px",{"lineHeight":"16px","fontWeight":"500"}],"code-mono":["13px",{"lineHeight":"18px","letterSpacing":"0.02em","fontWeight":"500"}]}}}};</script></head><body class="bg-background font-body-md text-on-surface antialiased"><header class="fixed top-0 left-0 w-full z-50 bg-inverse-surface text-inverse-on-surface shadow-[0_1px_8px_rgba(0,0,0,0.08)]"><div class="h-16 w-full px-gutter flex items-center justify-between gap-space-md"><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-sm"><img alt="ExamGuard Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDohOqzAzinkj8QoaGBWKCm48djR5U7w-OTxLhOtWV5AValfyjOiulsgZriCBgqXsf7GsOdV3C3wOmNH5iSd42-GwFAs0i55SvV1dWm-5ZDlDyZdgu7E59WrBT06bgs_-yfKj1RoU4mDd9NlUi3WnaoiqcwQ-bz-XpZt5FFDZLxvE0Bm00L2xxjzYZl0dn_FJviaSY4-Aoxn840Kd5i_x28MWGR2qkHnOJskj4lNRjy-tdU-Fb8eZ0"/><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-surface-container-lowest leading-tight tracking-tight">ExamGuard</span><span class="font-code-mono text-code-mono text-inverse-primary text-[10px] leading-none uppercase tracking-wider">Proctoring Core</span></div></div><div class="hidden xl:flex items-center gap-space-xs bg-inverse-surface/80 px-space-sm py-1 rounded-xl shadow-inner"><span class="w-2 h-2 rounded-full bg-tertiary-fixed animate-pulse"></span><span class="font-label-md text-label-md text-surface-container-high">Sesi Aktif:</span><span class="font-code-mono text-code-mono text-surface-container-lowest font-medium">Penilaian Akhir Semester Ganjil 2024/2025</span></div></div><nav class="hidden lg:flex items-center gap-space-xs" data-active-classes="bg-primary-container text-on-primary font-bold rounded-lg"><a class="px-space-sm py-1.5 rounded-lg font-label-lg text-label-lg text-surface-container-high hover:bg-surface-container-high/20 hover:text-surface-container-lowest transition-all" data-path="gerbang-siswa" href="#">Gerbang Siswa</a><a aria-current="page" class="px-space-sm py-1.5 transition-all bg-primary-container text-on-primary font-bold rounded-lg" data-path="ruang-ujian-terproteksi" href="#">Ruang Ujian Terproteksi</a><a class="px-space-sm py-1.5 rounded-lg font-label-lg text-label-lg text-surface-container-high hover:bg-surface-container-high/20 hover:text-surface-container-lowest transition-all" data-path="dasbor-pengawas-live" href="#">Dasbor Pengawas Live</a><a class="px-space-sm py-1.5 rounded-lg font-label-lg text-label-lg text-surface-container-high hover:bg-surface-container-high/20 hover:text-surface-container-lowest transition-all" data-path="manajemen-ujian-&amp;-token" href="#">Manajemen Ujian &amp; Token</a></nav><div class="flex items-center gap-space-md"><div class="hidden md:flex items-center gap-space-xs px-space-sm py-1 bg-surface-container-lowest/10 rounded-lg"><span class="w-2 h-2 rounded-full bg-tertiary-fixed"></span><span class="font-code-mono text-code-mono text-surface-container-lowest">Online 99.8ms</span></div><button class="flex items-center justify-center p-2 rounded-lg bg-error text-on-error hover:bg-error-container hover:text-on-error-container transition-all" title="Emergency Alert Beacon"><span class="material-symbols-outlined text-[20px]">e911_emergency</span></button><div class="flex items-center gap-space-sm pl-space-xs"><div class="text-right hidden sm:block"><div class="font-label-lg text-label-lg text-surface-container-lowest leading-tight">Budi Santoso, M.Pd</div><div class="font-label-md text-label-md text-inverse-primary">Pengawas Utama</div></div><img alt="Profile" class="w-8 h-8 rounded-full object-cover ring-2 ring-primary-container" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhxJmdAAJ8iLwH9MNk5CswlY16KWLyGpwo2lc-3w4EPAzpkk4llBSLLid2jNRdgn9T6nco72_HmaNts0nt4ynkJzqhNQUQ4Al4Wz8WQRHvQDkycTxHu3QiBTDINzfGyRPbX7yQ_AYDSd7xoeodFCQz46Y_XS4LeJdZm4CJHKzfWnIN39Xnxvm8J_uqLK1EZSgsuHlTu5xke4SmzypTISqDtvMJuclTlT0GssgYU3erJlv25Jr-eU4"/></div></div></div></header><main class="w-full pt-16 bg-background min-h-screen"><div class="flex flex-col w-full relative select-none">
+<!-- SECURITY WATERMARK TILES (ANTI-SCREEN CAPTURE EMBED) -->
+<div class="fixed inset-0 pointer-events-none z-10 overflow-hidden flex flex-wrap gap-12 opacity-[0.035] rotate-[-12deg] select-none">
+<div class="flex flex-col items-center justify-center p-4">
+<span class="font-code-mono text-code-mono text-on-surface font-bold tracking-widest uppercase">0054819284 • AHMAD FAUZAN</span>
+<span class="font-code-mono text-code-mono text-[10px]">EXAMGUARD-ID: SEC-2024-X11-982</span>
+</div>
+<div class="flex flex-col items-center justify-center p-4">
+<span class="font-code-mono text-code-mono text-on-surface font-bold tracking-widest uppercase">0054819284 • AHMAD FAUZAN</span>
+<span class="font-code-mono text-code-mono text-[10px]">EXAMGUARD-ID: SEC-2024-X11-982</span>
+</div>
+<div class="flex flex-col items-center justify-center p-4">
+<span class="font-code-mono text-code-mono text-on-surface font-bold tracking-widest uppercase">0054819284 • AHMAD FAUZAN</span>
+<span class="font-code-mono text-code-mono text-[10px]">EXAMGUARD-ID: SEC-2024-X11-982</span>
+</div>
+<div class="flex flex-col items-center justify-center p-4">
+<span class="font-code-mono text-code-mono text-on-surface font-bold tracking-widest uppercase">0054819284 • AHMAD FAUZAN</span>
+<span class="font-code-mono text-code-mono text-[10px]">EXAMGUARD-ID: SEC-2024-X11-982</span>
+</div>
+<div class="flex flex-col items-center justify-center p-4">
+<span class="font-code-mono text-code-mono text-on-surface font-bold tracking-widest uppercase">0054819284 • AHMAD FAUZAN</span>
+<span class="font-code-mono text-code-mono text-[10px]">EXAMGUARD-ID: SEC-2024-X11-982</span>
+</div>
+<div class="flex flex-col items-center justify-center p-4">
+<span class="font-code-mono text-code-mono text-on-surface font-bold tracking-widest uppercase">0054819284 • AHMAD FAUZAN</span>
+<span class="font-code-mono text-code-mono text-[10px]">EXAMGUARD-ID: SEC-2024-X11-982</span>
+</div>
+</div>
+<!-- FLOATING HUD / TOP OPERATIONAL BAR -->
+<div class="sticky top-16 z-30 w-full bg-surface-container-lowest shadow-md px-gutter py-space-sm border-b-0">
+<div class="max-w-[1440px] mx-auto flex flex-col md:flex-row items-center justify-between gap-space-md">
+<!-- Left: Subject & Student Badge -->
+<div class="flex items-center gap-space-md w-full md:w-auto justify-between md:justify-start">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[24px]">calculate</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-headline-sm text-on-surface">Matematika Peminatan</span>
+<span class="font-label-md text-label-md bg-surface-container px-2 py-0.5 rounded text-on-surface-variant font-medium">Kelas XII MIPA</span>
+</div>
+<div class="flex items-center gap-2 mt-0.5">
+<span class="font-label-md text-label-md text-secondary">Siswa:</span>
+<span class="font-label-lg text-label-lg text-on-surface">Ahmad Fauzan</span>
+<span class="font-code-mono text-code-mono text-secondary bg-surface-container-low px-1.5 py-0.2 rounded text-[11px]">NISN: 0054819284</span>
+</div>
+</div>
+</div>
+<!-- Telemetry Status Chip -->
+<div class="flex items-center gap-space-xs bg-tertiary-container/10 px-3 py-1.5 rounded-lg shadow-sm">
+<span class="w-2.5 h-2.5 rounded-full bg-tertiary-fixed-dim animate-ping"></span>
+<span class="font-label-md text-label-md text-tertiary font-bold tracking-tight">Kiosk Terkunci</span>
+<span class="material-symbols-outlined text-[16px] text-tertiary">lock</span>
+</div>
+</div>
+<!-- Center: Circular Dynamic Countdown Timer -->
+<div class="flex items-center gap-3 bg-surface-container-low px-4 py-2 rounded-xl shadow-sm">
+<div class="relative w-8 h-8 flex items-center justify-center">
+<svg class="w-8 h-8 transform -rotate-90" viewbox="0 0 36 36">
+<path class="text-surface-container-highest" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3"></path>
+<path class="text-primary animate-pulse" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="72, 100" stroke-linecap="round" stroke-width="3.5"></path>
+</svg>
+<span class="material-symbols-outlined absolute text-[14px] text-primary">alarm</span>
+</div>
+<div class="flex flex-col">
+<div class="font-timer-display text-timer-display text-on-surface tracking-tight leading-none" id="examCountdown">01:24:18</div>
+<span class="font-label-md text-[10px] text-secondary uppercase font-semibold">Sisa Waktu Pengerjaan</span>
+</div>
+</div>
+<!-- Right: Action Submit & Diagnostic Trigger -->
+<div class="flex items-center gap-space-sm w-full md:w-auto justify-end">
+<button class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-surface-container text-on-surface-variant font-label-md text-label-md hover:bg-error-container hover:text-on-error-container transition-all" id="simulateCheatingBtn" title="Simulasi Pengawas: Deteksi Pelanggaran Siswa">
+<span class="material-symbols-outlined text-[18px]">bug_report</span>
+<span class="hidden xl:inline">Simulasi Tab Switch</span>
+</button>
+<button class="flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-on-primary font-label-lg text-label-lg shadow-sm hover:bg-primary-fixed-variant active:scale-[0.99] transition-all" id="finalSubmitBtn">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+<span>Kirim Jawaban</span>
+</button>
+</div>
+</div>
+</div>
+<!-- MAIN ASSESSMENT BODY CONTAINER (12-COL BESPOKE WORKSPACE) -->
+<div class="max-w-[1440px] w-full mx-auto px-gutter py-space-lg">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
+<!-- LEFT / CENTRAL CANVAS: SECURE GOOGLE FORMS CONTAINER MOCKUP (8 cols) -->
+<div class="lg:col-span-8 flex flex-col gap-space-md">
+<!-- SECURE FRAME WRAPPER (MASKING NATIVE BROWSER/URL/FORM BARS) -->
+<div class="bg-surface-container-lowest rounded-xl shadow-md overflow-hidden flex flex-col">
+<!-- Masked Embedded Form Header Ribbon -->
+<div class="bg-primary-container px-space-lg py-space-md text-on-primary flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container-lowest/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px] text-on-primary">assignment_turned_in</span>
+</div>
+<div>
+<h1 class="font-headline-sm text-headline-sm leading-tight text-on-primary">Penilaian Akhir Semester Ganjil 2024/2025</h1>
+<p class="font-label-md text-label-md text-inverse-primary">Matematika Peminatan (Lanjutan Kalkulus Trigonometri) • Sesi 02</p>
+</div>
+</div>
+<!-- Security Guard Tag -->
+<div class="hidden sm:flex items-center gap-1.5 bg-surface-container-lowest/15 px-3 py-1 rounded-full">
+<span class="material-symbols-outlined text-[14px]">shield</span>
+<span class="font-code-mono text-code-mono text-[11px] uppercase tracking-wider">DOM-Mask Active</span>
+</div>
+</div>
+<!-- Form Notice Metadata Bar -->
+<div class="bg-surface-container-low px-space-lg py-3 flex items-center justify-between text-secondary">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-tertiary">check_circle</span>
+<span class="font-body-sm text-body-sm">Semua interaksi form terekam dalam log audit audit kriptografi.</span>
+</div>
+<div class="font-code-mono text-code-mono text-[11px] text-outline">ID-SOAL: MTH-XII-PAS-049</div>
+</div>
+<!-- Question Content Canvas -->
+<div class="p-space-lg md:p-space-xl flex flex-col gap-space-xl">
+<!-- QUESTION ITEM #1: Pilihan Ganda Turunan Trigonometri -->
+<div class="flex flex-col gap-space-md bg-surface-container-lowest p-space-md rounded-xl">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-3">
+<span class="w-7 h-7 rounded-lg bg-primary text-on-primary font-headline-sm text-label-lg flex items-center justify-center">1</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Turunan Fungsi Aljabar Trigonometri</span>
+</div>
+<span class="font-label-md text-label-md bg-surface-container px-2.5 py-1 rounded-full text-secondary font-medium">Bobot: 4 Poin</span>
+</div>
+<!-- Question Stem -->
+<div class="font-body-lg text-body-lg text-on-surface pl-10">
+<p class="mb-2">Jika fungsi <span class="font-code-mono font-bold text-primary">f(x) = (sin 3x + cos 2x) • (tan x)</span>, maka nilai turunan pertama <span class="font-code-mono font-bold text-primary">f'(0)</span> adalah...</p>
+<p class="text-secondary font-body-sm text-body-sm">Pilihlah salah satu jawaban yang paling tepat sesuai kaidah diferensial fungsi komposisi.</p>
+</div>
+<!-- Radio Option Surface Cards -->
+<div class="grid grid-cols-1 gap-2.5 pl-10">
+<label class="group relative flex items-center p-3.5 rounded-lg bg-surface-container-low hover:bg-surface-container transition-all cursor-pointer">
+<input class="w-4 h-4 text-primary focus:ring-primary-container" name="soal_1" type="radio" value="A"/>
+<div class="ml-3.5 flex items-center gap-3 w-full">
+<span class="w-6 h-6 rounded bg-surface-container-lowest text-secondary group-hover:bg-primary group-hover:text-on-primary font-code-mono text-code-mono flex items-center justify-center font-bold">A</span>
+<span class="font-body-md text-body-md text-on-surface">1</span>
+</div>
+</label>
+<label class="group relative flex items-center p-3.5 rounded-lg bg-secondary-container/50 shadow-sm cursor-pointer">
+<input checked="" class="w-4 h-4 text-primary focus:ring-primary-container" name="soal_1" type="radio" value="B"/>
+<div class="ml-3.5 flex items-center gap-3 w-full">
+<span class="w-6 h-6 rounded bg-primary text-on-primary font-code-mono text-code-mono flex items-center justify-center font-bold">B</span>
+<span class="font-body-md text-body-md text-on-surface font-semibold">2</span>
+<span class="ml-auto font-code-mono text-[11px] text-primary bg-primary-fixed px-2 py-0.5 rounded font-bold">Tersimpan</span>
+</div>
+</label>
+<label class="group relative flex items-center p-3.5 rounded-lg bg-surface-container-low hover:bg-surface-container transition-all cursor-pointer">
+<input class="w-4 h-4 text-primary focus:ring-primary-container" name="soal_1" type="radio" value="C"/>
+<div class="ml-3.5 flex items-center gap-3 w-full">
+<span class="w-6 h-6 rounded bg-surface-container-lowest text-secondary group-hover:bg-primary group-hover:text-on-primary font-code-mono text-code-mono flex items-center justify-center font-bold">C</span>
+<span class="font-body-md text-body-md text-on-surface">3</span>
+</div>
+</label>
+<label class="group relative flex items-center p-3.5 rounded-lg bg-surface-container-low hover:bg-surface-container transition-all cursor-pointer">
+<input class="w-4 h-4 text-primary focus:ring-primary-container" name="soal_1" type="radio" value="D"/>
+<div class="ml-3.5 flex items-center gap-3 w-full">
+<span class="w-6 h-6 rounded bg-surface-container-lowest text-secondary group-hover:bg-primary group-hover:text-on-primary font-code-mono text-code-mono flex items-center justify-center font-bold">D</span>
+<span class="font-body-md text-body-md text-on-surface">5</span>
+</div>
+</label>
+<label class="group relative flex items-center p-3.5 rounded-lg bg-surface-container-low hover:bg-surface-container transition-all cursor-pointer">
+<input class="w-4 h-4 text-primary focus:ring-primary-container" name="soal_1" type="radio" value="E"/>
+<div class="ml-3.5 flex items-center gap-3 w-full">
+<span class="w-6 h-6 rounded bg-surface-container-lowest text-secondary group-hover:bg-primary group-hover:text-on-primary font-code-mono text-code-mono flex items-center justify-center font-bold">E</span>
+<span class="font-body-md text-body-md text-on-surface">0</span>
+</div>
+</label>
+</div>
+</div>
+<!-- QUESTION ITEM #2: Soal Grafik Fungsi & Mini Diagram -->
+<div class="flex flex-col gap-space-md bg-surface-container-lowest p-space-md rounded-xl">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-3">
+<span class="w-7 h-7 rounded-lg bg-primary text-on-primary font-headline-sm text-label-lg flex items-center justify-center">2</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Analisis Titik Stasioner &amp; Kecekungan</span>
+</div>
+<span class="font-label-md text-label-md bg-surface-container px-2.5 py-1 rounded-full text-secondary font-medium">Bobot: 4 Poin</span>
+</div>
+<!-- Question Stem with Visual Mini Chart -->
+<div class="font-body-lg text-body-lg text-on-surface pl-10 flex flex-col gap-space-md">
+<p>Perhatikan kurva fungsi trigonometri <span class="font-code-mono font-bold text-primary">y = 2 cos(2x - π/3)</span> untuk domain interval <span class="font-code-mono text-secondary">0 ≤ x ≤ π</span> berikut:</p>
+<!-- Pure Inline SVG Trigonometric Diagram -->
+<div class="w-full max-w-lg bg-surface-container-low rounded-xl p-space-md flex flex-col items-center">
+<div class="w-full flex justify-between font-code-mono text-[10px] text-secondary mb-1">
+<span>y = 2</span>
+<span>Sumbu Koordinat Kartesius</span>
+<span>y = -2</span>
+</div>
+<svg class="w-full h-36" fill="none" viewbox="0 0 380 120">
+<!-- Grid Lines -->
+<line stroke="#cbd5e1" stroke-dasharray="2 2" stroke-width="1.5" x1="20" x2="360" y1="60" y2="60"></line>
+<line stroke="#cbd5e1" stroke-width="1" x1="190" x2="190" y1="10" y2="110"></line>
+<!-- Trigonometric Wave -->
+<path d="M 20 20 C 60 10, 100 110, 150 110 C 200 110, 240 10, 290 10 C 330 10, 350 70, 360 90" stroke="#3525cd" stroke-linecap="round" stroke-width="3"></path>
+<!-- Key Extrema Markers -->
+<circle cx="290" cy="10" fill="#005338" r="4"></circle>
+<text fill="#005338" font-family="JetBrains Mono" font-size="9" font-weight="bold" x="280" y="28">Titik Balik Maks</text>
+<circle cx="150" cy="110" fill="#ba1a1a" r="4"></circle>
+<text fill="#ba1a1a" font-family="JetBrains Mono" font-size="9" font-weight="bold" x="140" y="105">Titik Min</text>
+</svg>
+<span class="font-code-mono text-code-mono text-[11px] text-secondary mt-1">Gambar 2.1: Profil grafik kurva periodik sinusoida</span>
+</div>
+<p>Koordinat titik balik maksimum pertama pada grafik fungsi tersebut berada di koordinat:</p>
+</div>
+<!-- Radio Option Surface Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pl-10">
+<label class="group relative flex items-center p-3.5 rounded-lg bg-surface-container-low hover:bg-surface-container transition-all cursor-pointer">
+<input class="w-4 h-4 text-primary focus:ring-primary-container" name="soal_2" type="radio" value="A"/>
+<div class="ml-3.5 flex items-center gap-2">
+<span class="w-6 h-6 rounded bg-surface-container-lowest text-secondary group-hover:bg-primary group-hover:text-on-primary font-code-mono text-code-mono flex items-center justify-center font-bold">A</span>
+<span class="font-body-md text-body-md text-on-surface">(π/6, 2)</span>
+</div>
+</label>
+<label class="group relative flex items-center p-3.5 rounded-lg bg-surface-container-low hover:bg-surface-container transition-all cursor-pointer">
+<input class="w-4 h-4 text-primary focus:ring-primary-container" name="soal_2" type="radio" value="B"/>
+<div class="ml-3.5 flex items-center gap-2">
+<span class="w-6 h-6 rounded bg-surface-container-lowest text-secondary group-hover:bg-primary group-hover:text-on-primary font-code-mono text-code-mono flex items-center justify-center font-bold">B</span>
+<span class="font-body-md text-body-md text-on-surface">(π/3, 2)</span>
+</div>
+</label>
+<label class="group relative flex items-center p-3.5 rounded-lg bg-surface-container-low hover:bg-surface-container transition-all cursor-pointer">
+<input class="w-4 h-4 text-primary focus:ring-primary-container" name="soal_2" type="radio" value="C"/>
+<div class="ml-3.5 flex items-center gap-2">
+<span class="w-6 h-6 rounded bg-surface-container-lowest text-secondary group-hover:bg-primary group-hover:text-on-primary font-code-mono text-code-mono flex items-center justify-center font-bold">C</span>
+<span class="font-body-md text-body-md text-on-surface">(5π/6, 2)</span>
+</div>
+</label>
+<label class="group relative flex items-center p-3.5 rounded-lg bg-surface-container-low hover:bg-surface-container transition-all cursor-pointer">
+<input class="w-4 h-4 text-primary focus:ring-primary-container" name="soal_2" type="radio" value="D"/>
+<div class="ml-3.5 flex items-center gap-2">
+<span class="w-6 h-6 rounded bg-surface-container-lowest text-secondary group-hover:bg-primary group-hover:text-on-primary font-code-mono text-code-mono flex items-center justify-center font-bold">D</span>
+<span class="font-body-md text-body-md text-on-surface">(7π/6, 2)</span>
+</div>
+</label>
+</div>
+</div>
+<!-- QUESTION ITEM #3: Protected Essay Textarea -->
+<div class="flex flex-col gap-space-md bg-surface-container-lowest p-space-md rounded-xl">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-3">
+<span class="w-7 h-7 rounded-lg bg-primary text-on-primary font-headline-sm text-label-lg flex items-center justify-center">3</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Uraian: Aplikasi Nilai Ekstrem Fisika Mekanika</span>
+</div>
+<span class="font-label-md text-label-md bg-surface-container px-2.5 py-1 rounded-full text-secondary font-medium">Bobot: 6 Poin</span>
+</div>
+<!-- Question Stem -->
+<div class="font-body-lg text-body-lg text-on-surface pl-10 flex flex-col gap-space-sm">
+<p>Sebuah partikel bergerak horizontal dengan lintasan simpangan yang dinyatakan oleh persamaan posisi <span class="font-code-mono font-bold text-primary">s(t) = 4 cos(2t) + 3 sin(2t)</span> (dalam satuan meter, <span class="font-code-mono">t ≥ 0</span> detik).</p>
+<p class="text-secondary font-body-sm text-body-sm">Tuliskan langkah kalkulasi lengkap turunan kedua <span class="font-code-mono">a(t) = s''(t)</span> untuk menentukan percepatan gerak partikel pada saat <span class="font-code-mono">t = π/4</span> detik.</p>
+<!-- Protected Textarea Container with Anti-Copy/Paste Notice -->
+<div class="relative mt-2">
+<div class="flex items-center justify-between px-3 py-1.5 bg-surface-container rounded-t-lg font-code-mono text-code-mono text-[11px] text-secondary">
+<span class="flex items-center gap-1.5 text-on-surface-variant font-medium">
+<span class="material-symbols-outlined text-[14px]">content_paste_off</span>
+                      Proteksi Papan Klip Aktif (Ctrl+V dinonaktifkan)
+                    </span>
+<span id="charCounter">142 karakter tersimpan</span>
+</div>
+<textarea class="w-full p-3.5 bg-surface-container-low text-on-surface font-code-mono text-code-mono text-[13px] rounded-b-lg focus:outline-none focus:bg-surface-container-lowest focus:ring-0 transition-all resize-y" id="secureEssayInput" placeholder="Ketik langkah kalkulasi matematika secara terstruktur di sini..." rows="4">Langkah 1: s'(t) = v(t) = -8 sin(2t) + 6 cos(2t)
+Langkah 2: s''(t) = a(t) = -16 cos(2t) - 12 sin(2t)
+Pada t = pi/4: a(pi/4) = -16 cos(pi/2) - 12 sin(pi/2) = -12 m/s^2</textarea>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Action Flow of the Secure Mockup -->
+<div class="bg-surface-container-low p-space-md flex flex-col sm:flex-row items-center justify-between gap-space-md">
+<div class="flex items-center gap-2 text-secondary font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[18px] text-tertiary">lock</span>
+<span>Enkripsi Sesi TLS 1.3 Aktif • Sertifikasi ExamGuard TrustID</span>
+</div>
+<div class="flex items-center gap-space-sm w-full sm:w-auto justify-end">
+<button class="px-4 py-2 rounded-lg bg-surface-container text-on-surface-variant font-label-md text-label-md hover:bg-surface-container-high transition-all">
+                Simpan Draf Lokal
+              </button>
+<button class="px-5 py-2 rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-container transition-all">
+                Halaman Berikutnya (2/4)
+              </button>
+</div>
+</div>
+</div>
+</div>
+<!-- RIGHT SIDEBAR TELEMETRY & NAVIGATION RAIL (4 cols) -->
+<div class="lg:col-span-4 flex flex-col gap-space-lg">
+<!-- BIOMETRIC AI TELEMETRY MONITOR -->
+<div class="bg-surface-container-lowest rounded-xl shadow-md overflow-hidden flex flex-col">
+<div class="p-3.5 bg-inverse-surface text-inverse-on-surface flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-tertiary-fixed animate-pulse"></span>
+<span class="font-headline-sm text-headline-sm text-[13px] tracking-tight">Kamera Telemetri Pengawas</span>
+</div>
+<span class="font-code-mono text-code-mono text-inverse-primary text-[10px] uppercase">720P • 30 FPS</span>
+</div>
+<!-- Camera Stream Frame Mockup -->
+<div class="relative bg-inverse-surface w-full h-52 flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="High school student Ahmad Fauzan wearing a uniform, seated upright facing his laptop camera in an examination room, subtle biometric face mesh tracking overlay in translucent cyan, high definition clean academic lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmrvCh2HpE12YvCHfoAi7w6cNSlx6sZqrw8YUJIxZSSNEVOMLmVKRNuHN5kDXlyy0Ucx-GetW_aVPaCU4MXWZkmTcnyyr22JZNOzLBK6aOcc-eXGiD4rB0xA2-Jix5PTEiQ-gp8Fxi7GnsGTTfBT_SHBGRAHqbWVYJb0D3aQxL9dac_EDgm3kkANFPqOK3VvohNsoDgJsT_QXls7H0OkYeqrV57sncmcISsidNVz9_0NQL-y-bxQg"/>
+<!-- Live Artificial Intelligence Tracking Overlay HUD -->
+<div class="absolute inset-0 pointer-events-none p-3 flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<div class="bg-inverse-surface/85 backdrop-blur-sm px-2 py-0.5 rounded text-[10px] font-code-mono text-tertiary-fixed flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">visibility</span>
+<span>Tatapan: Layar Utama</span>
+</div>
+<div class="bg-inverse-surface/85 backdrop-blur-sm px-2 py-0.5 rounded text-[10px] font-code-mono text-surface-container-lowest">
+                  Suara: 18 dB (Hening)
+                </div>
+</div>
+<!-- Facial Tracking Box Coordinate Simulation -->
+<div class="mx-auto w-28 h-32 rounded-lg border-2 border-tertiary-fixed-dim/40 flex flex-col justify-between p-1">
+<span class="text-[9px] font-code-mono text-tertiary-fixed">FACE_ID: 98.4%</span>
+<span class="text-[9px] font-code-mono text-tertiary-fixed text-right">DEV: 0.00</span>
+</div>
+<div class="bg-inverse-surface/85 backdrop-blur-sm px-2 py-1 rounded text-[11px] font-code-mono text-surface-container-lowest flex items-center justify-between">
+<span class="flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed"></span>
+                  1 Orang Terdeteksi
+                </span>
+<span class="text-tertiary-fixed-dim">Status: Normal</span>
+</div>
+</div>
+</div>
+<!-- Proctor Diagnostic Micro-List -->
+<div class="p-space-sm bg-surface-container-low grid grid-cols-2 gap-2 text-on-surface">
+<div class="flex items-center gap-2 p-2 bg-surface-container-lowest rounded-lg">
+<span class="material-symbols-outlined text-tertiary text-[18px]">fullscreen</span>
+<div class="flex flex-col">
+<span class="font-label-md text-[10px] text-secondary leading-none">Status Layar</span>
+<span class="font-label-md text-label-md font-bold text-on-surface">Terkunci Penuh</span>
+</div>
+</div>
+<div class="flex items-center gap-2 p-2 bg-surface-container-lowest rounded-lg">
+<span class="material-symbols-outlined text-primary text-[18px]">cell_tower</span>
+<div class="flex flex-col">
+<span class="font-label-md text-[10px] text-secondary leading-none">Latensi Sesi</span>
+<span class="font-label-md text-label-md font-bold text-on-surface">42 ms (Stabil)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- QUESTION MATRIX NAVIGATION GRID -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-md flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">grid_view</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Navigasi Soal</span>
+</div>
+<span class="font-code-mono text-code-mono text-[11px] bg-surface-container px-2 py-0.5 rounded text-secondary font-semibold">Total: 40 Soal</span>
+</div>
+<!-- Question Indicator Matrix Legend -->
+<div class="flex items-center gap-4 py-2 text-[11px] font-label-md text-secondary">
+<div class="flex items-center gap-1.5">
+<span class="w-3.5 h-3.5 rounded bg-primary"></span>
+<span>Terjawab</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-3.5 h-3.5 rounded bg-surface-container-highest"></span>
+<span>Belum</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-3.5 h-3.5 rounded bg-secondary-container"></span>
+<span>Ragu-ragu</span>
+</div>
+</div>
+<!-- 40 Numeric Item Compact Grid -->
+<div class="grid grid-cols-5 gap-2 pt-1">
+<button class="h-9 rounded bg-primary text-on-primary font-code-mono text-code-mono font-bold flex items-center justify-center shadow-sm ring-2 ring-on-surface">1</button>
+<button class="h-9 rounded bg-primary text-on-primary font-code-mono text-code-mono font-bold flex items-center justify-center shadow-sm">2</button>
+<button class="h-9 rounded bg-primary text-on-primary font-code-mono text-code-mono font-bold flex items-center justify-center shadow-sm">3</button>
+<button class="h-9 rounded bg-secondary-container text-on-secondary-container font-code-mono text-code-mono font-bold flex items-center justify-center">4</button>
+<button class="h-9 rounded bg-surface-container text-on-surface font-code-mono text-code-mono font-medium hover:bg-surface-container-high flex items-center justify-center">5</button>
+<button class="h-9 rounded bg-surface-container text-on-surface font-code-mono text-code-mono font-medium hover:bg-surface-container-high flex items-center justify-center">6</button>
+<button class="h-9 rounded bg-surface-container text-on-surface font-code-mono text-code-mono font-medium hover:bg-surface-container-high flex items-center justify-center">7</button>
+<button class="h-9 rounded bg-surface-container text-on-surface font-code-mono text-code-mono font-medium hover:bg-surface-container-high flex items-center justify-center">8</button>
+<button class="h-9 rounded bg-surface-container text-on-surface font-code-mono text-code-mono font-medium hover:bg-surface-container-high flex items-center justify-center">9</button>
+<button class="h-9 rounded bg-surface-container text-on-surface font-code-mono text-code-mono font-medium hover:bg-surface-container-high flex items-center justify-center">10</button>
+<button class="h-9 rounded bg-surface-container text-on-surface font-code-mono text-code-mono font-medium hover:bg-surface-container-high flex items-center justify-center">11</button>
+<button class="h-9 rounded bg-surface-container text-on-surface font-code-mono text-code-mono font-medium hover:bg-surface-container-high flex items-center justify-center">12</button>
+<button class="h-9 rounded bg-surface-container text-on-surface font-code-mono text-code-mono font-medium hover:bg-surface-container-high flex items-center justify-center">13</button>
+<button class="h-9 rounded bg-surface-container text-on-surface font-code-mono text-code-mono font-medium hover:bg-surface-container-high flex items-center justify-center">14</button>
+<button class="h-9 rounded bg-surface-container text-on-surface font-code-mono text-code-mono font-medium hover:bg-surface-container-high flex items-center justify-center">15</button>
+</div>
+<div class="mt-2 pt-3 bg-surface-container-low rounded-lg p-2.5 flex items-center justify-between">
+<span class="font-label-md text-label-md text-secondary">Progres Pengerjaan</span>
+<span class="font-code-mono text-code-mono text-primary font-bold">3 / 40 (7.5%)</span>
+</div>
+</div>
+<!-- INTEGRITY LOG STREAM (MINI TELEMETRY LOGS) -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-md flex flex-col gap-2">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-lg text-label-lg text-on-surface font-semibold">Log Telemetri Klien</span>
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+</div>
+<div class="flex flex-col gap-1.5 font-code-mono text-[11px] text-secondary">
+<div class="flex items-start gap-2">
+<span class="text-tertiary">08:00:12</span>
+<span>Kandidat memasuki mode Fullscreen Secure.</span>
+</div>
+<div class="flex items-start gap-2">
+<span class="text-tertiary">08:02:44</span>
+<span>Pemeriksaan integritas kunci formulir diverifikasi.</span>
+</div>
+<div class="flex items-start gap-2">
+<span class="text-primary">08:14:02</span>
+<span>Sinkronisasi otomatis draft soal #1 &amp; #2 berhasil.</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- SIMULATION / ACTIVE CHEATING BREACH ALERT MODAL (HIGH VISIBILITY) -->
+<div class="fixed inset-0 z-50 bg-inverse-surface/75 backdrop-blur-sm flex items-center justify-center p-4 transition-all duration-300" id="violationOverlayModal">
+<div class="bg-surface-container-lowest max-w-xl w-full rounded-2xl shadow-2xl overflow-hidden animate-bounce-subtle">
+<!-- Flashing Siren Audio Bar -->
+<div class="bg-error px-space-lg py-space-md text-on-error flex items-center justify-between animate-pulse">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-[28px] animate-spin text-on-error">crisis_alert</span>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-error uppercase font-bold tracking-tight">Peringatan Pelanggaran #1: Deteksi Pindah Tab!</h2>
+<p class="font-body-sm text-body-sm text-error-container">Sistem mendeteksi fokus kursor meninggalkan ruang ujian terproteksi.</p>
+</div>
+</div>
+<div class="p-2 rounded-lg bg-surface-container-lowest/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-[24px]">volume_up</span>
+</div>
+</div>
+<!-- Siren & Audio Waveform Diagnostic Visualizer -->
+<div class="bg-error-container/40 p-space-md flex flex-col items-center justify-center text-center">
+<div class="flex items-center gap-1.5 h-10 mb-2">
+<span class="w-1.5 h-4 bg-error rounded-full animate-pulse"></span>
+<span class="w-1.5 h-8 bg-error rounded-full animate-bounce"></span>
+<span class="w-1.5 h-10 bg-error rounded-full animate-pulse"></span>
+<span class="w-1.5 h-6 bg-error rounded-full animate-bounce"></span>
+<span class="w-1.5 h-9 bg-error rounded-full animate-pulse"></span>
+<span class="w-1.5 h-5 bg-error rounded-full animate-bounce"></span>
+<span class="w-1.5 h-10 bg-error rounded-full animate-pulse"></span>
+<span class="w-1.5 h-4 bg-error rounded-full animate-bounce"></span>
+</div>
+<span class="font-code-mono text-code-mono text-error font-bold text-[12px] uppercase tracking-wider">
+          Sirine Alarm Bertekanan Tinggi Berbunyi di Perangkat Siswa
+        </span>
+</div>
+<!-- Violation Impact Body Details -->
+<div class="p-space-lg flex flex-col gap-space-md">
+<!-- Breach Limit Tracker -->
+<div class="bg-surface-container-low p-space-sm rounded-xl flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-secondary">Ambang Batas Toleransi</span>
+<span class="font-headline-sm text-headline-sm text-error">Pelanggaran 1 dari Maksimal 3</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-4 h-4 rounded-full bg-error flex items-center justify-center text-on-error text-[10px] font-bold">1</span>
+<span class="w-4 h-4 rounded-full bg-surface-container-highest"></span>
+<span class="w-4 h-4 rounded-full bg-surface-container-highest"></span>
+</div>
+</div>
+<!-- Automated Report Notification -->
+<div class="flex items-start gap-3 bg-surface-container p-space-sm rounded-xl">
+<span class="material-symbols-outlined text-primary text-[22px] shrink-0 mt-0.5">outgoing_mail</span>
+<div class="font-body-sm text-body-sm text-on-surface">
+<p class="font-semibold text-on-surface">Laporan Pelanggaran Telah Dikirim Otomatis</p>
+<p class="text-secondary">Tangkapan layar instan, status jendela OS, dan telemetri biometrik telah diteruskan ke konsol pengawas <strong class="text-on-surface">Budi Santoso, M.Pd</strong>.</p>
+</div>
+</div>
+<div class="p-3 bg-surface-container-lowest rounded-lg border-l-4 border-error text-secondary font-body-sm text-[12px]">
+          Jika terjadi 2 kali lagi pengalihan fokus jendela/aplikasi lain, sesi ujian Anda akan <strong>otomatis dibatalkan</strong> dan akun NISN Anda akan <strong>dibekukan permanen</strong>.
+        </div>
+<!-- Action Button to Resume -->
+<div class="flex flex-col sm:flex-row items-center gap-space-sm pt-2">
+<button class="w-full flex items-center justify-center gap-2 py-3 px-space-md rounded-lg bg-error text-on-error font-label-lg text-label-lg hover:bg-error-container hover:text-on-error-container transition-all shadow-md" id="dismissViolationBtn">
+<span class="material-symbols-outlined text-[20px]">fullscreen</span>
+<span>Kembali ke Layar Penuh &amp; Heningkan Sirine</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- CONFIRMATION MODAL BEFORE FINAL SUBMIT -->
+<div class="hidden fixed inset-0 z-50 bg-inverse-surface/70 backdrop-blur-sm flex items-center justify-center p-4" id="submitConfirmModal">
+<div class="bg-surface-container-lowest max-w-md w-full rounded-2xl p-space-lg shadow-2xl flex flex-col gap-space-md">
+<div class="w-12 h-12 rounded-xl bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[28px]">fact_check</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Kirim dan Akhiri Ujian Sekarang?</h3>
+<p class="font-body-md text-body-md text-secondary mt-1">Anda masih memiliki sisa waktu dan 37 soal yang belum terverifikasi. Setelah diserahkan, lembar ujian tidak dapat diedit kembali.</p>
+</div>
+<div class="flex items-center justify-end gap-space-sm mt-2">
+<button class="px-4 py-2 rounded-lg bg-surface-container text-on-surface-variant font-label-md text-label-md hover:bg-surface-container-high transition-all" id="cancelSubmitModalBtn">
+          Periksa Kembali
+        </button>
+<button class="px-5 py-2 rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-fixed-variant transition-all" onclick="alert('Ujian Berhasil Diserahkan! Telemetri tersimpan aman.');">
+          Ya, Kirim Sekarang
+        </button>
+</div>
+</div>
+</div>
+<!-- INLINE CLIENT SCRIPTING (TELEMETRY SIMULATION & PREVENTIONS) -->
+<script>
+    (function() {
+      // Countdown Timer Logic
+      let totalSeconds = 84 * 60 + 18;
+      const timerElement = document.getElementById('examCountdown');
+
+      function updateExamTimer() {
+        if (totalSeconds <= 0) {
+          timerElement.innerText = "00:00:00";
+          return;
+        }
+        totalSeconds--;
+        const hrs = Math.floor(totalSeconds / 3600);
+        const mins = Math.floor((totalSeconds % 3600) / 60);
+        const secs = totalSeconds % 60;
+        
+        timerElement.innerText = 
+          String(hrs).padStart(2, '0') + ':' + 
+          String(mins).padStart(2, '0') + ':' + 
+          String(secs).padStart(2, '0');
+      }
+      setInterval(updateExamTimer, 1000);
+
+      // Cheating Simulation Modal Controls
+      const modal = document.getElementById('violationOverlayModal');
+      const dismissBtn = document.getElementById('dismissViolationBtn');
+      const triggerBtn = document.getElementById('simulateCheatingBtn');
+      
+      // Submit Confirmation Controls
+      const submitBtn = document.getElementById('finalSubmitBtn');
+      const submitModal = document.getElementById('submitConfirmModal');
+      const cancelSubmitBtn = document.getElementById('cancelSubmitModalBtn');
+
+      if (dismissBtn && modal) {
+        dismissBtn.addEventListener('click', function() {
+          modal.classList.add('hidden');
+        });
+      }
+
+      if (triggerBtn && modal) {
+        triggerBtn.addEventListener('click', function() {
+          modal.classList.remove('hidden');
+        });
+      }
+
+      if (submitBtn && submitModal) {
+        submitBtn.addEventListener('click', function() {
+          submitModal.classList.remove('hidden');
+        });
+      }
+
+      if (cancelSubmitBtn && submitModal) {
+        cancelSubmitBtn.addEventListener('click', function() {
+          submitModal.classList.add('hidden');
+        });
+      }
+
+      // Clipboard protection prevention notification demo
+      const essayArea = document.getElementById('secureEssayInput');
+      const charCounter = document.getElementById('charCounter');
+      if (essayArea) {
+        essayArea.addEventListener('paste', function(e) {
+          e.preventDefault();
+          alert('Peringatan Keamanan ExamGuard: Fungsi tempel (Paste / Ctrl+V) dinonaktifkan demi integritas akademik.');
+        });
+        essayArea.addEventListener('input', function() {
+          if (charCounter) {
+            charCounter.innerText = essayArea.value.length + ' karakter tersimpan';
+          }
+        });
+      }
+
+      // Prevent Context Menu across the Exam Room
+      document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+      });
+    })();
+  </script>
+</div></main><footer class="w-full bg-surface-container-low py-space-lg shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="w-full px-gutter flex flex-col md:flex-row items-center justify-between gap-space-md text-on-surface-variant"><div class="flex items-center gap-space-sm"><span class="font-headline-sm text-headline-sm text-on-surface">ExamGuard Integrity Network</span><span class="font-code-mono text-code-mono bg-surface-container px-2 py-0.5 rounded text-on-surface-variant">v4.8.2-SECURE</span></div><div class="font-body-sm text-body-sm text-center md:text-right">© 2024 ExamGuard Proctoring System. Terproteksi Enkripsi End-to-End &amp; Telemetri Biometrik.</div></div></footer></body></html>

@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+
+<html lang="id"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Plus+Jakarta+Sans:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"background":"#f8f9ff","surface-bright":"#f8f9ff","on-error":"#ffffff","on-tertiary-fixed-variant":"#005236","on-secondary":"#ffffff","secondary":"#565e74","tertiary-fixed-dim":"#4edea3","tertiary-container":"#006e4b","outline":"#777587","surface-container-high":"#dce9ff","inverse-surface":"#213145","on-primary-container":"#dad7ff","outline-variant":"#c7c4d8","surface-container":"#e5eeff","surface-container-highest":"#d3e4fe","surface-dim":"#cbdbf5","on-surface":"#0b1c30","on-surface-variant":"#464555","on-primary-fixed-variant":"#3323cc","surface-container-low":"#eff4ff","tertiary-fixed":"#6ffbbe","primary-container":"#4f46e5","inverse-primary":"#c3c0ff","on-primary":"#ffffff","inverse-on-surface":"#eaf1ff","on-error-container":"#93000a","error":"#ba1a1a","secondary-fixed-dim":"#bec6e0","surface-variant":"#d3e4fe","surface":"#f8f9ff","on-secondary-fixed-variant":"#3f465c","primary-fixed-dim":"#c3c0ff","secondary-container":"#dae2fd","tertiary":"#005338","on-tertiary":"#ffffff","primary-fixed":"#e2dfff","primary":"#3525cd","surface-tint":"#4d44e3","on-tertiary-container":"#67f4b7","on-secondary-fixed":"#131b2e","on-background":"#0b1c30","error-container":"#ffdad6","on-tertiary-fixed":"#002113","secondary-fixed":"#dae2fd","surface-container-lowest":"#ffffff","on-secondary-container":"#5c647a","on-primary-fixed":"#0f0069"},borderRadius:{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},spacing:{"margin":"2rem","gutter-mobile":"1rem","margin-mobile":"1rem","space-lg":"1.5rem","space-xs":"0.25rem","gutter":"1.5rem","space-md":"1rem","space-sm":"0.5rem","space-xl":"2.5rem"},fontFamily:{"body-lg":["Inter"],"headline-sm":["Plus Jakarta Sans"],"body-sm":["Inter"],"headline-md":["Plus Jakarta Sans"],"label-lg":["Inter"],"body-md":["Inter"],"headline-xl":["Plus Jakarta Sans"],"timer-display":["JetBrains Mono"],"headline-lg":["Plus Jakarta Sans"],"headline-lg-mobile":["Plus Jakarta Sans"],"headline-xl-mobile":["Plus Jakarta Sans"],"label-md":["Inter"],"code-mono":["JetBrains Mono"]},fontSize:{"body-lg":["16px",{"lineHeight":"26px","fontWeight":"400"}],"headline-sm":["16px",{"lineHeight":"24px","fontWeight":"600"}],"body-sm":["12px",{"lineHeight":"18px","fontWeight":"400"}],"headline-md":["20px",{"lineHeight":"28px","letterSpacing":"-0.005em","fontWeight":"600"}],"label-lg":["14px",{"lineHeight":"20px","fontWeight":"600"}],"body-md":["14px",{"lineHeight":"22px","fontWeight":"400"}],"headline-xl":["36px",{"lineHeight":"44px","letterSpacing":"-0.02em","fontWeight":"700"}],"timer-display":["24px",{"lineHeight":"28px","letterSpacing":"-0.02em","fontWeight":"700"}],"headline-lg":["28px",{"lineHeight":"36px","letterSpacing":"-0.01em","fontWeight":"600"}],"headline-lg-mobile":["22px",{"lineHeight":"30px","letterSpacing":"-0.01em","fontWeight":"600"}],"headline-xl-mobile":["28px",{"lineHeight":"36px","letterSpacing":"-0.01em","fontWeight":"700"}],"label-md":["12px",{"lineHeight":"16px","fontWeight":"500"}],"code-mono":["13px",{"lineHeight":"18px","letterSpacing":"0.02em","fontWeight":"500"}]}}}};</script></head><body class="bg-background font-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-low z-50 flex flex-col pt-4 pb-6 shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="px-space-md mb-6 flex items-center gap-space-sm"><img alt="ExamGuard Logo" class="h-7 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDohOqzAzinkj8QoaGBWKCm48djR5U7w-OTxLhOtWV5AValfyjOiulsgZriCBgqXsf7GsOdV3C3wOmNH5iSd42-GwFAs0i55SvV1dWm-5ZDlDyZdgu7E59WrBT06bgs_-yfKj1RoU4mDd9NlUi3WnaoiqcwQ-bz-XpZt5FFDZLxvE0Bm00L2xxjzYZl0dn_FJviaSY4-Aoxn840Kd5i_x28MWGR2qkHnOJskj4lNRjy-tdU-Fb8eZ0"/><span class="font-headline-sm text-headline-sm text-on-surface">ExamGuard</span></div><div class="px-space-md mb-4"><div class="bg-surface-container px-space-sm py-2 rounded-lg flex flex-col gap-1"><span class="font-label-md text-label-md text-secondary">Konsol Pengawas</span><span class="font-code-mono text-code-mono text-on-surface font-semibold">RUANG-A1 (Aktif)</span></div></div><nav class="flex-1 px-space-sm flex flex-col gap-1" data-active-classes="bg-primary-container text-on-primary font-bold"><a aria-current="page" class="flex items-center px-space-sm py-2 rounded-lg transition-all bg-primary-container text-on-primary font-bold" data-path="dasbor-pengawas-live" href="#"><span class="material-symbols-outlined mr-3 text-[20px]">grid_view</span>Multi-Feed Siswa</a><a class="flex items-center px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-label-lg text-label-lg" data-path="log-telemetri-&amp;-anomali" href="#"><span class="material-symbols-outlined mr-3 text-[20px]">notification_important</span>Log Anomali</a><a class="flex items-center px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-label-lg text-label-lg" data-path="intervensi-audio-proctor" href="#"><span class="material-symbols-outlined mr-3 text-[20px]">record_voice_over</span>Intervensi Audio</a><a class="flex items-center px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-label-lg text-label-lg" data-path="manajemen-ujian-&amp;-token" href="#"><span class="material-symbols-outlined mr-3 text-[20px]">vpn_key</span>Rilis Token Ujian</a></nav><div class="px-space-sm mt-auto"><div class="p-space-sm bg-surface-container-high rounded-lg flex items-center justify-between"><span class="font-code-mono text-code-mono text-on-surface">Latency</span><span class="font-code-mono text-code-mono text-tertiary-container font-bold">99.8ms</span></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-inverse-surface text-inverse-on-surface shadow-[0_1px_8px_rgba(0,0,0,0.08)] z-40 flex items-center justify-between px-gutter"><div class="flex items-center gap-space-sm"><span class="w-2 h-2 rounded-full bg-tertiary-fixed animate-pulse"></span><span class="font-label-md text-label-md text-surface-container-high hidden sm:inline">Sesi Aktif:</span><span class="font-code-mono text-code-mono text-surface-container-lowest text-sm">Penilaian Akhir Semester Ganjil 2024/2025</span></div><div class="flex items-center gap-space-md"><button class="flex items-center justify-center p-2 rounded-lg bg-error text-on-error hover:bg-error-container hover:text-on-error-container transition-all" title="Emergency Alert Beacon"><span class="material-symbols-outlined text-[20px]">e911_emergency</span></button><div class="flex items-center gap-space-sm"><div class="text-right hidden sm:block"><div class="font-label-lg text-label-lg text-surface-container-lowest leading-tight">Budi Santoso, M.Pd</div><div class="font-label-md text-label-md text-inverse-primary">Pengawas Utama</div></div><img alt="Profile" class="w-8 h-8 rounded-full object-cover ring-2 ring-primary-container" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhxJmdAAJ8iLwH9MNk5CswlY16KWLyGpwo2lc-3w4EPAzpkk4llBSLLid2jNRdgn9T6nco72_HmaNts0nt4ynkJzqhNQUQ4Al4Wz8WQRHvQDkycTxHu3QiBTDINzfGyRPbX7yQ_AYDSd7xoeodFCQz46Y_XS4LeJdZm4CJHKzfWnIN39Xnxvm8J_uqLK1EZSgsuHlTu5xke4SmzypTISqDtvMJuclTlT0GssgYU3erJlv25Jr-eU4"/></div></div></header><main class="relative pt-16 bg-background min-h-screen w-full px-gutter"><div class="flex flex-col w-full pb-12">
+<!-- Top Metric Cards Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-space-md mb-space-lg">
+<!-- Card 1: Total Registered -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-all">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-secondary">Total Terdaftar</span>
+<span class="p-1.5 rounded-lg bg-surface-container text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">group</span>
+</span>
+</div>
+<div class="mt-3 flex items-baseline gap-2">
+<span class="font-headline-xl text-headline-xl text-on-surface">36</span>
+<span class="font-label-md text-label-md text-secondary">Siswa</span>
+</div>
+<div class="mt-2 text-xs font-code-mono text-secondary flex items-center gap-1">
+<span>Kapasitas: 100%</span>
+</div>
+<div class="absolute bottom-0 left-0 right-0 h-1 bg-surface-container-high"></div>
+</div>
+<!-- Card 2: Sedang Mengerjakan -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-all">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-tertiary">Sedang Mengerjakan</span>
+<span class="p-1.5 rounded-lg bg-tertiary-fixed text-on-tertiary-fixed-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">edit_document</span>
+</span>
+</div>
+<div class="mt-3 flex items-baseline gap-2">
+<span class="font-headline-xl text-headline-xl text-tertiary-container">32</span>
+<span class="font-label-md text-label-md text-tertiary font-semibold">Aktif</span>
+</div>
+<div class="mt-2 flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed-dim animate-pulse"></span>
+<span class="font-code-mono text-body-sm text-tertiary">88.8% sesi terkoneksi</span>
+</div>
+<div class="absolute bottom-0 left-0 right-0 h-1 bg-tertiary"></div>
+</div>
+<!-- Card 3: Belum Mulai / Idle -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-all">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-secondary-container">Belum Login</span>
+<span class="p-1.5 rounded-lg bg-secondary-container text-on-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">schedule</span>
+</span>
+</div>
+<div class="mt-3 flex items-baseline gap-2">
+<span class="font-headline-xl text-headline-xl text-on-surface">02</span>
+<span class="font-label-md text-label-md text-secondary">Siswa</span>
+</div>
+<div class="mt-2 font-code-mono text-body-sm text-secondary">
+<span>Menunggu token rilis</span>
+</div>
+<div class="absolute bottom-0 left-0 right-0 h-1 bg-secondary-fixed-dim"></div>
+</div>
+<!-- Card 4: Selesai / Dikirim -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-all">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-primary">Selesai / Dikirim</span>
+<span class="p-1.5 rounded-lg bg-primary-fixed text-on-primary-fixed-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">task_alt</span>
+</span>
+</div>
+<div class="mt-3 flex items-baseline gap-2">
+<span class="font-headline-xl text-headline-xl text-primary">02</span>
+<span class="font-label-md text-label-md text-primary font-semibold">Terkirim</span>
+</div>
+<div class="mt-2 font-code-mono text-body-sm text-primary">
+<span>Integritas hash terverifikasi</span>
+</div>
+<div class="absolute bottom-0 left-0 right-0 h-1 bg-primary"></div>
+</div>
+<!-- Card 5: Pelanggaran Aktif (URGENT ALARM) -->
+<div class="bg-error-container/30 p-space-md rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-all ring-2 ring-error">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-error font-bold flex items-center gap-1">
+<span class="w-2.5 h-2.5 rounded-full bg-error animate-ping"></span>
+          Pelanggaran Aktif
+        </span>
+<span class="p-1.5 rounded-lg bg-error text-on-error flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[18px]">fmd_bad</span>
+</span>
+</div>
+<div class="mt-3 flex items-baseline gap-2">
+<span class="font-headline-xl text-headline-xl text-error font-bold">02</span>
+<span class="font-label-md text-label-md text-error font-semibold">Alarm Berbunyi</span>
+</div>
+<div class="mt-2 flex items-center justify-between">
+<span class="font-code-mono text-body-sm text-error font-semibold">Sirine Siswa: ON</span>
+<span class="material-symbols-outlined text-error text-[18px] animate-bounce">volume_up</span>
+</div>
+<div class="absolute bottom-0 left-0 right-0 h-1 bg-error animate-pulse"></div>
+</div>
+</div>
+<!-- Global Operational Command Bar -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm mb-space-lg flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+<!-- Filters & Exam Info -->
+<div class="flex flex-wrap items-center gap-3">
+<div class="flex items-center gap-2 bg-surface-container-low px-3 py-1.5 rounded-lg">
+<span class="material-symbols-outlined text-secondary text-[18px]">school</span>
+<span class="font-label-md text-label-md text-secondary">Kelas:</span>
+<span class="font-label-lg text-label-lg text-on-surface font-bold">XII MIPA 1</span>
+</div>
+<div class="flex items-center gap-2 bg-surface-container-low px-3 py-1.5 rounded-lg">
+<span class="material-symbols-outlined text-secondary text-[18px]">menu_book</span>
+<span class="font-label-md text-label-md text-secondary">Mata Uji:</span>
+<span class="font-label-lg text-label-lg text-on-surface font-semibold">Fisika Terapan &amp; Kimia Inti</span>
+</div>
+<div class="h-6 w-px bg-surface-container-high hidden md:block"></div>
+<!-- Quick Search -->
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-2.5 text-secondary text-[18px]">search</span>
+<input class="bg-surface-container-low text-on-surface font-body-sm text-body-sm pl-8 pr-3 py-1.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-container w-44 lg:w-56" placeholder="Cari nama / NISN..." type="text"/>
+</div>
+</div>
+<!-- Instant Operational Controls -->
+<div class="flex flex-wrap items-center gap-2">
+<!-- Mute All Active Sirens -->
+<button class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-surface-container-high text-on-surface hover:bg-surface-container-highest transition-all font-label-md text-label-md shadow-sm" id="mute-all-btn" onclick="handleGlobalMute()">
+<span class="material-symbols-outlined text-[18px] text-error">volume_off</span>
+<span>Mute Semua Sirine</span>
+</button>
+<!-- Broadcast Voice Announcement -->
+<button class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary-container text-on-primary hover:bg-primary transition-all font-label-md text-label-md shadow-sm" onclick="handleBroadcastModal(true)">
+<span class="material-symbols-outlined text-[18px]">campaign</span>
+<span>Broadcast Suara</span>
+</button>
+<!-- Freeze/Lock All Exam Sessions -->
+<button class="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-inverse-surface text-inverse-on-surface hover:bg-on-surface transition-all font-label-md text-label-md shadow-sm" id="lock-toggle-btn" onclick="handleToggleLockExam()">
+<span class="material-symbols-outlined text-[18px] text-tertiary-fixed">lock_open</span>
+<span id="lock-text">Kunci Semua Sesi</span>
+</button>
+</div>
+</div>
+<!-- Main Split Canvas: Left Table 70% | Right Telemetry Feed 30% -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
+<!-- LEFT COLUMN (8 cols / ~67-70%): Live Student Table -->
+<div class="lg:col-span-8 flex flex-col gap-space-md">
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+<!-- Table Header Banner -->
+<div class="px-space-md py-3.5 bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-headline-sm text-on-surface">Matriks Pengawasan Live</span>
+<span class="px-2 py-0.5 rounded-full bg-primary text-on-primary font-code-mono text-xs">36 Meja</span>
+</div>
+<div class="flex items-center gap-2 font-code-mono text-body-sm text-secondary">
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed-dim animate-ping"></span>
+<span>Refresh otomatis 1.2s</span>
+</div>
+</div>
+<!-- Student Monitoring Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-secondary font-label-md text-label-md">
+<th class="py-3 px-4 w-12">No</th>
+<th class="py-3 px-4">Siswa &amp; NISN</th>
+<th class="py-3 px-4">Status Ujian</th>
+<th class="py-3 px-4">Pelanggaran</th>
+<th class="py-3 px-4">Status Sirine</th>
+<th class="py-3 px-4 text-right">Aksi Kendali Proktor</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container">
+<!-- SISWA #1: ROW MERAH ALARM AKTIF (Muhammad Rizky Pratama) -->
+<tr class="bg-error-container/25 hover:bg-error-container/40 transition-colors">
+<td class="py-4 px-4 font-code-mono text-body-md font-bold text-error">01</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-3">
+<div class="relative">
+<img class="w-10 h-10 rounded-full object-cover ring-2 ring-error shadow-sm" data-alt="Close-up documentary portrait of high school student Muhammad Rizky Pratama, sharp lighting, realistic proctor candidate camera stream look" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjPZk0RWuv0CU_DS6lO9KUv61Cg45wzJcdYCCyte1op87q8UxKzazXkq9eVr3eqO4QUd89wWW5Ej-nCBVl3NDMWcYWeNbxths4nMo7IYABBU29dh7Blf_ecylZzx1detgNgogkZRUQiQsbWh9mCZSK0McorpXvq6WMQBOQHyWNDg2DV9dbXQe22djxC0mRDiXHwwtFsGBCWfPRSnwt1s1t_4Bgl4DfRI5q9Lpq99U2OJTBZoQcmcM"/>
+<span class="absolute -bottom-1 -right-1 w-4 h-4 bg-error text-on-error rounded-full flex items-center justify-center text-[10px] font-bold">!</span>
+</div>
+<div class="min-w-0">
+<div class="font-label-lg text-label-lg text-on-surface font-bold flex items-center gap-1.5">
+<span class="truncate">M. Rizky Pratama</span>
+<span class="px-1.5 py-0.5 rounded bg-error text-on-error font-code-mono text-[10px] font-bold">MEJA-04</span>
+</div>
+<div class="font-code-mono text-body-sm text-secondary">NISN: 0064829104</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-4">
+<div class="flex flex-col gap-1">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-error text-on-error font-label-md text-xs font-bold shadow-sm animate-pulse">
+<span class="material-symbols-outlined text-[14px]">warning</span>
+                      BUKA TAB BARU
+                    </span>
+<span class="font-code-mono text-xs text-error font-semibold">Browser kehilangan fokus!</span>
+</div>
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded bg-error text-on-error font-code-mono text-xs font-bold">2x Alert</span>
+</div>
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-1.5 text-error font-bold text-xs font-code-mono bg-error/10 px-2.5 py-1 rounded-lg">
+<span class="material-symbols-outlined text-[18px] animate-bounce">alarm_on</span>
+<span>BERBUNYI (88dB)</span>
+</div>
+</td>
+<td class="py-4 px-4 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<!-- Matikan Sirine -->
+<button class="p-2 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface transition-all" onclick="handleMuteSingle(this, 'M. Rizky Pratama')" title="Matikan Sirine Meja Ini">
+<span class="material-symbols-outlined text-[18px] text-error">volume_off</span>
+</button>
+<!-- Kirim Teguran -->
+<button class="p-2 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface transition-all" onclick="sendWarningPrompt('M. Rizky Pratama')" title="Kirim Teguran Pop-up">
+<span class="material-symbols-outlined text-[18px] text-primary">chat_error</span>
+</button>
+<!-- Lock / Kick -->
+<button class="p-2 rounded-lg bg-error text-on-error hover:bg-error-container hover:text-on-error-container transition-all" onclick="lockSingleStudent('M. Rizky Pratama')" title="Paksa Kunci Lembar Ujian">
+<span class="material-symbols-outlined text-[18px]">no_sim</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- SISWA #2: ROW KUNING PERNAH PELANGGARAN (Siti Nurhaliza) -->
+<tr class="bg-secondary-container/20 hover:bg-secondary-container/35 transition-colors">
+<td class="py-4 px-4 font-code-mono text-body-md font-semibold text-secondary">02</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-3">
+<img class="w-10 h-10 rounded-full object-cover ring-1 ring-secondary shadow-sm" data-alt="Close-up photograph of female Indonesian student Siti Nurhaliza with headscarf, neutral focused expression during an exam" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgcHA1LkhNmhN8g7qRYJGkDPPvtiy45DNEoKrOQHewBwWPRDN2HQD2tC87lBHYm5Z2crjPNJaJCZ9Vm32r7awzW5wZkKFu5TR6JEOPs7TK6o_wauH5upYXqo2Q7MfxSUhEw9cP0KaAzvznTO_i_dW3crR0f8-lnYIO4oI_7tSsGxnBRK0T_F8Jc30VOTRYpnA6hL03wttwlnX6_lQ70Q5QSFlE279DYNQMMjpGMJb50QUMVxFDluU"/>
+<div class="min-w-0">
+<div class="font-label-lg text-label-lg text-on-surface font-bold flex items-center gap-1.5">
+<span class="truncate">Siti Nurhaliza</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-secondary font-code-mono text-[10px]">MEJA-12</span>
+</div>
+<div class="font-code-mono text-body-sm text-secondary">NISN: 0065910243</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-4">
+<div class="flex flex-col gap-1">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-md text-xs font-semibold">
+<span class="material-symbols-outlined text-[14px]">fullscreen_exit</span>
+                      Pernah Keluar FS
+                    </span>
+<span class="font-code-mono text-[11px] text-secondary">Teguran terkirim (5m lalu)</span>
+</div>
+</td>
+<td class="py-4 px-4">
+<span class="px-2 py-0.5 rounded bg-secondary text-on-secondary font-code-mono text-xs font-semibold">1x Teguran</span>
+</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-1 font-code-mono text-xs text-secondary">
+<span class="material-symbols-outlined text-[16px] text-outline">volume_mute</span>
+<span>Sirine Selesai</span>
+</div>
+</td>
+<td class="py-4 px-4 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="p-2 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface transition-all" onclick="sendWarningPrompt('Siti Nurhaliza')" title="Kirim Pesan Teguran">
+<span class="material-symbols-outlined text-[18px]">chat</span>
+</button>
+<button class="p-2 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface transition-all" onclick="openStudentCam('Siti Nurhaliza')" title="Perbesar Layar &amp; Kamera">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- SISWA #3: AMAN / MENGERJAKAN (Ahmad Fauzan) -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-4 px-4 font-code-mono text-body-md text-secondary">03</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-high text-on-surface flex items-center justify-center font-bold text-sm shadow-sm">
+                      AF
+                    </div>
+<div class="min-w-0">
+<div class="font-label-lg text-label-lg text-on-surface font-semibold flex items-center gap-1.5">
+<span class="truncate">Ahmad Fauzan</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-secondary font-code-mono text-[10px]">MEJA-01</span>
+</div>
+<div class="font-code-mono text-body-sm text-secondary">NISN: 0058291039</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-4">
+<div class="flex flex-col gap-1 w-32">
+<div class="flex items-center justify-between font-code-mono text-xs text-tertiary">
+<span>Progres 28/40</span>
+<span>70%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-tertiary rounded-full" style="width: 70%"></div>
+</div>
+</div>
+</td>
+<td class="py-4 px-4">
+<span class="px-2 py-0.5 rounded bg-surface-container text-secondary font-code-mono text-xs">0 Bersih</span>
+</td>
+<td class="py-4 px-4">
+<span class="font-code-mono text-xs text-secondary flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-fixed-dim"></span>
+                    Normal (Mati)
+                  </span>
+</td>
+<td class="py-4 px-4 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="p-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-secondary hover:text-on-surface transition-all" onclick="openStudentCam('Ahmad Fauzan')" title="Lihat Layar Siswa">
+<span class="material-symbols-outlined text-[18px]">desktop_windows</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- SISWA #4: AMAN / MENGERJAKAN (Dewi Sekar Ayu) -->
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-4 px-4 font-code-mono text-body-md text-secondary">04</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-high text-on-surface flex items-center justify-center font-bold text-sm shadow-sm">
+                      DA
+                    </div>
+<div class="min-w-0">
+<div class="font-label-lg text-label-lg text-on-surface font-semibold flex items-center gap-1.5">
+<span class="truncate">Dewi Sekar Ayu</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-secondary font-code-mono text-[10px]">MEJA-07</span>
+</div>
+<div class="font-code-mono text-body-sm text-secondary">NISN: 0061298451</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-4">
+<div class="flex flex-col gap-1 w-32">
+<div class="flex items-center justify-between font-code-mono text-xs text-tertiary">
+<span>Progres 35/40</span>
+<span>87%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-tertiary rounded-full" style="width: 87%"></div>
+</div>
+</div>
+</td>
+<td class="py-4 px-4">
+<span class="px-2 py-0.5 rounded bg-surface-container text-secondary font-code-mono text-xs">0 Bersih</span>
+</td>
+<td class="py-4 px-4">
+<span class="font-code-mono text-xs text-secondary flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-fixed-dim"></span>
+                    Normal (Mati)
+                  </span>
+</td>
+<td class="py-4 px-4 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="p-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-secondary hover:text-on-surface transition-all" onclick="openStudentCam('Dewi Sekar Ayu')" title="Lihat Layar Siswa">
+<span class="material-symbols-outlined text-[18px]">desktop_windows</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- SISWA #5: SELESAI / TERKIRIM (Bagas Wicaksono) -->
+<tr class="hover:bg-surface-container-low transition-colors opacity-85">
+<td class="py-4 px-4 font-code-mono text-body-md text-secondary">05</td>
+<td class="py-4 px-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-fixed text-on-primary-fixed-variant flex items-center justify-center font-bold text-sm shadow-sm">
+                      BW
+                    </div>
+<div class="min-w-0">
+<div class="font-label-lg text-label-lg text-on-surface font-semibold flex items-center gap-1.5">
+<span class="truncate">Bagas Wicaksono</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-secondary font-code-mono text-[10px]">MEJA-19</span>
+</div>
+<div class="font-code-mono text-body-sm text-secondary">NISN: 0054819022</div>
+</div>
+</div>
+</td>
+<td class="py-4 px-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary text-on-primary font-label-md text-xs font-semibold">
+<span class="material-symbols-outlined text-[14px]">done_all</span>
+                    Selesai &amp; Dikirim
+                  </span>
+</td>
+<td class="py-4 px-4">
+<span class="px-2 py-0.5 rounded bg-surface-container text-secondary font-code-mono text-xs">0 Bersih</span>
+</td>
+<td class="py-4 px-4">
+<span class="font-code-mono text-xs text-secondary">Sesi Ditutup</span>
+</td>
+<td class="py-4 px-4 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="p-2 rounded-lg bg-surface-container text-secondary hover:bg-surface-container-high transition-all" title="Cetak Berita Acara Lembar Jawaban">
+<span class="material-symbols-outlined text-[18px]">receipt_long</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer Pagination / Summary -->
+<div class="px-space-md py-3 bg-surface-container-low flex items-center justify-between">
+<span class="font-label-md text-label-md text-secondary">Menampilkan 5 dari 36 Siswa</span>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1 rounded bg-surface-container text-secondary text-xs font-code-mono hover:bg-surface-container-high transition-colors">Sebelumnya</button>
+<span class="font-code-mono text-xs font-bold text-on-surface">1 / 8</span>
+<button class="px-3 py-1 rounded bg-surface-container text-secondary text-xs font-code-mono hover:bg-surface-container-high transition-colors">Berikutnya</button>
+</div>
+</div>
+</div>
+<!-- Quick Proctor Guide & Camera Grid Snapshot Snippet -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<div class="p-2.5 rounded-lg bg-tertiary-container text-on-tertiary flex items-center justify-center">
+<span class="material-symbols-outlined text-[24px]">verified_user</span>
+</div>
+<div>
+<div class="font-headline-sm text-headline-sm text-on-surface">Algoritma AI Sentinel 4.2 Berjalan</div>
+<div class="font-body-sm text-body-sm text-secondary">Deteksi mata ganda, pemutusan fullscreen, dan duplikasi layar diaktifkan penuh.</div>
+</div>
+</div>
+<div class="flex items-center gap-2 shrink-0">
+<div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container font-code-mono text-xs text-on-surface">
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed-dim"></span>
+<span>Audio Analyser: Aktif</span>
+</div>
+</div>
+</div>
+</div>
+<!-- RIGHT COLUMN (4 cols / ~30%): Live Anti-Cheating Violation Feed -->
+<div class="lg:col-span-4 flex flex-col gap-space-md">
+<!-- Live Incident Stream Card -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col h-[650px]">
+<!-- Stream Header -->
+<div class="p-space-md bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-error text-[20px]">notification_important</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Log Telemetri Live</span>
+</div>
+<!-- Audio Proctor Chime Toggle Indicator -->
+<div class="flex items-center gap-1.5 bg-surface-container px-2 py-1 rounded-md text-xs font-code-mono text-on-surface-variant">
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed-dim animate-pulse"></span>
+<span class="material-symbols-outlined text-[14px] text-tertiary-container">volume_up</span>
+<span class="font-semibold">Chime Proktor: ON</span>
+</div>
+</div>
+<!-- Feed Events Scroller -->
+<div class="flex-1 overflow-y-auto p-space-md flex flex-col gap-3" id="telemetry-feed">
+<!-- Event 1: Urgent Breached -->
+<div class="p-3 rounded-lg bg-error-container/20 border-l-4 border-error flex flex-col gap-1 shadow-sm">
+<div class="flex items-center justify-between">
+<span class="px-2 py-0.5 rounded bg-error text-on-error font-code-mono text-[10px] font-bold tracking-wide uppercase">URGENT</span>
+<span class="font-code-mono text-[11px] text-secondary font-semibold">10:42:15 WIB</span>
+</div>
+<div class="font-label-lg text-label-lg text-on-surface font-bold mt-1">M. Rizky Pratama (Meja 04)</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-tight">
+              Terdeteksi <span class="font-bold text-error">Alt+Tab / Buka Tab Baru</span>. Mode Fullscreen otomatis terputus. Sirine audio meja berbunyi!
+            </p>
+<div class="mt-2 flex items-center gap-2">
+<button class="px-2 py-1 rounded bg-error text-on-error font-code-mono text-[11px] font-semibold hover:bg-error-container hover:text-on-error-container transition-all" onclick="handleMuteSingle(this, 'M. Rizky Pratama')">
+                Matikan Sirine
+              </button>
+<button class="px-2 py-1 rounded bg-surface-container-high text-on-surface font-code-mono text-[11px] hover:bg-surface-container-highest transition-all" onclick="sendWarningPrompt('M. Rizky Pratama')">
+                Kirim Peringatan
+              </button>
+</div>
+</div>
+<!-- Event 2: Warning Fullscreen Breach -->
+<div class="p-3 rounded-lg bg-secondary-container/25 border-l-4 border-secondary flex flex-col gap-1 shadow-sm">
+<div class="flex items-center justify-between">
+<span class="px-2 py-0.5 rounded bg-secondary-fixed text-on-secondary-fixed font-code-mono text-[10px] font-bold tracking-wide uppercase">WARNING</span>
+<span class="font-code-mono text-[11px] text-secondary font-semibold">10:38:02 WIB</span>
+</div>
+<div class="font-label-lg text-label-lg text-on-surface font-semibold mt-1">Siti Nurhaliza (Meja 12)</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-tight">
+              Meninggalkan mode Fullscreen. Siswa mengklaim shortcut touchpad tidak sengaja tersentuh.
+            </p>
+<div class="mt-1 font-code-mono text-[11px] text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">check</span>
+<span>Status: Telah di-review pengawas</span>
+</div>
+</div>
+<!-- Event 3: Proctor Action Info -->
+<div class="p-3 rounded-lg bg-surface-container-low border-l-4 border-primary flex flex-col gap-1 shadow-sm">
+<div class="flex items-center justify-between">
+<span class="px-2 py-0.5 rounded bg-primary-fixed text-on-primary-fixed-variant font-code-mono text-[10px] font-bold tracking-wide uppercase">ACTION INFO</span>
+<span class="font-code-mono text-[11px] text-secondary font-semibold">10:35:10 WIB</span>
+</div>
+<div class="font-label-lg text-label-lg text-on-surface font-semibold mt-1">Pengawas Budi Santoso</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-tight">
+              Melakukan manual remote mute sirine dan reset toleransi pelanggaran pada meja 14 (Siswa: Rio Fernanda).
+            </p>
+</div>
+<!-- Event 4: Submission Info -->
+<div class="p-3 rounded-lg bg-surface-container-low border-l-4 border-tertiary flex flex-col gap-1 shadow-sm">
+<div class="flex items-center justify-between">
+<span class="px-2 py-0.5 rounded bg-tertiary-fixed text-on-tertiary-fixed-variant font-code-mono text-[10px] font-bold tracking-wide uppercase">SUCCESS</span>
+<span class="font-code-mono text-[11px] text-secondary font-semibold">10:31:44 WIB</span>
+</div>
+<div class="font-label-lg text-label-lg text-on-surface font-semibold mt-1">Bagas Wicaksono (Meja 19)</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-tight">
+              Selesai mengirimkan berkas jawaban ujian. Enkripsi SHA-256 valid. Sesi ujian ditutup otomatis.
+            </p>
+</div>
+</div>
+<!-- Stream Action Footer -->
+<div class="p-space-sm bg-surface-container-low flex items-center justify-between">
+<button class="text-secondary font-code-mono text-xs hover:text-on-surface flex items-center gap-1" onclick="clearEventLogs()">
+<span class="material-symbols-outlined text-[14px]">clear_all</span>
+            Bersihkan Log Lokal
+          </button>
+<button class="text-primary font-code-mono text-xs font-bold hover:underline flex items-center gap-1" onclick="exportAuditLog()">
+<span class="material-symbols-outlined text-[14px]">download</span>
+            Unduh Log Audit (.csv)
+          </button>
+</div>
+</div>
+<!-- Quick Audio Announcement Dispatch Module -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-on-surface">Intervensi Suara Cepat</span>
+<span class="material-symbols-outlined text-primary text-[20px]">mic</span>
+</div>
+<p class="font-body-sm text-body-sm text-secondary">
+          Kirim template peringatan audio terstandar langsung ke headphone/speaker siswa di kelas:
+        </p>
+<div class="grid grid-cols-1 gap-2">
+<button class="p-2.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-left text-on-surface font-label-md text-xs transition-colors flex items-center justify-between" onclick="triggerVoiceTemplate('Perhatian: Tetap pandangi layar dan jangan membuka aplikasi lain.')">
+<span>“Fokus Layar &amp; Tetap di Tempat”</span>
+<span class="material-symbols-outlined text-[16px] text-primary">play_arrow</span>
+</button>
+<button class="p-2.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-left text-on-surface font-label-md text-xs transition-colors flex items-center justify-between" onclick="triggerVoiceTemplate('Waktu tersisa 15 menit lagi. Mohon periksa kembali seluruh jawaban Anda.')">
+<span>“Pemberitahuan: Waktu Sisa 15 Menit”</span>
+<span class="material-symbols-outlined text-[16px] text-primary">play_arrow</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Broadcast Announcement Modal (Hidden by Default) -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-inverse-surface/60 backdrop-blur-sm hidden" id="broadcast-modal">
+<div class="bg-surface-container-lowest rounded-xl max-w-lg w-full p-space-lg shadow-2xl flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="p-2 rounded-lg bg-primary text-on-primary">
+<span class="material-symbols-outlined text-[20px]">campaign</span>
+</div>
+<span class="font-headline-md text-headline-md text-on-surface">Pengumuman Suara Global</span>
+</div>
+<button class="p-1 rounded-lg text-secondary hover:bg-surface-container" onclick="handleBroadcastModal(false)">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">
+        Suara atau teks ini akan disiarkan secara serentak ke seluruh 36 perangkat siswa yang terhubung di ruangan XII MIPA 1.
+      </p>
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-secondary">Isi Pesan / Instruksi Pengawas:</label>
+<textarea class="w-full bg-surface-container-low p-3 rounded-lg text-on-surface font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary-container" id="broadcast-text" placeholder="Contoh: Meja 04 harap segera kembali ke layar ujian atau sesi akan dihentikan paksa..." rows="3"></textarea>
+</div>
+<div class="flex items-center justify-end gap-2 pt-2">
+<button class="px-4 py-2 rounded-lg bg-surface-container text-secondary font-label-lg text-label-lg hover:bg-surface-container-high transition-colors" onclick="handleBroadcastModal(false)">
+          Batal
+        </button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-container text-on-primary font-label-lg text-label-lg hover:bg-primary transition-colors" onclick="dispatchBroadcastVoice()">
+<span class="material-symbols-outlined text-[18px]">send</span>
+          Siarkan Sekarang
+        </button>
+</div>
+</div>
+</div>
+<!-- Toast Notification Alert (Micro-interaction) -->
+<div class="fixed bottom-6 right-6 z-50 bg-inverse-surface text-inverse-on-surface px-4 py-3 rounded-xl shadow-xl flex items-center gap-3 transition-all transform translate-y-20 opacity-0 pointer-events-none" id="action-toast">
+<span class="material-symbols-outlined text-tertiary-fixed text-[20px]" id="toast-icon">check_circle</span>
+<span class="font-label-md text-label-md" id="toast-msg">Instruksi berhasil dikirim ke siswa.</span>
+</div>
+</div>
+<script>
+  function showToast(message, isWarning = false) {
+    const toast = document.getElementById('action-toast');
+    const msgElem = document.getElementById('toast-msg');
+    const iconElem = document.getElementById('toast-icon');
+
+    msgElem.textContent = message;
+    if (isWarning) {
+      iconElem.textContent = 'warning';
+      iconElem.className = 'material-symbols-outlined text-error text-[20px]';
+    } else {
+      iconElem.textContent = 'check_circle';
+      iconElem.className = 'material-symbols-outlined text-tertiary-fixed text-[20px]';
+    }
+
+    toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+    toast.classList.add('translate-y-0', 'opacity-100');
+
+    setTimeout(() => {
+      toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+      toast.classList.remove('translate-y-0', 'opacity-100');
+    }, 3200);
+  }
+
+  function handleMuteSingle(btn, studentName) {
+    btn.disabled = true;
+    btn.classList.add('opacity-50');
+    showToast(`Sirine perangkat ${studentName} berhasil dimatikan.`);
+    appendLogEvent(`Proktor me-mute sirine pada perangkat ${studentName}`, 'ACTION INFO', 'primary');
+  }
+
+  function handleGlobalMute() {
+    showToast('Seluruh sirine aktif di ruangan berhasil dimatikan secara serentak.');
+    appendLogEvent('Pengawas menekan Global Mute untuk semua perangkat berbunyi', 'ACTION INFO', 'primary');
+  }
+
+  function sendWarningPrompt(studentName) {
+    const warning = prompt(`Tulis teguran langsung untuk ${studentName}:`, 'Peringatan Resmi: Jangan berpindah jendela aplikasi atau keluar dari layar fullscreen!');
+    if (warning) {
+      showToast(`Teguran dikirim ke layar ${studentName}.`);
+      appendLogEvent(`Teguran terkirim ke ${studentName}: "${warning.substring(0, 40)}..."`, 'WARNING', 'secondary');
+    }
+  }
+
+  function lockSingleStudent(studentName) {
+    if (confirm(`Konfirmasi diskualifikasi / kunci sesi untuk ${studentName}?`)) {
+      showToast(`Sesi ujian ${studentName} telah DIBEKUKAN.`, true);
+      appendLogEvent(`Sesi ${studentName} DIKUNCI PAKSA oleh Pengawas`, 'URGENT', 'error');
+    }
+  }
+
+  function openStudentCam(studentName) {
+    showToast(`Membuka streaming visual definisi tinggi untuk ${studentName}...`);
+  }
+
+  let allLocked = false;
+  function handleToggleLockExam() {
+    allLocked = !allLocked;
+    const lockText = document.getElementById('lock-text');
+    const lockBtn = document.getElementById('lock-toggle-btn');
+    if (allLocked) {
+      lockText.textContent = 'Buka Semua Kunci';
+      lockBtn.classList.replace('bg-inverse-surface', 'bg-error');
+      showToast('PERINGATAN: Seluruh lembar soal siswa telah DIBEKUKAN!', true);
+      appendLogEvent('Pengawas membekukan seluruh sesi ujian kelas XII MIPA 1', 'URGENT', 'error');
+    } else {
+      lockText.textContent = 'Kunci Semua Sesi';
+      lockBtn.classList.replace('bg-error', 'bg-inverse-surface');
+      showToast('Seluruh sesi ujian siswa telah dibuka kembali.');
+      appendLogEvent('Pengawas membuka kembali seluruh sesi ujian', 'ACTION INFO', 'primary');
+    }
+  }
+
+  function handleBroadcastModal(open) {
+    const modal = document.getElementById('broadcast-modal');
+    if (open) {
+      modal.classList.remove('hidden');
+    } else {
+      modal.classList.add('hidden');
+    }
+  }
+
+  function dispatchBroadcastVoice() {
+    const text = document.getElementById('broadcast-text').value;
+    if (!text.trim()) {
+      alert('Silakan tulis isi instruksi suara terlebih dahulu.');
+      return;
+    }
+    handleBroadcastModal(false);
+    showToast('Pesan suara Text-to-Speech disiarkan ke 36 siswa!');
+    appendLogEvent(`Pengumuman Serentak disiarkan: "${text.substring(0, 35)}..."`, 'ACTION INFO', 'primary');
+    document.getElementById('broadcast-text').value = '';
+  }
+
+  function triggerVoiceTemplate(msg) {
+    showToast('Menyiarkan template audio ke ruangan...');
+    appendLogEvent(`Siaran Cepat Proktor: "${msg}"`, 'ACTION INFO', 'primary');
+  }
+
+  function appendLogEvent(text, tag, colorType) {
+    const feed = document.getElementById('telemetry-feed');
+    const now = new Date();
+    const timeString = now.toTimeString().split(' ')[0] + ' WIB';
+
+    let tagBg = 'bg-primary-fixed text-on-primary-fixed-variant';
+    let border = 'border-primary';
+    let cardBg = 'bg-surface-container-low';
+
+    if (colorType === 'error') {
+      tagBg = 'bg-error text-on-error';
+      border = 'border-error';
+      cardBg = 'bg-error-container/20';
+    } else if (colorType === 'secondary') {
+      tagBg = 'bg-secondary-fixed text-on-secondary-fixed';
+      border = 'border-secondary';
+      cardBg = 'bg-secondary-container/25';
+    }
+
+    const card = document.createElement('div');
+    card.className = `p-3 rounded-lg ${cardBg} border-l-4 ${border} flex flex-col gap-1 shadow-sm transition-all duration-300`;
+    card.innerHTML = `
+      <div class="flex items-center justify-between">
+        <span class="px-2 py-0.5 rounded ${tagBg} font-code-mono text-[10px] font-bold tracking-wide uppercase">${tag}</span>
+        <span class="font-code-mono text-[11px] text-secondary font-semibold">${timeString}</span>
+      </div>
+      <p class="font-body-sm text-body-sm text-on-surface-variant leading-tight mt-1">
+        ${text}
+      </p>
+    `;
+    feed.insertBefore(card, feed.firstChild);
+  }
+
+  function clearEventLogs() {
+    if (confirm('Hapus tampilan log lokal saat ini?')) {
+      document.getElementById('telemetry-feed').innerHTML = '<div class="text-center py-8 text-secondary font-code-mono text-xs">Log lokal telah dibersihkan. Memantau sinyal baru...</div>';
+      showToast('Log lokal berhasil dibersihkan.');
+    }
+  }
+
+  function exportAuditLog() {
+    showToast('Mengunduh audit trail integritas ujian (CSV)...');
+  }
+</script></main></div></body></html>
