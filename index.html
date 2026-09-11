@@ -849,7 +849,8 @@
 
                 setDbStatusUI(true, "Terhubung Supabase DB");
                 await syncDataFromSupabase();
-                subscribeSupabaseRealtime();
+                // Use robust REST Polling to prevent WebSocket SecurityError in Canvas/iFrame environments
+                startPollingFallback();
             } catch (err) {
                 console.error("Supabase Connection Error:", err);
                 if (supabaseClient) {
@@ -862,10 +863,10 @@
 
         function startPollingFallback() {
             if (pollingIntervalHandle) return; // already active
-            setDbStatusUI(true, "Terhubung Supabase (Polling)");
+            setDbStatusUI(true, "Terhubung Supabase (REST Sync)");
             pollingIntervalHandle = setInterval(() => {
                 syncDataFromSupabase();
-            }, 4000);
+            }, 3000);
         }
 
         function setDbStatusUI(isConnected, labelText) {
@@ -936,41 +937,8 @@
         }
 
         function subscribeSupabaseRealtime() {
-            if (!supabaseClient) return;
-
-            if (supabaseChannel) {
-                try {
-                    supabaseClient.removeChannel(supabaseChannel);
-                } catch(e) {}
-            }
-
-            try {
-                supabaseChannel = supabaseClient.channel('public:exam_realtime')
-                    .on('postgres_changes', { event: '*', schema: 'public', table: 'active_sessions' }, payload => {
-                        syncDataFromSupabase();
-                    })
-                    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'cheat_logs' }, payload => {
-                        const newLog = payload.new;
-                        cheatLogs.unshift({
-                            time: new Date(newLog.logged_at || Date.now()).toLocaleTimeString('id-ID'),
-                            student: 'Siswa DB',
-                            type: newLog.violation_type,
-                            severity: newLog.severity || 'HIGH'
-                        });
-                        renderAuditFeed();
-                    })
-                    .subscribe((status, err) => {
-                        if (status === 'SUBSCRIBED') {
-                            setDbStatusUI(true, "Terhubung Supabase Realtime");
-                        } else if (status === 'CHANNEL_ERROR' || status === 'CLOSED' || err) {
-                            console.warn("Realtime WebSocket unavailable in environment, switching to REST polling.");
-                            startPollingFallback();
-                        }
-                    });
-            } catch (e) {
-                console.warn("WebSocket blocked in this environment (Canvas / Sandbox). Falling back to HTTP REST Polling.");
-                startPollingFallback();
-            }
+            // Switched to REST Polling via startPollingFallback to prevent WebSocket SecurityError in Canvas
+            startPollingFallback();
         }
 
         // WEB AUDIO API SOUND ENGINE (Anti-Cheat Alarm)
