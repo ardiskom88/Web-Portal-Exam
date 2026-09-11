@@ -181,6 +181,17 @@
                         </div>
                     </div>
 
+                    <!-- Exam Subject & Session Selector -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Mata Pelajaran & Sesi Ujian</label>
+                        <div class="relative">
+                            <i class="ph-bold ph-book-open absolute left-3.5 top-3.5 text-slate-500 text-lg"></i>
+                            <select id="inputStudentExamSelect" required class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-11 pr-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500 transition-all">
+                                <!-- Populated dynamically from examsMaster -->
+                            </select>
+                        </div>
+                    </div>
+
                     <!-- Audio Autoplay Handshake Permission Card -->
                     <div class="bg-cyan-950/40 border border-cyan-800/50 rounded-xl p-4 text-xs text-cyan-200 flex items-start gap-3 mt-2">
                         <i class="ph-bold ph-speaker-high text-cyan-400 text-xl shrink-0 mt-0.5"></i>
@@ -410,75 +421,238 @@
                 </div>
             </div>
 
-            <!-- PROCTOR TOOLBAR & SIMULATOR CONTROLS -->
-            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex flex-wrap items-center justify-between gap-4">
-                <div class="flex items-center gap-3">
-                    <div class="relative min-w-[240px]">
-                        <i class="ph-bold ph-magnifying-glass absolute left-3 top-2.5 text-slate-500"></i>
-                        <input type="text" id="proctorSearchInput" oninput="renderProctorGrid()" placeholder="Cari Siswa / NISN..." class="w-full bg-slate-950 border border-slate-800 text-xs rounded-xl pl-9 pr-3 py-2 text-white focus:outline-none focus:border-cyan-500">
+            <!-- ADMIN TABS NAVIGATION (VISIBLE TO ADMIN ONLY) -->
+            <div id="adminTabNav" class="hidden bg-slate-900 border border-slate-800 p-1.5 rounded-2xl flex items-center gap-2 text-xs font-medium">
+                <button id="btnAdminTabMonitoring" onclick="switchAdminTab('monitoring')" class="px-4 py-2 rounded-xl text-white bg-cyan-600 font-semibold shadow transition-all flex items-center gap-2">
+                    <i class="ph-bold ph-desktop text-base"></i>
+                    <span>Monitoring Realtime</span>
+                </button>
+                <button id="btnAdminTabStudents" onclick="switchAdminTab('students')" class="px-4 py-2 rounded-xl text-slate-400 hover:text-white transition-all flex items-center gap-2">
+                    <i class="ph-bold ph-student text-base"></i>
+                    <span>Kelola Data Siswa</span>
+                </button>
+                <button id="btnAdminTabExams" onclick="switchAdminTab('exams')" class="px-4 py-2 rounded-xl text-slate-400 hover:text-white transition-all flex items-center gap-2">
+                    <i class="ph-bold ph-folders text-base"></i>
+                    <span>Kelola Mapel, Sesi & GForm</span>
+                </button>
+            </div>
+
+            <!-- TAB 1: PROCTOR MONITORING REALTIME CONTAINER -->
+            <div id="adminSectionMonitoring" class="flex flex-col gap-6">
+                <!-- PROCTOR TOOLBAR & SIMULATOR CONTROLS -->
+                <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="relative min-w-[240px]">
+                            <i class="ph-bold ph-magnifying-glass absolute left-3 top-2.5 text-slate-500"></i>
+                            <input type="text" id="proctorSearchInput" oninput="renderProctorGrid()" placeholder="Cari Siswa / NISN..." class="w-full bg-slate-950 border border-slate-800 text-xs rounded-xl pl-9 pr-3 py-2 text-white focus:outline-none focus:border-cyan-500">
+                        </div>
+                        <select id="proctorFilterStatus" onchange="renderProctorGrid()" class="bg-slate-950 border border-slate-800 text-xs rounded-xl px-3 py-2 text-slate-300 focus:outline-none">
+                            <option value="ALL">Semua Status</option>
+                            <option value="NORMAL">Normal (Hijau)</option>
+                            <option value="CHEATING">Curang (Merah)</option>
+                            <option value="WARNING">Peringatan (Kuning)</option>
+                        </select>
                     </div>
-                    <select id="proctorFilterStatus" onchange="renderProctorGrid()" class="bg-slate-950 border border-slate-800 text-xs rounded-xl px-3 py-2 text-slate-300 focus:outline-none">
-                        <option value="ALL">Semua Status</option>
-                        <option value="NORMAL">Normal (Hijau)</option>
-                        <option value="CHEATING">Curang (Merah)</option>
-                        <option value="WARNING">Peringatan (Kuning)</option>
-                    </select>
+
+                    <div class="flex items-center gap-2">
+                        <!-- ADMIN EXCLUSIVE ACTION BUTTONS -->
+                        <button id="btnAdminSimulateStudent" onclick="simulateAddStudent()" class="hidden px-3 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-semibold rounded-xl items-center gap-1.5 transition-colors">
+                            <i class="ph-bold ph-plus-circle"></i>
+                            <span>+ Simulasi Siswa Test</span>
+                        </button>
+                        
+                        <button onclick="triggerGlobalAlarmSimulate()" class="px-3 py-2 bg-rose-600/20 hover:bg-rose-600 border border-rose-500/30 text-rose-300 hover:text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 transition-all">
+                            <i class="ph-bold ph-bell-ringing"></i>
+                            <span>Tes Sirene Remote</span>
+                        </button>
+                    </div>
                 </div>
 
-                <div class="flex items-center gap-2">
-                    <!-- ADMIN EXCLUSIVE ACTION BUTTONS -->
-                    <button id="btnAdminSimulateStudent" onclick="simulateAddStudent()" class="hidden px-3 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-semibold rounded-xl items-center gap-1.5 transition-colors">
-                        <i class="ph-bold ph-plus-circle"></i>
-                        <span>+ Simulasi Siswa Test</span>
-                    </button>
+                <!-- MAIN GRID & AUDIT FEED -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     
-                    <button onclick="triggerGlobalAlarmSimulate()" class="px-3 py-2 bg-rose-600/20 hover:bg-rose-600 border border-rose-500/30 text-rose-300 hover:text-white text-xs font-semibold rounded-xl flex items-center gap-1.5 transition-all">
-                        <i class="ph-bold ph-bell-ringing"></i>
-                        <span>Tes Sirene Remote</span>
-                    </button>
+                    <!-- Live Student Grid (2 Cols on lg) -->
+                    <div class="lg:col-span-2 flex flex-col gap-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-base font-bold text-white flex items-center gap-2">
+                                <i class="ph-bold ph-grid-four text-cyan-400"></i>
+                                <span>Live Monitoring Grid Siswa</span>
+                            </h3>
+                            <span class="text-xs text-slate-400 font-mono">Auto-sync: Active</span>
+                        </div>
+
+                        <div id="studentGridContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- Student cards populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Realtime Audit Feed Sidebar -->
+                    <div class="flex flex-col gap-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-base font-bold text-white flex items-center gap-2">
+                                <i class="ph-bold ph-list-dashes text-rose-400"></i>
+                                <span>Audit Feed Pelanggaran Realtime</span>
+                            </h3>
+                            <button id="btnClearCheatLogs" onclick="clearCheatLogs()" class="hidden text-[11px] text-slate-400 hover:text-rose-400 font-medium">Clear Feed (Admin)</button>
+                        </div>
+
+                        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex-1 h-[520px] overflow-y-auto space-y-3 font-mono text-xs">
+                            <div id="proctorAuditFeed" class="space-y-2">
+                                <!-- Live logs appear here -->
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
-            <!-- MAIN GRID & AUDIT FEED -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                
-                <!-- Live Student Grid (2 Cols on lg) -->
-                <div class="lg:col-span-2 flex flex-col gap-4">
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-base font-bold text-white flex items-center gap-2">
-                            <i class="ph-bold ph-grid-four text-cyan-400"></i>
-                            <span>Live Monitoring Grid Siswa</span>
-                        </h3>
-                        <span class="text-xs text-slate-400 font-mono">Auto-sync: Active</span>
-                    </div>
-
-                    <div id="studentGridContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <!-- Student cards populated dynamically -->
-                    </div>
-                </div>
-
-                <!-- Realtime Audit Feed Sidebar -->
-                <div class="flex flex-col gap-4">
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-base font-bold text-white flex items-center gap-2">
-                            <i class="ph-bold ph-list-dashes text-rose-400"></i>
-                            <span>Audit Feed Pelanggaran Realtime</span>
-                        </h3>
-                        <button id="btnClearCheatLogs" onclick="clearCheatLogs()" class="hidden text-[11px] text-slate-400 hover:text-rose-400 font-medium">Clear Feed (Admin)</button>
-                    </div>
-
-                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex-1 h-[520px] overflow-y-auto space-y-3 font-mono text-xs">
-                        <div id="proctorAuditFeed" class="space-y-2">
-                            <!-- Live logs appear here -->
+            <!-- TAB 2: KELOLA DATA SISWA (ADMIN ONLY CRUD) -->
+            <div id="adminSectionStudents" class="hidden flex-1 flex-col gap-4">
+                <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="relative min-w-[260px]">
+                            <i class="ph-bold ph-magnifying-glass absolute left-3 top-2.5 text-slate-500"></i>
+                            <input type="text" id="adminStudentSearchInput" oninput="renderAdminStudentsTable()" placeholder="Cari Nama / NISN Siswa..." class="w-full bg-slate-950 border border-slate-800 text-xs rounded-xl pl-9 pr-3 py-2 text-white focus:outline-none focus:border-cyan-500">
                         </div>
                     </div>
+                    <button onclick="openStudentModal()" class="px-4 py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-semibold text-xs rounded-xl shadow-lg flex items-center gap-2 transition-all">
+                        <i class="ph-bold ph-user-plus text-base"></i>
+                        <span>+ Tambah Siswa Baru</span>
+                    </button>
                 </div>
 
+                <!-- Students Table Card -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs text-slate-300">
+                            <thead class="bg-slate-950 border-b border-slate-800 text-slate-400 uppercase font-mono text-[10px]">
+                                <tr>
+                                    <th class="p-4">NISN / ID</th>
+                                    <th class="p-4">Nama Lengkap Siswa</th>
+                                    <th class="p-4">Kelas</th>
+                                    <th class="p-4 text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminStudentsTableBody" class="divide-y divide-slate-800/60">
+                                <!-- Student rows populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: KELOLA MAPEL, SESI & GFORM (ADMIN ONLY CONFIG) -->
+            <div id="adminSectionExams" class="hidden flex-1 flex-col gap-4">
+                <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                        <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                            <i class="ph-bold ph-file-text text-cyan-400"></i>
+                            <span>Daftar Mata Pelajaran & Sesi Ujian</span>
+                        </h3>
+                        <p class="text-xs text-slate-400">Atur waktu pelaksanaan, durasi, dan link Google Form soal per mata pelajaran.</p>
+                    </div>
+                    <button onclick="openExamModal()" class="px-4 py-2 bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white font-semibold text-xs rounded-xl shadow-lg flex items-center gap-2 transition-all">
+                        <i class="ph-bold ph-plus-circle text-base"></i>
+                        <span>+ Tambah Mapel / Ujian Baru</span>
+                    </button>
+                </div>
+
+                <!-- Exams List Container -->
+                <div id="adminExamsGridContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Exam cards populated dynamically -->
+                </div>
             </div>
 
         </section>
 
     </main>
+
+    <!-- MODAL: ADD / EDIT STUDENT -->
+    <div id="studentModal" class="hidden fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl p-6 shadow-2xl relative">
+            <button onclick="closeStudentModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl">
+                <i class="ph-bold ph-x"></i>
+            </button>
+
+            <h3 id="studentModalTitle" class="font-bold text-white text-lg mb-4 flex items-center gap-2">
+                <i class="ph-bold ph-user-plus text-cyan-400"></i>
+                <span>Tambah Data Siswa</span>
+            </h3>
+
+            <form onsubmit="saveStudentForm(event)" class="space-y-4 text-xs">
+                <input type="hidden" id="editStudentId">
+                <div>
+                    <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">NISN / ID Siswa</label>
+                    <input type="text" id="modalStudentNisn" required placeholder="Contoh: 10012835" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Nama Lengkap Siswa</label>
+                    <input type="text" id="modalStudentName" required placeholder="Contoh: Farhan Pratama" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Kelas</label>
+                    <input type="text" id="modalStudentClass" required placeholder="Contoh: XII RPL 1" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500">
+                </div>
+
+                <div class="mt-6 flex justify-end gap-2 pt-2 border-t border-slate-800">
+                    <button type="button" onclick="closeStudentModal()" class="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl">Batal</button>
+                    <button type="submit" class="px-5 py-2 bg-cyan-600 hover:bg-cyan-500 text-white font-semibold rounded-xl">Simpan Data</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD / EDIT EXAM SUBJECT & GFORM -->
+    <div id="examModal" class="hidden fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-2xl p-6 shadow-2xl relative">
+            <button onclick="closeExamModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl">
+                <i class="ph-bold ph-x"></i>
+            </button>
+
+            <h3 id="examModalTitle" class="font-bold text-white text-lg mb-4 flex items-center gap-2">
+                <i class="ph-bold ph-book-open-text text-cyan-400"></i>
+                <span>Pengaturan Mapel & Sesi Ujian</span>
+            </h3>
+
+            <form onsubmit="saveExamForm(event)" class="space-y-4 text-xs">
+                <input type="hidden" id="editExamId">
+                <div>
+                    <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Nama Mata Pelajaran (Mapel)</label>
+                    <input type="text" id="modalExamSubject" required placeholder="Contoh: Pemrograman Web / Fisika" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Judul Ujian</label>
+                    <input type="text" id="modalExamTitle" required placeholder="Contoh: Ujian Akhir Semester Genap" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Sesi Ujian</label>
+                        <input type="text" id="modalExamSession" required placeholder="Sesi 1" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Jam Mulai</label>
+                        <input type="text" id="modalExamStartTime" required placeholder="08:00 WIB" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Durasi (Menit)</label>
+                        <input type="number" id="modalExamDuration" required value="90" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Google Form Embed URL (Soal)</label>
+                    <input type="text" id="modalExamGformUrl" required placeholder="https://docs.google.com/forms/d/e/.../viewform?embedded=true" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500 font-mono">
+                    <p class="text-[11px] text-slate-500 mt-1">Pastikan akhiran URL memiliki atribut <code class="text-cyan-300">?embedded=true</code></p>
+                </div>
+
+                <div class="mt-6 flex justify-end gap-2 pt-2 border-t border-slate-800">
+                    <button type="button" onclick="closeExamModal()" class="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl">Batal</button>
+                    <button type="submit" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl">Simpan Ujian</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- STAFF LOGIN MODAL (PENGAWAS & ADMIN) -->
     <div id="staffLoginModal" class="hidden fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
@@ -536,19 +710,13 @@
             <div class="flex items-center justify-between pb-4 border-b border-slate-800 mb-4">
                 <h3 class="font-bold text-white text-base flex items-center gap-2">
                     <i class="ph-bold ph-database text-cyan-400"></i>
-                    <span>Pengaturan Supabase & Form Soal</span>
+                    <span>Pengaturan Supabase & Database Engine</span>
                 </h3>
                 <button onclick="toggleConfigModal()" class="text-slate-400 hover:text-white text-lg"><i class="ph-bold ph-x"></i></button>
             </div>
 
             <div class="space-y-4 text-xs">
                 <div>
-                    <label class="block font-semibold text-slate-300 mb-1">Google Form Embed URL (Soal Ujian)</label>
-                    <input type="text" id="configGformUrl" value="https://docs.google.com/forms/d/e/1FAIpQLScf43d3Vp3G3eGv0S7x_demo/viewform?embedded=true" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500">
-                    <p class="text-[11px] text-slate-500 mt-1">Masukkan URL Google Form dengan atribut ?embedded=true</p>
-                </div>
-
-                <div class="border-t border-slate-800 pt-3">
                     <label class="block font-semibold text-slate-300 mb-1">Supabase URL (Opsional)</label>
                     <input type="text" id="configSupabaseUrl" placeholder="https://xyzcompany.supabase.co" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500">
                 </div>
@@ -585,6 +753,7 @@
         let currentRole = 'student';
         let authenticatedStaffRole = null; // 'pengawas' | 'admin' | null
         let targetStaffRoleToLogin = null;
+        let activeAdminTab = 'monitoring'; // 'monitoring' | 'students' | 'exams'
         let currentStudent = null;
         let examStarted = false;
         let cheatCount = 0;
@@ -598,6 +767,38 @@
             pengawas: { username: 'pengawas', pass: 'pengawas123', label: 'PENGAWAS' },
             admin: { username: 'admin', pass: 'admin123', label: 'ADMINISTRATOR' }
         };
+
+        // Master Data Siswa (CRUD Target)
+        let studentsMaster = [
+            { id: 'std_1', nisn: '10012831', name: 'Ahmad Rizky', class: 'XII RPL 1' },
+            { id: 'std_2', nisn: '10012832', name: 'Siti Sarah', class: 'XII RPL 1' },
+            { id: 'std_3', nisn: '10012833', name: 'Budi Santoso', class: 'XII RPL 2' },
+            { id: 'std_4', nisn: '10012834', name: 'Dewi Lestari', class: 'XII TKJ 1' }
+        ];
+
+        // Master Ujian / Mapel & GForm Config
+        let examsMaster = [
+            { 
+                id: 'ex_1', 
+                subject: 'Informatika / Pemrograman Web', 
+                title: 'Ujian Akhir Semester Web Programming', 
+                session: 'Sesi 1', 
+                startTime: '08:00 WIB', 
+                duration: 90, 
+                gformUrl: 'https://docs.google.com/forms/d/e/1FAIpQLScf43d3Vp3G3eGv0S7x_demo/viewform?embedded=true', 
+                isActive: true 
+            },
+            { 
+                id: 'ex_2', 
+                subject: 'Matematika Wajib', 
+                title: 'PTS Matematika Wajib Semester 2', 
+                session: 'Sesi 2', 
+                startTime: '10:00 WIB', 
+                duration: 90, 
+                gformUrl: 'https://docs.google.com/forms/d/e/1FAIpQLScf43d3Vp3G3eGv0S7x_demo/viewform?embedded=true', 
+                isActive: false 
+            }
+        ];
 
         // Simulated/Local In-memory DB for Realtime Proctoring
         let activeSessions = [
@@ -615,6 +816,17 @@
             supabaseUrl: "",
             supabaseKey: ""
         };
+
+        // REALTIME CLOCK UPDATER
+        function initClock() {
+            setInterval(() => {
+                const clockEl = document.getElementById('realtimeClock');
+                if (clockEl) {
+                    const now = new Date();
+                    clockEl.innerText = now.toLocaleTimeString('id-ID');
+                }
+            }, 1000);
+        }
 
         // WEB AUDIO API SOUND ENGINE (Anti-Cheat Alarm)
         function initAudioContext() {
@@ -700,7 +912,6 @@
             // Check if staff is already logged in with adequate permissions
             if (authenticatedStaffRole) {
                 if (role === 'admin' && authenticatedStaffRole !== 'admin') {
-                    // Need Admin login upgrade
                     promptStaffLogin('admin');
                     return;
                 }
@@ -709,7 +920,6 @@
                 return;
             }
 
-            // Prompt staff login modal
             promptStaffLogin(role);
         }
 
@@ -735,7 +945,6 @@
         function cancelStaffLogin() {
             document.getElementById('staffLoginModal').classList.add('hidden');
             targetStaffRoleToLogin = null;
-            // Fallback to active view
             updateRoleUI(currentRole);
         }
 
@@ -781,12 +990,10 @@
             const staffBadge = document.getElementById('staffActiveBadge');
             const staffRoleLabel = document.getElementById('staffRoleLabel');
 
-            // Reset Tab Styles
             btnStudent.className = "px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all flex items-center gap-1.5";
             btnProctor.className = "px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all flex items-center gap-1.5";
             btnAdmin.className = "px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all flex items-center gap-1.5";
 
-            // Update Staff Active Badge
             if (authenticatedStaffRole) {
                 staffBadge.classList.remove('hidden');
                 staffBadge.classList.add('flex');
@@ -795,7 +1002,6 @@
                 staffBadge.classList.add('hidden');
             }
 
-            // View Management
             if (role === 'student') {
                 btnStudent.className = "px-3 py-1.5 rounded-lg text-white bg-cyan-600 font-semibold shadow transition-all flex items-center gap-1.5";
                 studentView.classList.remove('hidden');
@@ -804,6 +1010,7 @@
                 studentView.classList.add('hidden');
                 proctorView.classList.remove('hidden');
 
+                const adminTabNav = document.getElementById('adminTabNav');
                 const adminControls = document.getElementById('adminExclusiveControls');
                 const btnSimulate = document.getElementById('btnAdminSimulateStudent');
                 const btnClearLogs = document.getElementById('btnClearCheatLogs');
@@ -813,8 +1020,8 @@
 
                 if (role === 'admin') {
                     btnAdmin.className = "px-3 py-1.5 rounded-lg text-white bg-cyan-600 font-semibold shadow transition-all flex items-center gap-1.5";
-                    
-                    // Show Admin Features
+                    adminTabNav.classList.remove('hidden');
+                    adminTabNav.classList.add('flex');
                     adminControls.classList.remove('hidden');
                     adminControls.classList.add('flex');
                     btnSimulate.classList.remove('hidden');
@@ -824,11 +1031,10 @@
                     headerTitle.innerText = "Dashboard Administrator Portal Ujian";
                     headerTag.innerText = "FULL ACCESS ADMIN";
                     headerTag.className = "text-[10px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded font-mono font-semibold";
-                    headerDesc.innerText = "Akses penuh manajemen DB, Google Form URL, simulasi, & proctoring.";
+                    headerDesc.innerText = "Akses penuh manajemen data siswa, jadwal/sesi mapel, DB engine, & proctoring.";
                 } else {
                     btnProctor.className = "px-3 py-1.5 rounded-lg text-white bg-cyan-600 font-semibold shadow transition-all flex items-center gap-1.5";
-                    
-                    // Hide Admin Features
+                    adminTabNav.classList.add('hidden');
                     adminControls.classList.add('hidden');
                     btnSimulate.classList.add('hidden');
                     btnClearLogs.classList.add('hidden');
@@ -837,6 +1043,8 @@
                     headerTag.innerText = "MODE PENGAWAS";
                     headerTag.className = "text-[10px] bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-2 py-0.5 rounded font-mono font-semibold";
                     headerDesc.innerText = "Pengawasan jalannya ujian real-time dan kendali sirene kecurangan.";
+                    
+                    switchAdminTab('monitoring');
                 }
 
                 renderProctorGrid();
@@ -845,18 +1053,74 @@
             }
         }
 
-        // STUDENT LOGIN & EXAM HANDSHAKE
+        function switchAdminTab(tabName) {
+            activeAdminTab = tabName;
+            const tabMonitoring = document.getElementById('btnAdminTabMonitoring');
+            const tabStudents = document.getElementById('btnAdminTabStudents');
+            const tabExams = document.getElementById('btnAdminTabExams');
+
+            const secMonitoring = document.getElementById('adminSectionMonitoring');
+            const secStudents = document.getElementById('adminSectionStudents');
+            const secExams = document.getElementById('adminSectionExams');
+
+            tabMonitoring.className = "px-4 py-2 rounded-xl text-slate-400 hover:text-white transition-all flex items-center gap-2";
+            tabStudents.className = "px-4 py-2 rounded-xl text-slate-400 hover:text-white transition-all flex items-center gap-2";
+            tabExams.className = "px-4 py-2 rounded-xl text-slate-400 hover:text-white transition-all flex items-center gap-2";
+
+            secMonitoring.classList.add('hidden');
+            secStudents.classList.add('hidden');
+            secExams.classList.add('hidden');
+
+            if (tabName === 'monitoring') {
+                tabMonitoring.className = "px-4 py-2 rounded-xl text-white bg-cyan-600 font-semibold shadow transition-all flex items-center gap-2";
+                secMonitoring.classList.remove('hidden');
+                secMonitoring.classList.add('flex');
+            } else if (tabName === 'students') {
+                tabStudents.className = "px-4 py-2 rounded-xl text-white bg-cyan-600 font-semibold shadow transition-all flex items-center gap-2";
+                secStudents.classList.remove('hidden');
+                secStudents.classList.add('flex');
+                renderAdminStudentsTable();
+            } else if (tabName === 'exams') {
+                tabExams.className = "px-4 py-2 rounded-xl text-white bg-cyan-600 font-semibold shadow transition-all flex items-center gap-2";
+                secExams.classList.remove('hidden');
+                secExams.classList.add('flex');
+                renderAdminExamsList();
+            }
+        }
+
+        function populateStudentExamSelect() {
+            const select = document.getElementById('inputStudentExamSelect');
+            if (!select) return;
+            select.innerHTML = '';
+
+            const activeExams = examsMaster.filter(e => e.isActive);
+            if (activeExams.length === 0) {
+                select.innerHTML = `<option value="">-- Tidak ada ujian aktif --</option>`;
+                return;
+            }
+
+            activeExams.forEach(e => {
+                select.innerHTML += `<option value="${e.id}">${e.subject} - ${e.session} (${e.startTime})</option>`;
+            });
+        }
+
         function handleStudentLogin(e) {
             e.preventDefault();
-            initAudioContext(); // Initialize Web Audio handshake
+            initAudioContext();
 
             const name = document.getElementById('inputStudentName').value.trim();
             const nisn = document.getElementById('inputStudentNisn').value.trim();
             const className = document.getElementById('inputStudentClass').value;
+            const selectedExamId = document.getElementById('inputStudentExamSelect').value;
 
             if (!name || !nisn) {
                 showNoticeModal("Input Kosong", "Silakan isi Nama dan NISN dengan lengkap.");
                 return;
+            }
+
+            const chosenExam = examsMaster.find(ex => ex.id === selectedExamId);
+            if (chosenExam) {
+                configSettings.gformUrl = chosenExam.gformUrl;
             }
 
             currentStudent = {
@@ -864,6 +1128,7 @@
                 name: name,
                 nisn: nisn,
                 class: className,
+                examTitle: chosenExam ? chosenExam.subject : 'Ujian Online',
                 status: 'NORMAL',
                 cheats: 0,
                 integrity: 100,
@@ -871,93 +1136,60 @@
                 device: navigator.platform || 'Web Device'
             };
 
-            // Register student in active sessions
             activeSessions.unshift(currentStudent);
             renderProctorGrid();
             updateProctorStats();
 
-            // Update Rule Card Details
-            document.getElementById('ruleStudentDetails').innerText = `${name} (${className})`;
+            document.getElementById('ruleStudentDetails').innerText = `${name} (${className}) - ${currentStudent.examTitle}`;
             document.getElementById('ruleStudentNisn').innerText = nisn;
 
-            // Transition UI
             document.getElementById('studentLoginCard').classList.add('hidden');
             document.getElementById('studentRulesCard').classList.remove('hidden');
         }
 
         function requestBrowserFullscreen() {
-            const elem = document.documentElement;
-            if (elem.requestFullscreen) {
-                return elem.requestFullscreen();
-            } else if (elem.webkitRequestFullscreen) { /* Safari / Chrome antiguas */
-                return elem.webkitRequestFullscreen();
-            } else if (elem.msRequestFullscreen) { /* IE11 */
-                return elem.msRequestFullscreen();
+            const docEl = document.documentElement;
+            if (docEl.requestFullscreen) {
+                docEl.requestFullscreen().catch(err => {});
+            } else if (docEl.webkitRequestFullscreen) {
+                docEl.webkitRequestFullscreen();
+            } else if (docEl.mozRequestFullScreen) {
+                docEl.mozRequestFullScreen();
+            } else if (docEl.msRequestFullscreen) {
+                docEl.msRequestFullscreen();
             }
-            return Promise.reject("Fullscreen API not supported");
         }
 
         function startExamWithFullscreen() {
-            // Request Strict Fullscreen Browser
-            requestBrowserFullscreen().then(() => {
-                console.log("Fullscreen mode enabled successfully.");
-            }).catch(err => {
-                console.warn("Fullscreen request error or user blocked:", err);
-            });
+            requestBrowserFullscreen();
 
-            examStarted = true;
-
-            // Attach Lockdown Security Listeners
-            attachSecurityListeners();
-
-            // Set GForm URL
-            document.getElementById('gformIframe').src = configSettings.gformUrl;
-            document.getElementById('activeStudentLabel').innerText = `Siswa: ${currentStudent.name}`;
-
-            // Transition UI
             document.getElementById('studentRulesCard').classList.add('hidden');
             document.getElementById('studentWorkspace').classList.remove('hidden');
+            document.getElementById('activeStudentLabel').innerText = `Siswa: ${currentStudent.name} (${currentStudent.class})`;
 
-            // Log event
-            logCheatEvent(currentStudent.name, 'Memulai Sesi Ujian dalam Fullscreen', 'INFO');
+            // Load Google Form URL into iframe
+            const iframe = document.getElementById('gformIframe');
+            iframe.src = configSettings.gformUrl;
+
+            examStarted = true;
+            setupAntiCheatListeners();
         }
 
         function reenterExamFullscreen() {
-            requestBrowserFullscreen().then(() => {
-                const lockOverlay = document.getElementById('fullscreenLockOverlay');
-                if (lockOverlay) lockOverlay.classList.add('hidden');
-                dismissCheatAlarm();
-            }).catch(() => {
-                showNoticeModal("Fullscreen Wajib", "Anda harus mengizinkan browser masuk mode Fullscreen untuk melanjutkan ujian.");
-            });
+            requestBrowserFullscreen();
+            document.getElementById('fullscreenLockOverlay').classList.add('hidden');
         }
 
-        // MULTI-VECTOR ANTI-CHEAT DETECTION ENGINE
-        function attachSecurityListeners() {
-            // 1. Tab Switching & Window Blur
-            window.addEventListener('blur', () => {
-                if (examStarted) triggerCheatViolation('Membuka Tab Lain / Pindah Window Browser');
-            });
-
-            document.addEventListener('visibilitychange', () => {
-                if (document.hidden && examStarted) {
-                    triggerCheatViolation('Membuka Tab Baru / Minimalkan Browser');
-                }
-            });
-
-            // 2. Fullscreen Exit Detection (Cross-browser event handler)
+        function setupAntiCheatListeners() {
+            // Fullscreen status monitor
             const handleFullscreenChange = () => {
-                const isFullscreen = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
-                
-                if (!isFullscreen && examStarted) {
-                    // Show strict barrier overlay covering the exam
-                    const lockOverlay = document.getElementById('fullscreenLockOverlay');
-                    if (lockOverlay) lockOverlay.classList.remove('hidden');
-                    
-                    triggerCheatViolation('Keluar dari Mode Layar Penuh (Fullscreen)');
-                } else if (isFullscreen && examStarted) {
-                    const lockOverlay = document.getElementById('fullscreenLockOverlay');
-                    if (lockOverlay) lockOverlay.classList.add('hidden');
+                if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
+                    if (examStarted) {
+                        document.getElementById('fullscreenLockOverlay').classList.remove('hidden');
+                        triggerCheatViolation("Keluar dari Mode Fullscreen Ujian!");
+                    }
+                } else {
+                    document.getElementById('fullscreenLockOverlay').classList.add('hidden');
                 }
             };
 
@@ -966,108 +1198,98 @@
             document.addEventListener('mozfullscreenchange', handleFullscreenChange);
             document.addEventListener('MSFullscreenChange', handleFullscreenChange);
 
-            // 3. DevTools & Keyboard Shortcuts Hook (F12, Inspect, Copy-Paste)
-            window.addEventListener('keydown', (e) => {
+            // Tab switch & visibility monitor
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden && examStarted) {
+                    triggerCheatViolation("Terdeteksi Berpindah Tab / Jendela Lain!");
+                }
+            });
+
+            // Window Blur
+            window.addEventListener('blur', () => {
+                if (examStarted) {
+                    triggerCheatViolation("Fokus Jendela Ujian Terlepas!");
+                }
+            });
+
+            // Prevent Context Menu (Right Click)
+            document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+            // Keybindings Trap (F12, Inspect, Copy Paste, Alt+Tab)
+            document.addEventListener('keydown', (e) => {
                 if (!examStarted) return;
-
-                // F12 or Ctrl+Shift+I / Ctrl+Shift+J / Ctrl+U or Alt+Tab / Win key traps
-                if (e.key === 'F12' || e.key === 'F11' || e.key === 'Escape' ||
-                   (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j')) ||
-                   (e.ctrlKey && (e.key === 'u' || e.key === 'U'))) {
+                // F12 or Inspect shortcuts
+                if (e.keyCode === 123 || (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67))) {
                     e.preventDefault();
-                    triggerCheatViolation('Mencoba Keluar Fullscreen / Membuka Inspect DevTools');
+                    triggerCheatViolation("Mencoba Buka DevTools / Inspect Element!");
                 }
-
-                // Copy-Paste Lock
-                if (e.ctrlKey && (e.key === 'c' || e.key === 'C' || e.key === 'v' || e.key === 'V' || e.key === 'a' || e.key === 'A')) {
+                // Copy Paste Shortcuts
+                if (e.ctrlKey && (e.keyCode === 67 || e.keyCode === 86 || e.keyCode === 85 || e.keyCode === 65)) {
                     e.preventDefault();
-                    playShortBeep();
+                    triggerCheatViolation("Aksi Copy/Paste/Select All Diblokir!");
                 }
-            });
-
-            // 4. Context Menu & Text Select Disable
-            document.addEventListener('contextmenu', (e) => {
-                if (examStarted) e.preventDefault();
             });
         }
 
-        function playShortBeep() {
-            initAudioContext();
-            const osc = audioContext.createOscillator();
-            const gain = audioContext.createGain();
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(440, audioContext.currentTime);
-            gain.gain.setValueAtTime(0.1, audioContext.currentTime);
-            osc.connect(gain);
-            gain.connect(audioContext.destination);
-            osc.start();
-            osc.stop(audioContext.currentTime + 0.15);
-        }
-
-        // TRIGGER CHEAT VIOLATION RESPONSE
         function triggerCheatViolation(reason) {
             cheatCount++;
             integrityScore = Math.max(0, integrityScore - 15);
 
-            // Update UI Counters
             document.getElementById('studentCheatCounter').innerText = `${cheatCount} / 3`;
             document.getElementById('studentIntegrityScore').innerText = `${integrityScore}%`;
 
-            // Update Student Record in Memory
             if (currentStudent) {
                 currentStudent.cheats = cheatCount;
                 currentStudent.integrity = integrityScore;
                 currentStudent.status = cheatCount >= 3 ? 'CHEATING' : 'WARNING';
             }
 
-            // Show Alarm Overlay & Sound
             document.getElementById('cheatReasonText').innerText = reason;
             document.getElementById('cheatAlarmOverlay').classList.remove('hidden');
 
             playSirenSound();
-            speakWarningTTS(`Peringatan! Terdeteksi ${reason}. Kembali ke mode fullscreen sekarang.`);
+            speakWarningTTS(`Peringatan! Pelanggaran terdeteksi: ${reason}`);
 
-            // Log event to Proctor Feed
-            logCheatEvent(currentStudent ? currentStudent.name : 'Siswa', reason, 'HIGH');
+            // Log cheat to feed
+            const logItem = {
+                time: new Date().toLocaleTimeString('id-ID'),
+                student: currentStudent ? currentStudent.name : 'Siswa',
+                type: reason,
+                severity: 'HIGH'
+            };
+            cheatLogs.unshift(logItem);
+
             renderProctorGrid();
             updateProctorStats();
+            renderAuditFeed();
         }
 
         function dismissCheatAlarm() {
             stopSirenSound();
             document.getElementById('cheatAlarmOverlay').classList.add('hidden');
-
-            // Verify fullscreen state
-            const isFullscreen = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement);
-            if (!isFullscreen) {
-                reenterExamFullscreen();
-            }
         }
 
         function finishExamStudent() {
-            examStarted = false;
             stopSirenSound();
-            if (document.exitFullscreen) document.exitFullscreen().catch(()=>{});
-
-            showNoticeModal("Ujian Selesai", "Terima kasih, lembar jawaban Ujian Anda telah tersimpan.");
-            
-            // Reset Student UI
+            examStarted = false;
             document.getElementById('studentWorkspace').classList.add('hidden');
             document.getElementById('studentLoginCard').classList.remove('hidden');
+            showNoticeModal("Ujian Selesai", "Terima kasih! Lembar ujian Anda telah terkirim dengan aman.");
         }
 
-        // PROCTOR DASHBOARD CONTROLS & RENDERING
         function renderProctorGrid() {
             const container = document.getElementById('studentGridContainer');
-            const search = document.getElementById('proctorSearchInput').value.toLowerCase();
-            const filter = document.getElementById('proctorFilterStatus').value;
+            if (!container) return;
+
+            const search = (document.getElementById('proctorSearchInput')?.value || '').toLowerCase();
+            const filterStatus = document.getElementById('proctorFilterStatus')?.value || 'ALL';
 
             container.innerHTML = '';
 
             const filtered = activeSessions.filter(s => {
-                const matchesSearch = s.name.toLowerCase().includes(search) || s.nisn.includes(search);
-                const matchesFilter = filter === 'ALL' || s.status === filter;
-                return matchesSearch && matchesFilter;
+                const matchSearch = s.name.toLowerCase().includes(search) || s.nisn.includes(search);
+                const matchStatus = filterStatus === 'ALL' || s.status === filterStatus;
+                return matchSearch && matchStatus;
             });
 
             if (filtered.length === 0) {
@@ -1079,191 +1301,434 @@
                 return;
             }
 
-            filtered.forEach(student => {
-                let statusBadge = '';
-                let borderClass = 'border-slate-800';
+            filtered.forEach(s => {
+                let statusBadge = '<span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] px-2 py-0.5 rounded font-semibold">NORMAL</span>';
+                let cardBorder = 'border-slate-800';
 
-                if (student.status === 'NORMAL') {
-                    statusBadge = '<span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] px-2 py-0.5 rounded font-semibold flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> NORMAL</span>';
-                } else if (student.status === 'WARNING') {
-                    statusBadge = '<span class="bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] px-2 py-0.5 rounded font-semibold flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> PERINGATAN</span>';
-                    borderClass = 'border-amber-500/30';
-                } else {
-                    statusBadge = '<span class="bg-rose-500/10 text-rose-400 border border-rose-500/20 text-[10px] px-2 py-0.5 rounded font-semibold flex items-center gap-1 animate-pulse"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> ALARM CURANG</span>';
-                    borderClass = 'border-rose-500/50';
+                if (s.status === 'WARNING') {
+                    statusBadge = '<span class="bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] px-2 py-0.5 rounded font-semibold">PERINGATAN</span>';
+                    cardBorder = 'border-amber-500/40';
+                } else if (s.status === 'CHEATING') {
+                    statusBadge = '<span class="bg-rose-500/10 text-rose-400 border border-rose-500/20 text-[10px] px-2 py-0.5 rounded font-semibold animate-pulse">CURANG</span>';
+                    cardBorder = 'border-rose-500/60 bg-rose-950/10';
                 }
 
-                const cardHtml = `
-                    <div class="bg-slate-900 border ${borderClass} rounded-2xl p-4 flex flex-col justify-between gap-3 shadow-lg relative overflow-hidden">
-                        <div>
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-[11px] font-mono text-slate-400">${student.nisn} - ${student.class}</span>
-                                ${statusBadge}
-                            </div>
-                            <h4 class="font-bold text-white text-sm mb-1">${student.name}</h4>
-                            <p class="text-[11px] text-slate-500">${student.device}</p>
-                        </div>
-
-                        <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800/80 flex items-center justify-between text-xs">
+                container.innerHTML += `
+                    <div class="bg-slate-900 border ${cardBorder} rounded-2xl p-4 flex flex-col justify-between gap-3 shadow-lg transition-all">
+                        <div class="flex items-start justify-between gap-2">
                             <div>
-                                <p class="text-[10px] text-slate-500">Pelanggaran</p>
-                                <p class="font-bold text-rose-400">${student.cheats} x</p>
+                                <h4 class="font-bold text-white text-sm leading-tight">${s.name}</h4>
+                                <p class="text-[11px] text-slate-400 font-mono">${s.nisn} • ${s.class}</p>
                             </div>
-                            <div class="text-right">
-                                <p class="text-[10px] text-slate-500">Integritas</p>
-                                <p class="font-bold text-cyan-400">${student.integrity}%</p>
+                            ${statusBadge}
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2 text-[11px] bg-slate-950 p-2.5 rounded-xl border border-slate-800 font-mono">
+                            <div>
+                                <span class="text-slate-500 block">Pelanggaran:</span>
+                                <span class="font-bold ${s.cheats > 0 ? 'text-rose-400' : 'text-slate-300'}">${s.cheats} Kali</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-500 block">Integritas:</span>
+                                <span class="font-bold text-emerald-400">${s.integrity}%</span>
                             </div>
                         </div>
 
-                        <div class="flex items-center gap-1.5 pt-1">
-                            <button onclick="triggerRemoteAlarm('${student.name}')" class="flex-1 bg-rose-600/20 hover:bg-rose-600 border border-rose-500/30 text-rose-300 hover:text-white py-1.5 px-2 rounded-lg text-[11px] font-medium flex items-center justify-center gap-1 transition-all">
-                                <i class="ph-bold ph-speaker-high"></i> Sirene
-                            </button>
-                            <button onclick="sendRemoteMessage('${student.name}')" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 py-1.5 px-2 rounded-lg text-[11px] font-medium flex items-center justify-center gap-1 transition-all">
-                                <i class="ph-bold ph-chat-teardrop-text"></i> Pesan
-                            </button>
+                        <div class="flex items-center justify-between text-[11px] text-slate-500 border-t border-slate-800/80 pt-2">
+                            <span><i class="ph-bold ph-desktop text-cyan-400 mr-1"></i>${s.device}</span>
+                            <div class="flex items-center gap-1">
+                                <button onclick="triggerRemoteSirenForStudent('${s.id}')" class="p-1.5 bg-rose-950/60 hover:bg-rose-600 text-rose-300 hover:text-white rounded-lg transition-colors" title="Bunyikan Sirene Remote">
+                                    <i class="ph-bold ph-bell-ringing"></i>
+                                </button>
+                                <button onclick="sendRemoteMessageToStudent('${s.id}')" class="p-1.5 bg-slate-800 hover:bg-slate-700 text-cyan-300 rounded-lg transition-colors" title="Kirim Pesan Teguran">
+                                    <i class="ph-bold ph-chat-text"></i>
+                                </button>
+                                <button onclick="kickStudentSession('${s.id}')" class="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-rose-400 rounded-lg transition-colors" title="Keluarkan Sesi">
+                                    <i class="ph-bold ph-sign-out"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 `;
-                container.innerHTML += cardHtml;
             });
         }
 
         function updateProctorStats() {
-            document.getElementById('statTotalStudents').innerText = activeSessions.length;
-            
+            const total = activeSessions.length;
             const normal = activeSessions.filter(s => s.status === 'NORMAL').length;
             const warning = activeSessions.filter(s => s.status === 'WARNING').length;
             const cheating = activeSessions.filter(s => s.status === 'CHEATING').length;
 
-            document.getElementById('statNormalStudents').innerText = normal;
-            document.getElementById('statWarningStudents').innerText = warning;
-            document.getElementById('statCheatingStudents').innerText = cheating;
-
-            const avgIntegrity = activeSessions.length > 0 
-                ? Math.round(activeSessions.reduce((acc, curr) => acc + curr.integrity, 0) / activeSessions.length) 
+            const avgIntegrity = total > 0 
+                ? Math.round(activeSessions.reduce((acc, s) => acc + s.integrity, 0) / total) 
                 : 100;
-            document.getElementById('statAvgIntegrity').innerText = `${avgIntegrity}%`;
-        }
 
-        function logCheatEvent(studentName, reason, severity) {
-            const now = new Date();
-            const timeStr = now.toTimeString().split(' ')[0];
-
-            cheatLogs.unshift({
-                time: timeStr,
-                student: studentName,
-                type: reason,
-                severity: severity
-            });
-
-            renderAuditFeed();
+            if (document.getElementById('statTotalStudents')) document.getElementById('statTotalStudents').innerText = total;
+            if (document.getElementById('statNormalStudents')) document.getElementById('statNormalStudents').innerText = normal;
+            if (document.getElementById('statWarningStudents')) document.getElementById('statWarningStudents').innerText = warning;
+            if (document.getElementById('statCheatingStudents')) document.getElementById('statCheatingStudents').innerText = cheating;
+            if (document.getElementById('statAvgIntegrity')) document.getElementById('statAvgIntegrity').innerText = `${avgIntegrity}%`;
         }
 
         function renderAuditFeed() {
-            const feed = document.getElementById('proctorAuditFeed');
-            feed.innerHTML = '';
+            const feedContainer = document.getElementById('proctorAuditFeed');
+            if (!feedContainer) return;
+            feedContainer.innerHTML = '';
+
+            if (cheatLogs.length === 0) {
+                feedContainer.innerHTML = `<div class="text-slate-500 text-center py-8">Belum ada catatan pelanggaran.</div>`;
+                return;
+            }
 
             cheatLogs.forEach(log => {
-                let badgeColor = 'text-amber-400 bg-amber-500/10';
-                if (log.severity === 'HIGH') badgeColor = 'text-rose-400 bg-rose-500/10 border-rose-500/20';
-                if (log.severity === 'INFO') badgeColor = 'text-cyan-400 bg-cyan-500/10 border-cyan-500/20';
-
-                const logItem = `
-                    <div class="p-2.5 rounded-xl bg-slate-950 border border-slate-800 flex flex-col gap-1">
-                        <div class="flex items-center justify-between text-[10px]">
-                            <span class="text-slate-500">${log.time}</span>
-                            <span class="px-1.5 py-0.2 rounded border ${badgeColor} font-bold">${log.severity}</span>
+                feedContainer.innerHTML += `
+                    <div class="bg-slate-950 p-2.5 rounded-xl border border-rose-500/20 text-slate-300 flex items-start gap-2">
+                        <i class="ph-bold ph-warning-circle text-rose-400 text-base shrink-0 mt-0.5"></i>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between gap-1 mb-0.5">
+                                <span class="font-bold text-white truncate">${log.student}</span>
+                                <span class="text-[10px] text-slate-500">${log.time}</span>
+                            </div>
+                            <p class="text-[11px] text-rose-300 leading-tight">${log.type}</p>
                         </div>
-                        <p class="font-bold text-slate-200 text-[11px]">${log.student}</p>
-                        <p class="text-slate-400 text-[10px]">${log.type}</p>
                     </div>
                 `;
-                feed.innerHTML += logItem;
             });
         }
 
-        function clearCheatLogs() {
-            if (authenticatedStaffRole !== 'admin') {
-                showNoticeModal("Akses Ditolak", "Hanya Admin yang dapat menghapus log audit.");
-                return;
+        function triggerRemoteSirenForStudent(studentId) {
+            const student = activeSessions.find(s => s.id === studentId);
+            if (student) {
+                student.status = 'CHEATING';
+                student.cheats++;
+                cheatLogs.unshift({
+                    time: new Date().toLocaleTimeString('id-ID'),
+                    student: student.name,
+                    type: 'Sirene Peringatan Demicu Oleh Pengawas Jarak Jauh',
+                    severity: 'HIGH'
+                });
+                renderProctorGrid();
+                updateProctorStats();
+                renderAuditFeed();
+                showNoticeModal("Sirene Dideploy", `Sirene peringatan dikirimkan ke perangkat ${student.name}.`);
             }
-            cheatLogs = [];
-            renderAuditFeed();
-            showNoticeModal("Audit Feed Cleared", "Log audit pelanggaran berhasil dibersihkan.");
         }
 
-        // REMOTE ACTIONS & SIMULATIONS
-        function triggerRemoteAlarm(studentName) {
-            logCheatEvent(studentName, 'Remote Siren Alarm Dipicu oleh Pengawas', 'HIGH');
-            showNoticeModal("Sirene Dikirim", `Perintah sirene remote telah dikirim ke perangkat ${studentName}.`);
+        function sendRemoteMessageToStudent(studentId) {
+            const student = activeSessions.find(s => s.id === studentId);
+            if (student) {
+                showNoticeModal("Pesan Terkirim", `Pesan instruksi berhasil dikirimkan ke layar ${student.name}.`);
+            }
         }
 
-        function sendRemoteMessage(studentName) {
-            logCheatEvent(studentName, 'Peringatan Pesan Teks dari Pengawas', 'INFO');
-            showNoticeModal("Pesan Terkirim", `Pesan peringatan telah ditampilkan di layar ${studentName}.`);
+        function kickStudentSession(studentId) {
+            activeSessions = activeSessions.filter(s => s.id !== studentId);
+            renderProctorGrid();
+            updateProctorStats();
+            showNoticeModal("Sesi Dikeluarkan", "Sesi siswa telah dikeluarkan dari ruang ujian.");
         }
 
         function simulateAddStudent() {
-            if (authenticatedStaffRole !== 'admin') {
-                showNoticeModal("Akses Ditolak", "Hanya Admin yang dapat memicu simulasi siswa test.");
-                return;
-            }
-            const names = ['Eko Prasetyo', 'Dewi Lestari', 'Fajar Ramadhan', 'Gita Gutawa'];
+            const randId = Date.now().toString();
+            const names = ['Rian Perdana', 'Anisa Rahma', 'Faris Putra', 'Maya Indah'];
             const randomName = names[Math.floor(Math.random() * names.length)];
-            const randomNisn = '100' + Math.floor(10000 + Math.random() * 90000);
 
-            const newStudent = {
-                id: 'std_' + Date.now(),
+            activeSessions.unshift({
+                id: randId,
                 name: randomName,
-                nisn: randomNisn,
-                class: 'XII TKJ 1',
+                nisn: '100' + Math.floor(10000 + Math.random() * 90000),
+                class: 'XII RPL 1',
                 status: 'NORMAL',
                 cheats: 0,
                 integrity: 100,
                 lastSeen: 'Baru saja',
-                device: 'Windows / Edge'
-            };
+                device: 'Chrome / Mobile'
+            });
 
-            activeSessions.unshift(newStudent);
-            logCheatEvent(randomName, 'Siswa Baru Bergabung ke Sesi Ujian', 'INFO');
             renderProctorGrid();
             updateProctorStats();
         }
 
         function triggerGlobalAlarmSimulate() {
-            testAudioAlarm();
-            showNoticeModal("Uji Coba Sirene", "Memutar sampel sirene audio anti-cheat.");
+            playSirenSound();
+            setTimeout(() => stopSirenSound(), 2500);
+            showNoticeModal("Simulasi Audio", "Tes alarm sirene remote berhasil dijalankan.");
         }
 
-        // CONFIG MODAL MANAGEMENT (ADMIN ONLY)
-        function toggleConfigModal() {
-            if (authenticatedStaffRole !== 'admin') {
-                showNoticeModal("Akses Ditolak", "Pengaturan Engine DB dan Form Ujian hanya dapat diakses oleh Admin.");
+        function clearCheatLogs() {
+            cheatLogs = [];
+            renderAuditFeed();
+            showNoticeModal("Feed Dibersihkan", "Audit feed pelanggaran telah dikosongkan.");
+        }
+
+        function renderAdminStudentsTable() {
+            const tbody = document.getElementById('adminStudentsTableBody');
+            if (!tbody) return;
+            const search = (document.getElementById('adminStudentSearchInput')?.value || '').toLowerCase();
+            tbody.innerHTML = '';
+
+            const filtered = studentsMaster.filter(s => 
+                s.name.toLowerCase().includes(search) || 
+                s.nisn.toLowerCase().includes(search) ||
+                s.class.toLowerCase().includes(search)
+            );
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="p-8 text-center text-slate-500">
+                            Belum ada data siswa ditemukan.
+                        </td>
+                    </tr>
+                `;
                 return;
             }
+
+            filtered.forEach(s => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-950/40 transition-colors">
+                        <td class="p-4 font-mono font-semibold text-cyan-400">${s.nisn}</td>
+                        <td class="p-4 font-bold text-white">${s.name}</td>
+                        <td class="p-4 text-slate-400">${s.class}</td>
+                        <td class="p-4 text-center">
+                            <div class="flex items-center justify-center gap-2">
+                                <button onclick="openStudentModal('${s.id}')" class="p-1.5 bg-slate-800 hover:bg-slate-700 text-cyan-300 rounded-lg transition-colors" title="Edit Siswa">
+                                    <i class="ph-bold ph-pencil text-sm"></i>
+                                </button>
+                                <button onclick="deleteStudent('${s.id}')" class="p-1.5 bg-rose-950/60 hover:bg-rose-600 text-rose-300 hover:text-white rounded-lg transition-colors" title="Hapus Siswa">
+                                    <i class="ph-bold ph-trash text-sm"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function openStudentModal(id = null) {
+            document.getElementById('studentModal').classList.remove('hidden');
+            const title = document.getElementById('studentModalTitle');
+
+            if (id) {
+                const s = studentsMaster.find(item => item.id === id);
+                if (!s) return;
+                title.innerText = "Edit Data Siswa";
+                document.getElementById('editStudentId').value = s.id;
+                document.getElementById('modalStudentNisn').value = s.nisn;
+                document.getElementById('modalStudentName').value = s.name;
+                document.getElementById('modalStudentClass').value = s.class;
+            } else {
+                title.innerText = "Tambah Siswa Baru";
+                document.getElementById('editStudentId').value = '';
+                document.getElementById('modalStudentNisn').value = '';
+                document.getElementById('modalStudentName').value = '';
+                document.getElementById('modalStudentClass').value = '';
+            }
+        }
+
+        function closeStudentModal() {
+            document.getElementById('studentModal').classList.add('hidden');
+        }
+
+        function saveStudentForm(e) {
+            e.preventDefault();
+            const editId = document.getElementById('editStudentId').value;
+            const nisn = document.getElementById('modalStudentNisn').value.trim();
+            const name = document.getElementById('modalStudentName').value.trim();
+            const className = document.getElementById('modalStudentClass').value.trim();
+
+            if (editId) {
+                const s = studentsMaster.find(item => item.id === editId);
+                if (s) {
+                    s.nisn = nisn;
+                    s.name = name;
+                    s.class = className;
+                }
+                showNoticeModal("Siswa Diperbarui", `Data siswa ${name} berhasil disimpan.`);
+            } else {
+                studentsMaster.unshift({
+                    id: 'std_' + Date.now(),
+                    nisn: nisn,
+                    name: name,
+                    class: className
+                });
+                showNoticeModal("Siswa Ditambahkan", `Siswa ${name} telah didaftarkan.`);
+            }
+
+            closeStudentModal();
+            renderAdminStudentsTable();
+        }
+
+        function deleteStudent(id) {
+            const s = studentsMaster.find(item => item.id === id);
+            if (!s) return;
+
+            studentsMaster = studentsMaster.filter(item => item.id !== id);
+            renderAdminStudentsTable();
+            showNoticeModal("Siswa Dihapus", `Siswa ${s.name} telah dihapus dari database.`);
+        }
+
+        function renderAdminExamsList() {
+            const container = document.getElementById('adminExamsGridContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (examsMaster.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center text-slate-500 text-xs">
+                        Belum ada jadwal mapel ujian tersimpan.
+                    </div>
+                `;
+                return;
+            }
+
+            examsMaster.forEach(ex => {
+                const statusBadge = ex.isActive 
+                    ? '<span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] px-2 py-0.5 rounded font-semibold">AKTIF</span>' 
+                    : '<span class="bg-slate-800 text-slate-400 border border-slate-700 text-[10px] px-2 py-0.5 rounded font-semibold">NON-AKTIF</span>';
+
+                container.innerHTML += `
+                    <div class="bg-slate-900 border ${ex.isActive ? 'border-cyan-500/40' : 'border-slate-800'} rounded-2xl p-5 flex flex-col justify-between gap-4 shadow-lg">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-mono text-cyan-400 font-bold">${ex.session} • ${ex.startTime}</span>
+                                ${statusBadge}
+                            </div>
+                            <h4 class="font-bold text-white text-base mb-1">${ex.subject}</h4>
+                            <p class="text-xs text-slate-400 mb-3">${ex.title}</p>
+                            
+                            <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-[11px] font-mono text-slate-400 truncate">
+                                <i class="ph-bold ph-link text-cyan-400 mr-1"></i>${ex.gformUrl}
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-2 border-t border-slate-800 text-xs">
+                            <span class="text-slate-400"><i class="ph-bold ph-clock text-amber-400 mr-1"></i>${ex.duration} Menit</span>
+                            
+                            <div class="flex items-center gap-2">
+                                <button onclick="toggleExamActive('${ex.id}')" class="px-2.5 py-1.5 ${ex.isActive ? 'bg-amber-600/20 text-amber-300 border border-amber-500/30' : 'bg-emerald-600/20 text-emerald-300 border border-emerald-500/30'} hover:opacity-80 rounded-lg text-[11px] font-semibold transition-all">
+                                    ${ex.isActive ? 'Non-aktifkan' : 'Aktifkan'}
+                                </button>
+                                <button onclick="openExamModal('${ex.id}')" class="p-1.5 bg-slate-800 hover:bg-slate-700 text-cyan-300 rounded-lg transition-colors" title="Edit Mapel">
+                                    <i class="ph-bold ph-pencil text-sm"></i>
+                                </button>
+                                <button onclick="deleteExam('${ex.id}')" class="p-1.5 bg-rose-950/60 hover:bg-rose-600 text-rose-300 hover:text-white rounded-lg transition-colors" title="Hapus Mapel">
+                                    <i class="ph-bold ph-trash text-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            populateStudentExamSelect();
+        }
+
+        function openExamModal(id = null) {
+            document.getElementById('examModal').classList.remove('hidden');
+            const title = document.getElementById('examModalTitle');
+
+            if (id) {
+                const ex = examsMaster.find(item => item.id === id);
+                if (!ex) return;
+                title.innerText = "Edit Mapel & Sesi Ujian";
+                document.getElementById('editExamId').value = ex.id;
+                document.getElementById('modalExamSubject').value = ex.subject;
+                document.getElementById('modalExamTitle').value = ex.title;
+                document.getElementById('modalExamSession').value = ex.session;
+                document.getElementById('modalExamStartTime').value = ex.startTime;
+                document.getElementById('modalExamDuration').value = ex.duration;
+                document.getElementById('modalExamGformUrl').value = ex.gformUrl;
+            } else {
+                title.innerText = "Tambah Mapel / Ujian Baru";
+                document.getElementById('editExamId').value = '';
+                document.getElementById('modalExamSubject').value = '';
+                document.getElementById('modalExamTitle').value = '';
+                document.getElementById('modalExamSession').value = 'Sesi 1';
+                document.getElementById('modalExamStartTime').value = '08:00 WIB';
+                document.getElementById('modalExamDuration').value = 90;
+                document.getElementById('modalExamGformUrl').value = 'https://docs.google.com/forms/d/e/.../viewform?embedded=true';
+            }
+        }
+
+        function closeExamModal() {
+            document.getElementById('examModal').classList.add('hidden');
+        }
+
+        function saveExamForm(e) {
+            e.preventDefault();
+            const editId = document.getElementById('editExamId').value;
+            const subject = document.getElementById('modalExamSubject').value.trim();
+            const examTitle = document.getElementById('modalExamTitle').value.trim();
+            const session = document.getElementById('modalExamSession').value.trim();
+            const startTime = document.getElementById('modalExamStartTime').value.trim();
+            const duration = parseInt(document.getElementById('modalExamDuration').value) || 90;
+            const gformUrl = document.getElementById('modalExamGformUrl').value.trim();
+
+            if (editId) {
+                const ex = examsMaster.find(item => item.id === editId);
+                if (ex) {
+                    ex.subject = subject;
+                    ex.title = examTitle;
+                    ex.session = session;
+                    ex.startTime = startTime;
+                    ex.duration = duration;
+                    ex.gformUrl = gformUrl;
+                }
+                showNoticeModal("Ujian Diperbarui", `Mata pelajaran ${subject} berhasil diperbarui.`);
+            } else {
+                examsMaster.unshift({
+                    id: 'ex_' + Date.now(),
+                    subject: subject,
+                    title: examTitle,
+                    session: session,
+                    startTime: startTime,
+                    duration: duration,
+                    gformUrl: gformUrl,
+                    isActive: true
+                });
+                showNoticeModal("Ujian Ditambahkan", `Mata pelajaran ${subject} telah didaftarkan.`);
+            }
+
+            closeExamModal();
+            renderAdminExamsList();
+        }
+
+        function toggleExamActive(id) {
+            const ex = examsMaster.find(item => item.id === id);
+            if (!ex) return;
+            ex.isActive = !ex.isActive;
+            renderAdminExamsList();
+        }
+
+        function deleteExam(id) {
+            const ex = examsMaster.find(item => item.id === id);
+            if (!ex) return;
+
+            examsMaster = examsMaster.filter(item => item.id !== id);
+            renderAdminExamsList();
+            showNoticeModal("Ujian Dihapus", `Mapel ${ex.subject} telah dihapus.`);
+        }
+
+        function toggleConfigModal() {
             const modal = document.getElementById('configModal');
             modal.classList.toggle('hidden');
         }
 
         function saveConfigurations() {
-            if (authenticatedStaffRole !== 'admin') return;
+            const supabaseUrl = document.getElementById('configSupabaseUrl').value.trim();
+            const supabaseKey = document.getElementById('configSupabaseKey').value.trim();
 
-            configSettings.gformUrl = document.getElementById('configGformUrl').value.trim();
-            configSettings.supabaseUrl = document.getElementById('configSupabaseUrl').value.trim();
-            configSettings.supabaseKey = document.getElementById('configSupabaseKey').value.trim();
-
-            if (configSettings.supabaseUrl) {
-                document.getElementById('dbStatusLabel').className = "w-2 h-2 rounded-full bg-cyan-400 animate-ping";
-            }
+            configSettings.supabaseUrl = supabaseUrl;
+            configSettings.supabaseKey = supabaseKey;
 
             toggleConfigModal();
-            showNoticeModal("Pengaturan Disimpan", "URL Google Form dan konfigurasi berhasil diperbarui.");
+            showNoticeModal("Pengaturan Disimpan", "Konfigurasi Database Supabase telah diperbarui.");
         }
 
-        function showNoticeModal(title, msg) {
+        function showNoticeModal(title, message) {
             document.getElementById('noticeTitle').innerText = title;
-            document.getElementById('noticeMessage').innerText = msg;
+            document.getElementById('noticeMessage').innerText = message;
             document.getElementById('customNoticeModal').classList.remove('hidden');
         }
 
@@ -1271,14 +1736,10 @@
             document.getElementById('customNoticeModal').classList.add('hidden');
         }
 
-        // REALTIME CLOCK INITIALIZATION
-        setInterval(() => {
-            const now = new Date();
-            document.getElementById('realtimeClock').innerText = now.toLocaleTimeString('id-ID');
-        }, 1000);
-
         // INITIAL LOAD
         window.onload = function() {
+            initClock();
+            populateStudentExamSelect();
             renderProctorGrid();
             updateProctorStats();
             renderAuditFeed();
