@@ -10,6 +10,8 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <!-- Google Fonts Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Supabase JS Client SDK v2 -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <script>
         tailwind.config = {
@@ -366,9 +368,9 @@
                 <!-- ADMIN EXCLUSIVE: IN-MEMORY ENGINE & DATABASE SETTINGS BUTTON -->
                 <div id="adminExclusiveControls" class="hidden items-center gap-2">
                     <button onclick="toggleConfigModal()" class="flex items-center gap-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-semibold text-xs px-3.5 py-2 rounded-xl shadow-lg transition-all">
-                        <span id="dbStatusLabel" class="w-2 h-2 rounded-full bg-emerald-300 animate-pulse"></span>
+                        <span id="dbStatusDot" class="w-2 h-2 rounded-full bg-emerald-300 animate-pulse"></span>
                         <i class="ph-bold ph-database"></i>
-                        <span>In-Memory / Database Engine</span>
+                        <span id="dbStatusLabel">Terhubung Supabase DB</span>
                     </button>
                 </div>
             </div>
@@ -762,13 +764,18 @@
         let isSirenActive = false;
         let sirenOscillator = null;
 
+        // Supabase Client Handle
+        let supabaseClient = null;
+        let supabaseChannel = null;
+        let pollingIntervalHandle = null;
+
         // Default Credentials for Staff
         const STAFF_CREDENTIALS = {
             pengawas: { username: 'pengawas', pass: 'pengawas123', label: 'PENGAWAS' },
             admin: { username: 'admin', pass: 'admin123', label: 'ADMINISTRATOR' }
         };
 
-        // Master Data Siswa (CRUD Target)
+        // Master Data Siswa
         let studentsMaster = [
             { id: 'std_1', nisn: '10012831', name: 'Ahmad Rizky', class: 'XII RPL 1' },
             { id: 'std_2', nisn: '10012832', name: 'Siti Sarah', class: 'XII RPL 1' },
@@ -811,21 +818,159 @@
             { time: '10:14:02', student: 'Budi Santoso', type: 'Window Blur / Tab Switch', severity: 'HIGH' }
         ];
 
+        // Preset user Supabase credentials
         let configSettings = {
             gformUrl: "https://docs.google.com/forms/d/e/1FAIpQLScf43d3Vp3G3eGv0S7x_demo/viewform?embedded=true",
-            supabaseUrl: "",
-            supabaseKey: ""
+            supabaseUrl: "https://dvgtqsqqywxbggogbkan.supabase.co",
+            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2Z3Rxc3FxeXd4Ymdnb2dia2FuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkxMzU3MzgsImV4cCI6MjEwNDcxMTczOH0.JL74dvxilW6-9ha6w5xC5SGzMVr8e6-bnRqEVWevnmg"
         };
 
-        // REALTIME CLOCK UPDATER
-        function initClock() {
-            setInterval(() => {
-                const clockEl = document.getElementById('realtimeClock');
-                if (clockEl) {
-                    const now = new Date();
-                    clockEl.innerText = now.toLocaleTimeString('id-ID');
+        async function initSupabase(url, key) {
+            if (!url || !key || !window.supabase) {
+                setDbStatusUI(false, "In-Memory Engine");
+                return;
+            }
+
+            try {
+                // Clear any previous polling interval
+                if (pollingIntervalHandle) {
+                    clearInterval(pollingIntervalHandle);
+                    pollingIntervalHandle = null;
                 }
-            }, 1000);
+
+                supabaseClient = window.supabase.createClient(url, key);
+                
+                // Test connectivity by checking 'exams' or 'students' table via REST HTTP
+                const { data, error } = await supabaseClient.from('exams').select('id').limit(1);
+                
+                if (error && error.code !== 'PGRST116') {
+                    console.warn("Supabase Warning:", error.message);
+                }
+
+                setDbStatusUI(true, "Terhubung Supabase DB");
+                await syncDataFromSupabase();
+                subscribeSupabaseRealtime();
+            } catch (err) {
+                console.error("Supabase Connection Error:", err);
+                if (supabaseClient) {
+                    startPollingFallback();
+                } else {
+                    setDbStatusUI(false, "In-Memory Engine");
+                }
+            }
+        }
+
+        function startPollingFallback() {
+            if (pollingIntervalHandle) return; // already active
+            setDbStatusUI(true, "Terhubung Supabase (Polling)");
+            pollingIntervalHandle = setInterval(() => {
+                syncDataFromSupabase();
+            }, 4000);
+        }
+
+        function setDbStatusUI(isConnected, labelText) {
+            const dot = document.getElementById('dbStatusDot');
+            const label = document.getElementById('dbStatusLabel');
+            if (dot && label) {
+                label.innerText = labelText;
+                dot.className = isConnected 
+                    ? "w-2 h-2 rounded-full bg-emerald-400 animate-pulse" 
+                    : "w-2 h-2 rounded-full bg-amber-400";
+            }
+        }
+
+        async function syncDataFromSupabase() {
+            if (!supabaseClient) return;
+
+            try {
+                // Fetch Students Master
+                const { data: stdData } = await supabaseClient.from('students').select('*');
+                if (stdData && stdData.length > 0) {
+                    studentsMaster = stdData.map(s => ({
+                        id: s.id,
+                        nisn: s.nisn,
+                        name: s.full_name,
+                        class: s.class_name
+                    }));
+                }
+
+                // Fetch Exams Master
+                const { data: exData } = await supabaseClient.from('exams').select('*');
+                if (exData && exData.length > 0) {
+                    examsMaster = exData.map(e => ({
+                        id: e.id,
+                        subject: e.subject,
+                        title: e.exam_title,
+                        session: 'Sesi 1',
+                        startTime: '08:00 WIB',
+                        duration: e.duration_minutes || 90,
+                        gformUrl: e.gform_embed_url,
+                        isActive: e.is_active
+                    }));
+                    populateStudentExamSelect();
+                }
+
+                // Fetch Active Sessions
+                const { data: sessData } = await supabaseClient.from('active_sessions').select('*, students(full_name, nisn, class_name)');
+                if (sessData && sessData.length > 0) {
+                    activeSessions = sessData.map(s => ({
+                        id: s.id,
+                        name: s.students ? s.students.full_name : 'Siswa',
+                        nisn: s.students ? s.students.nisn : '-',
+                        class: s.students ? s.students.class_name : '-',
+                        status: s.status,
+                        cheats: s.cheat_count,
+                        integrity: s.integrity_score,
+                        lastSeen: 'Live DB',
+                        device: s.device_info || 'Web Device'
+                    }));
+                }
+
+                renderProctorGrid();
+                updateProctorStats();
+                renderAdminStudentsTable();
+                renderAdminExamsList();
+            } catch (err) {
+                console.warn("Sync Supabase REST Exception:", err);
+            }
+        }
+
+        function subscribeSupabaseRealtime() {
+            if (!supabaseClient) return;
+
+            if (supabaseChannel) {
+                try {
+                    supabaseClient.removeChannel(supabaseChannel);
+                } catch(e) {}
+            }
+
+            try {
+                supabaseChannel = supabaseClient.channel('public:exam_realtime')
+                    .on('postgres_changes', { event: '*', schema: 'public', table: 'active_sessions' }, payload => {
+                        syncDataFromSupabase();
+                    })
+                    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'cheat_logs' }, payload => {
+                        const newLog = payload.new;
+                        cheatLogs.unshift({
+                            time: new Date(newLog.logged_at || Date.now()).toLocaleTimeString('id-ID'),
+                            student: 'Siswa DB',
+                            type: newLog.violation_type,
+                            severity: newLog.severity || 'HIGH'
+                        });
+                        renderAuditFeed();
+                    })
+                    .subscribe((status, err) => {
+                        if (status === 'SUBSCRIBED') {
+                            setDbStatusUI(true, "Terhubung Supabase Realtime");
+                        } else if (status === 'CHANNEL_ERROR' || status === 'CLOSED' || err) {
+                            console.warn("Realtime WebSocket unavailable in environment, switching to REST polling.");
+                            startPollingFallback();
+                        }
+                    });
+            } catch (e) {
+                console.warn("WebSocket blocked in this environment (Canvas / Sandbox). Falling back to HTTP REST Polling.");
+                startPollingFallback();
+            }
         }
 
         // WEB AUDIO API SOUND ENGINE (Anti-Cheat Alarm)
@@ -1137,8 +1282,18 @@
             };
 
             activeSessions.unshift(currentStudent);
-            renderProctorGrid();
-            updateProctorStats();
+
+            // Sync to Supabase if connected
+            if (supabaseClient) {
+                supabaseClient.from('students').upsert({ nisn: nisn, full_name: name, class_name: className }, { onConflict: 'nisn' })
+                .then(() => {
+                    renderProctorGrid();
+                    updateProctorStats();
+                });
+            } else {
+                renderProctorGrid();
+                updateProctorStats();
+            }
 
             document.getElementById('ruleStudentDetails').innerText = `${name} (${className}) - ${currentStudent.examTitle}`;
             document.getElementById('ruleStudentNisn').innerText = nisn;
@@ -1258,6 +1413,15 @@
                 severity: 'HIGH'
             };
             cheatLogs.unshift(logItem);
+
+            // Push to Supabase if active
+            if (supabaseClient && currentStudent) {
+                supabaseClient.from('cheat_logs').insert({
+                    student_id: currentStudent.id,
+                    violation_type: reason,
+                    severity: 'HIGH'
+                }).then(() => {});
+            }
 
             renderProctorGrid();
             updateProctorStats();
@@ -1713,6 +1877,9 @@
         function toggleConfigModal() {
             const modal = document.getElementById('configModal');
             modal.classList.toggle('hidden');
+
+            document.getElementById('configSupabaseUrl').value = configSettings.supabaseUrl || '';
+            document.getElementById('configSupabaseKey').value = configSettings.supabaseKey || '';
         }
 
         function saveConfigurations() {
@@ -1722,27 +1889,55 @@
             configSettings.supabaseUrl = supabaseUrl;
             configSettings.supabaseKey = supabaseKey;
 
+            initSupabase(supabaseUrl, supabaseKey);
+
             toggleConfigModal();
-            showNoticeModal("Pengaturan Disimpan", "Konfigurasi Database Supabase telah diperbarui.");
+            showNoticeModal("Pengaturan Disimpan", "Mencoba menghubungkan kembali ke Supabase Database.");
         }
 
+        // NOTICE & CLOCK HELPER FUNCTIONS
         function showNoticeModal(title, message) {
-            document.getElementById('noticeTitle').innerText = title;
-            document.getElementById('noticeMessage').innerText = message;
-            document.getElementById('customNoticeModal').classList.remove('hidden');
+            const modal = document.getElementById('customNoticeModal');
+            const titleEl = document.getElementById('noticeTitle');
+            const msgEl = document.getElementById('noticeMessage');
+            if (titleEl) titleEl.innerText = title;
+            if (msgEl) msgEl.innerText = message;
+            if (modal) modal.classList.remove('hidden');
         }
 
         function closeNoticeModal() {
-            document.getElementById('customNoticeModal').classList.add('hidden');
+            const modal = document.getElementById('customNoticeModal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function initClock() {
+            function updateClock() {
+                const now = new Date();
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const seconds = String(now.getSeconds()).padStart(2, '0');
+                const clockEl = document.getElementById('realtimeClock');
+                if (clockEl) {
+                    clockEl.innerText = `${hours}:${minutes}:${seconds}`;
+                }
+            }
+            updateClock();
+            setInterval(updateClock, 1000);
         }
 
         // INITIAL LOAD
         window.onload = function() {
             initClock();
             populateStudentExamSelect();
-            renderProctorGrid();
-            updateProctorStats();
-            renderAuditFeed();
+            
+            // Auto initialize user's Supabase connection
+            if (configSettings.supabaseUrl && configSettings.supabaseKey) {
+                initSupabase(configSettings.supabaseUrl, configSettings.supabaseKey);
+            } else {
+                renderProctorGrid();
+                updateProctorStats();
+                renderAuditFeed();
+            }
         };
     </script>
 </body>
