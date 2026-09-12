@@ -785,7 +785,9 @@
             { id: 'std_1', nisn: '10012831', name: 'Ahmad Rizky', class: 'XII RPL 1' },
             { id: 'std_2', nisn: '10012832', name: 'Siti Sarah', class: 'XII RPL 1' },
             { id: 'std_3', nisn: '10012833', name: 'Budi Santoso', class: 'XII RPL 2' },
-            { id: 'std_4', nisn: '10012834', name: 'Dewi Lestari', class: 'XII TKJ 1' }
+            { id: 'std_4', nisn: '10012834', name: 'Dewi Lestari', class: 'XII TKJ 1' },
+            { id: 'std_5', nisn: '10012835', name: 'Rian Perdana', class: 'XI IPA 1' },
+            { id: 'std_6', nisn: '10012836', name: 'Anisa Rahma', class: 'X MIPA 1' }
         ];
 
         // Master Ujian / Mapel & GForm Config
@@ -811,6 +813,17 @@
                 duration: 90, 
                 gformUrl: 'https://docs.google.com/forms/d/e/1FAIpQLScf43d3Vp3G3eGv0S7x_demo/viewform?embedded=true', 
                 isActive: true 
+            },
+            { 
+                id: 'ex_3', 
+                subject: 'Fisika Dasar', 
+                title: 'Penilaian Harian Fisika', 
+                session: 'Sesi 1', 
+                startTime: '08:00 WIB', 
+                targetClass: 'Kelas XI',
+                duration: 60, 
+                gformUrl: 'https://docs.google.com/forms/d/e/1FAIpQLScf43d3Vp3G3eGv0S7x_demo/viewform?embedded=true', 
+                isActive: true 
             }
         ];
 
@@ -826,6 +839,70 @@
             supabaseUrl: DIRECT_SUPABASE_URL,
             supabaseKey: DIRECT_SUPABASE_KEY
         };
+
+        // SMART CLASS MATCHER ALGORITHM
+        function normalizeString(str) {
+            if (!str) return '';
+            return String(str).toLowerCase().replace(/[\s\-_]/g, '').trim();
+        }
+
+        function isClassMatching(targetClassRaw, studentClassRaw) {
+            if (!targetClassRaw || !studentClassRaw) return false;
+            
+            const target = targetClassRaw.trim();
+            const student = studentClassRaw.trim();
+
+            const targetNorm = normalizeString(target);
+            const studentNorm = normalizeString(student);
+
+            // 1. Target "Semua Kelas" / "Semua"
+            if (target === 'Semua Kelas' || target === 'Semua' || targetNorm === 'semuakelas' || targetNorm === 'semua') {
+                return true;
+            }
+
+            // 2. Exact Match (Case-insensitive & space-insensitive)
+            if (targetNorm === studentNorm) {
+                return true;
+            }
+
+            // 3. Multi-class comma separated check (e.g., "XII RPL 1, XII RPL 2")
+            if (target.includes(',')) {
+                const targetList = target.split(',').map(t => normalizeString(t));
+                if (targetList.includes(studentNorm)) return true;
+            }
+
+            // 4. Grade-level matching (e.g. "Kelas XII" matching "XII RPL 1", "12 RPL 1", "XII-TKJ-2")
+            // Check for Grade X (10)
+            if (target === 'Kelas X' || targetNorm === 'kelasx' || targetNorm === 'tingkatx' || targetNorm === 'x') {
+                if (studentNorm.startsWith('x') || studentNorm.startsWith('10') || studentNorm.includes('kelasx') || studentNorm.includes('10')) {
+                    // Exclude XI (11) and XII (12)
+                    if (!studentNorm.startsWith('xi') && !studentNorm.startsWith('11') && !studentNorm.startsWith('xii') && !studentNorm.startsWith('12')) {
+                        return true;
+                    }
+                }
+            }
+
+            // Check for Grade XI (11)
+            if (target === 'Kelas XI' || targetNorm === 'kelasxi' || targetNorm === 'tingkatxi' || targetNorm === 'xi') {
+                if ((studentNorm.startsWith('xi') && !studentNorm.startsWith('xii')) || studentNorm.startsWith('11') || studentNorm.includes('11')) {
+                    return true;
+                }
+            }
+
+            // Check for Grade XII (12)
+            if (target === 'Kelas XII' || targetNorm === 'kelasxii' || targetNorm === 'tingkatxii' || targetNorm === 'xii') {
+                if (studentNorm.startsWith('xii') || studentNorm.startsWith('12') || studentNorm.includes('12')) {
+                    return true;
+                }
+            }
+
+            // 5. Partial Containment Check
+            if (studentNorm.includes(targetNorm) || targetNorm.includes(studentNorm)) {
+                return true;
+            }
+
+            return false;
+        }
 
         async function loadConfigFromCSV() {
             try {
@@ -855,7 +932,7 @@
                     }
                 }
             } catch (err) {
-                console.warn("Membaca config.csv via fetch gagal (mungkin file:// protocol), menggunakan default:", err);
+                console.warn("Membaca config.csv via fetch gagal, menggunakan fallback:", err);
             }
 
             const savedUrl = localStorage.getItem('EXAM_SHIELD_SUPABASE_URL') || DIRECT_SUPABASE_URL;
@@ -945,7 +1022,7 @@
                         targetClass: e.target_class || 'Semua Kelas',
                         duration: e.duration_minutes || 90,
                         gformUrl: e.gform_embed_url,
-                        isActive: e.is_active
+                        isActive: e.is_active === undefined || e.is_active === null ? true : Boolean(e.is_active)
                     }));
                 }
 
@@ -1004,7 +1081,6 @@
 
                 // Populate dynamic selectors based on fresh database content
                 populateStudentClassDropdown();
-                populateStudentExamSelect();
                 populateAdminTargetClassCombo();
 
                 // Refresh UI Views
@@ -1031,14 +1107,15 @@
 
             if (uniqueClasses.length === 0) {
                 classSelect.innerHTML = `<option value="Umum">Umum / Semua Kelas</option>`;
+                populateStudentExamSelect();
                 return;
             }
 
-            uniqueClasses.forEach(cls => {
+            uniqueClasses.forEach((cls, idx) => {
                 const opt = document.createElement('option');
                 opt.value = cls;
                 opt.textContent = cls;
-                if (cls === currentVal) opt.selected = true;
+                if (cls === currentVal || (!currentVal && idx === 0)) opt.selected = true;
                 classSelect.appendChild(opt);
             });
 
@@ -1088,39 +1165,27 @@
 
             select.innerHTML = '';
 
-            const activeExams = examsMaster.filter(e => e.isActive);
+            // Filter active exams
+            const activeExams = examsMaster.filter(e => e.isActive !== false);
+
             if (activeExams.length === 0) {
-                select.innerHTML = `<option value="">-- Tidak ada ujian aktif --</option>`;
+                select.innerHTML = `<option value="">-- Tidak ada ujian aktif saat ini --</option>`;
+                if (noticeEl) noticeEl.innerText = 'Tidak ada ujian aktif';
                 return;
             }
 
-            // Filter exams according to target class matching logic
+            // Filter exams using smart class matching algorithm
             const filteredExams = activeExams.filter(e => {
-                const target = (e.targetClass || 'Semua Kelas').trim();
-
-                if (target === 'Semua Kelas' || target === 'Semua') return true;
-                if (target === selectedClass) return true;
-                
-                // Grade-level targeting (e.g., 'Kelas XII' matching 'XII RPL 1')
-                if (target === 'Kelas X' && (selectedClass.startsWith('X ') || selectedClass === 'X')) return true;
-                if (target === 'Kelas XI' && (selectedClass.startsWith('XI ') || selectedClass === 'XI')) return true;
-                if (target === 'Kelas XII' && (selectedClass.startsWith('XII ') || selectedClass === 'XII')) return true;
-
-                // Multi-class comma separated check
-                if (target.includes(',')) {
-                    const targetsList = target.split(',').map(t => t.trim());
-                    if (targetsList.includes(selectedClass)) return true;
-                }
-
-                return false;
+                const target = e.targetClass || 'Semua Kelas';
+                return isClassMatching(target, selectedClass);
             });
 
             if (noticeEl) {
-                noticeEl.innerText = `Menampilkan ${filteredExams.length} ujian untuk ${selectedClass || 'Siswa'}`;
+                noticeEl.innerText = `Tersedia ${filteredExams.length} ujian untuk ${selectedClass || 'Siswa'}`;
             }
 
             if (filteredExams.length === 0) {
-                select.innerHTML = `<option value="">-- Tidak ada ujian untuk kelas ${selectedClass} --</option>`;
+                select.innerHTML = `<option value="">-- Tidak ada jadwal ujian untuk kelas ${selectedClass} --</option>`;
                 return;
             }
 
@@ -1459,7 +1524,7 @@
             const selectedExamId = document.getElementById('inputStudentExamSelect').value;
 
             if (!name || !nisn || !selectedExamId) {
-                showNoticeModal("Input Kosong", "Silakan lengkapi NISN, Nama, dan Pilih Ujian yang tersedia.");
+                showNoticeModal("Input Kosong / Ujian Tidak Ditemukan", "Silakan lengkapi NISN, Nama, dan pastikan Ujian yang sesuai kelas Anda tersedia.");
                 return;
             }
 
@@ -2028,12 +2093,13 @@
             }
 
             examsMaster.forEach(ex => {
-                const statusBadge = ex.isActive 
+                const isAct = ex.isActive !== false;
+                const statusBadge = isAct 
                     ? '<span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] px-2 py-0.5 rounded font-semibold">AKTIF</span>' 
                     : '<span class="bg-slate-800 text-slate-400 border border-slate-700 text-[10px] px-2 py-0.5 rounded font-semibold">NON-AKTIF</span>';
 
                 container.innerHTML += `
-                    <div class="bg-slate-900 border ${ex.isActive ? 'border-cyan-500/40' : 'border-slate-800'} rounded-2xl p-5 flex flex-col justify-between gap-4 shadow-lg">
+                    <div class="bg-slate-900 border ${isAct ? 'border-cyan-500/40' : 'border-slate-800'} rounded-2xl p-5 flex flex-col justify-between gap-4 shadow-lg">
                         <div>
                             <div class="flex items-center justify-between mb-2">
                                 <span class="text-xs font-mono text-cyan-400 font-bold"><i class="ph-bold ph-clock text-amber-400 mr-1"></i>${ex.session} • ${ex.startTime}</span>
@@ -2056,8 +2122,8 @@
                             <span class="text-slate-400"><i class="ph-bold ph-hourglass-high text-cyan-400 mr-1"></i>${ex.duration} Menit</span>
                             
                             <div class="flex items-center gap-2">
-                                <button onclick="toggleExamActive('${ex.id}')" class="px-2.5 py-1.5 ${ex.isActive ? 'bg-amber-600/20 text-amber-300 border border-amber-500/30' : 'bg-emerald-600/20 text-emerald-300 border border-emerald-500/30'} hover:opacity-80 rounded-lg text-[11px] font-semibold transition-all">
-                                    ${ex.isActive ? 'Non-aktifkan' : 'Aktifkan'}
+                                <button onclick="toggleExamActive('${ex.id}')" class="px-2.5 py-1.5 ${isAct ? 'bg-amber-600/20 text-amber-300 border border-amber-500/30' : 'bg-emerald-600/20 text-emerald-300 border border-emerald-500/30'} hover:opacity-80 rounded-lg text-[11px] font-semibold transition-all">
+                                    ${isAct ? 'Non-aktifkan' : 'Aktifkan'}
                                 </button>
                                 <button onclick="openExamModal('${ex.id}')" class="p-1.5 bg-slate-800 hover:bg-slate-700 text-cyan-300 rounded-lg transition-colors" title="Edit Mapel">
                                     <i class="ph-bold ph-pencil text-sm"></i>
@@ -2214,7 +2280,7 @@
             const ex = examsMaster.find(item => item.id === id);
             if (!ex) return;
 
-            const newStatus = !ex.isActive;
+            const newStatus = !(ex.isActive !== false);
             if (supabaseClient && !id.startsWith('ex_')) {
                 const { error } = await supabaseClient.from('exams').update({ is_active: newStatus }).eq('id', id);
                 if (error) {
