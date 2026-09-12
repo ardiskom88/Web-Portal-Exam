@@ -1102,7 +1102,12 @@
 
                 // Populate dynamic selectors based on fresh database content
                 populateStudentClassDropdown();
-                populateAdminTargetClassCheckboxes();
+
+                // PERBAIKAN: Hanya update daftar centang jika modal edit mapel tidak sedang terbuka
+                const examModal = document.getElementById('examModal');
+                if (!examModal || examModal.classList.contains('hidden')) {
+                    populateAdminTargetClassCheckboxes();
+                }
 
                 // Refresh UI Views
                 renderProctorGrid();
@@ -1148,6 +1153,11 @@
             const container = document.getElementById('dynamicClassesCheckboxes');
             if (!container) return;
 
+            // PERBAIKAN: Simpan kelas yang sedang tercentang saat ini agar tidak terhapus
+            const currentlyChecked = new Set(
+                Array.from(document.querySelectorAll('.target-class-chk:checked')).map(c => c.value)
+            );
+
             container.innerHTML = '';
             const uniqueClasses = Array.from(new Set(studentsMaster.map(s => s.class))).filter(Boolean).sort();
 
@@ -1157,9 +1167,10 @@
             }
 
             uniqueClasses.forEach(cls => {
+                const isChecked = currentlyChecked.has(cls) ? 'checked' : '';
                 container.innerHTML += `
                     <label class="inline-flex items-center gap-1.5 text-xs text-slate-300 cursor-pointer hover:text-white transition-colors">
-                        <input type="checkbox" value="${cls}" onchange="handleIndividualClassToggle()" class="target-class-chk rounded text-cyan-600 focus:ring-cyan-500 bg-slate-900 border-slate-700">
+                        <input type="checkbox" value="${cls}" ${isChecked} onchange="handleIndividualClassToggle()" class="target-class-chk rounded text-cyan-600 focus:ring-cyan-500 bg-slate-900 border-slate-700">
                         <span class="truncate">${cls}</span>
                     </label>
                 `;
