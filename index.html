@@ -1198,14 +1198,18 @@
             if (chkSemua) chkSemua.checked = false;
 
             document.querySelectorAll('.target-class-chk').forEach(chk => {
-                const valNorm = normalizeString(chk.value);
-                const prefixNorm = normalizeString(gradePrefix);
-                
-                if (gradePrefix === 'X' && (valNorm.startsWith('x') || valNorm.startsWith('10')) && !valNorm.startsWith('xi') && !valNorm.startsWith('xii')) {
-                    chk.checked = true;
-                } else if (gradePrefix === 'XI' && ((valNorm.startsWith('xi') && !valNorm.startsWith('xii')) || valNorm.startsWith('11'))) {
-                    chk.checked = true;
-                } else if (gradePrefix === 'XII' && (valNorm.startsWith('xii') || valNorm.startsWith('12'))) {
+                const val = chk.value.trim();
+                let isMatch = false;
+
+                if (gradePrefix === 'X') {
+                    isMatch = /\b(X|10)\b/i.test(val);
+                } else if (gradePrefix === 'XI') {
+                    isMatch = /\b(XI|11)\b/i.test(val);
+                } else if (gradePrefix === 'XII') {
+                    isMatch = /\b(XII|12)\b/i.test(val);
+                }
+
+                if (isMatch) {
                     chk.checked = true;
                 }
             });
