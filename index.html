@@ -2072,6 +2072,11 @@
             document.getElementById('studentModal').classList.add('hidden');
         }
 
+        function closeExamModal() {
+            const modal = document.getElementById('examModal');
+            if (modal) modal.classList.add('hidden');
+        }
+
         async function saveStudentForm(e) {
             e.preventDefault();
             const editId = document.getElementById('editStudentId').value;
