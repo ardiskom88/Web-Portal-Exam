@@ -803,8 +803,8 @@
 
         let configSettings = {
             gformUrl: "https://docs.google.com/forms/d/e/1FAIpQLScf43d3Vp3G3eGv0S7x_demo/viewform?embedded=true",
-            supabaseUrl: "https://dvgtqsqqywxbggogbkan.supabase.co",
-            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2Z3Rxc3FxeXd4Ymdnb2dia2FuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkxMzU3MzgsImV4cCI6MjEwNDcxMTczOH0.JL74dvxilW6-9ha6w5xC5SGzMVr8e6-bnRqEVWevnmg"
+            supabaseUrl: localStorage.getItem('EXAM_SHIELD_SUPABASE_URL') || "https://dvgtqsqqywxbggogbkan.supabase.co",
+            supabaseKey: localStorage.getItem('EXAM_SHIELD_SUPABASE_KEY') || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2Z3Rxc3FxeXd4Ymdnb2dia2FuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkxMzU3MzgsImV4cCI6MjEwNDcxMTczOH0.JL74dvxilW6-9ha6w5xC5SGzMVr8e6-bnRqEVWevnmg"
         };
 
         // INITIALIZE SUPABASE WITH HTTP REST POLLING
@@ -822,6 +822,7 @@
 
                 supabaseClient = window.supabase.createClient(url, key);
                 
+                // Immediate initial fetch & start persistent auto-polling sync
                 await syncDataFromSupabase();
                 startPollingFallback();
             } catch (err) {
@@ -2020,10 +2021,18 @@
             configSettings.supabaseUrl = supabaseUrl;
             configSettings.supabaseKey = supabaseKey;
 
+            // Save credentials permanently in browser storage
+            try {
+                localStorage.setItem('EXAM_SHIELD_SUPABASE_URL', supabaseUrl);
+                localStorage.setItem('EXAM_SHIELD_SUPABASE_KEY', supabaseKey);
+            } catch(err) {
+                console.warn("Storage save error:", err);
+            }
+
             initSupabase(supabaseUrl, supabaseKey);
 
             toggleConfigModal();
-            showNoticeModal("Pengaturan Disimpan", "Mencoba menghubungkan kembali ke Supabase Database.");
+            showNoticeModal("Pengaturan Tersimpan Permanen", "Kredensial Supabase tersimpan. Portal akan selalu terhubung secara otomatis.");
         }
 
         // HELPERS
