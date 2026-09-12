@@ -143,10 +143,28 @@
                         <i class="ph-bold ph-identification-card"></i>
                     </div>
                     <h2 class="text-2xl font-bold text-white mb-2">Masuk Ruang Ujian</h2>
-                    <p class="text-slate-400 text-sm">Silakan isi data NISN dan Pilih Sesi Ujian Anda. Pastikan mikrofon & speaker perangkat Anda berfungsi normal.</p>
+                    <p class="text-slate-400 text-sm">Masukan NISN atau pilih Kelas dari Database Sekolah untuk menampilkan Ujian yang tersedia.</p>
                 </div>
 
                 <form id="studentLoginForm" onsubmit="handleStudentLogin(event)" class="space-y-4 max-w-md mx-auto">
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">NISN / ID Siswa</label>
+                            <div class="relative">
+                                <i class="ph-bold ph-hash absolute left-3.5 top-3.5 text-slate-500 text-lg"></i>
+                                <input type="text" id="inputStudentNisn" oninput="handleNisnAutoLookup()" required placeholder="Masukkan NISN..." 
+                                    class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-11 pr-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Kelas (Dari Database)</label>
+                            <select id="inputStudentClass" onchange="onStudentClassChange()" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500 transition-all">
+                                <!-- Populated dynamically from unique database classes -->
+                            </select>
+                        </div>
+                    </div>
+
                     <div>
                         <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Nama Lengkap Siswa</label>
                         <div class="relative">
@@ -156,33 +174,16 @@
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">NISN / ID Siswa</label>
-                            <div class="relative">
-                                <i class="ph-bold ph-hash absolute left-3.5 top-3.5 text-slate-500 text-lg"></i>
-                                <input type="text" id="inputStudentNisn" required placeholder="1234567890" 
-                                    class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-11 pr-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Kelas</label>
-                            <select id="inputStudentClass" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500 transition-all">
-                                <option value="XII RPL 1">XII RPL 1</option>
-                                <option value="XII RPL 2">XII RPL 2</option>
-                                <option value="XII TKJ 1">XII TKJ 1</option>
-                                <option value="XI IPA 1">XI IPA 1</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Exam Subject & Session Selector -->
+                    <!-- Exam Subject & Session Selector (Filtered by Student Class) -->
                     <div>
-                        <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Mata Pelajaran & Sesi Ujian</label>
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">Mata Pelajaran & Sesi Ujian</label>
+                            <span id="examFilterNotice" class="text-[10px] text-cyan-400 font-mono">Disesuaikan untuk kelas Anda</span>
+                        </div>
                         <div class="relative">
                             <i class="ph-bold ph-book-open absolute left-3.5 top-3.5 text-slate-500 text-lg"></i>
                             <select id="inputStudentExamSelect" required class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-11 pr-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500 transition-all">
-                                <!-- Populated dynamically from examsMaster -->
+                                <!-- Populated dynamically matching student class -->
                             </select>
                         </div>
                     </div>
@@ -537,7 +538,7 @@
                             <i class="ph-bold ph-file-text text-cyan-400"></i>
                             <span>Daftar Mata Pelajaran & Sesi Ujian</span>
                         </h3>
-                        <p class="text-xs text-slate-400">Atur waktu pelaksanaan, durasi, dan link Google Form soal per mata pelajaran.</p>
+                        <p class="text-xs text-slate-400">Atur waktu pelaksanaan, durasi, target kelas, dan link Google Form soal per mata pelajaran.</p>
                     </div>
                     <button onclick="openExamModal()" class="px-4 py-2 bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white font-semibold text-xs rounded-xl shadow-lg flex items-center gap-2 transition-all">
                         <i class="ph-bold ph-plus-circle text-base"></i>
@@ -578,7 +579,7 @@
                 </div>
                 <div>
                     <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Kelas</label>
-                    <input type="text" id="modalStudentClass" required placeholder="Contoh: XII RPL 1" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500">
+                    <input type="text" id="modalStudentClass" required placeholder="Contoh: XII RPL 1 atau X IPA 2" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500">
                 </div>
 
                 <div class="mt-6 flex justify-end gap-2 pt-2 border-t border-slate-800">
@@ -611,9 +612,23 @@
                     <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Judul Ujian</label>
                     <input type="text" id="modalExamTitle" required placeholder="Contoh: Ujian Akhir Semester Genap" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500">
                 </div>
+                
+                <!-- Target Class Combo Box Select -->
                 <div>
-                    <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Target Pilihan Kelas</label>
-                    <input type="text" id="modalExamTargetClass" required placeholder="Contoh: XII RPL 1, XII RPL 2 (atau Semua Kelas)" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500">
+                    <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Target Pilihan Kelas Ujian</label>
+                    <select id="modalExamTargetClassSelect" onchange="handleTargetClassSelectChange()" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500 font-medium">
+                        <option value="Semua Kelas">Semua Kelas (Seluruh Tingkat)</option>
+                        <option value="Kelas X">Hanya Kelas X (Tingkat X)</option>
+                        <option value="Kelas XI">Hanya Kelas XI (Tingkat XI)</option>
+                        <option value="Kelas XII">Hanya Kelas XII (Tingkat XII)</option>
+                        <optgroup id="dynamicClassesOptGroup" label="-- Pilih Spesifik Kelas Dari Database --">
+                            <!-- Populated dynamically from students master -->
+                        </optgroup>
+                        <option value="CUSTOM">-- Isikan Kelas Kustom Manual --</option>
+                    </select>
+                    
+                    <!-- Custom Manual Input (Hidden by default unless CUSTOM selected) -->
+                    <input type="text" id="modalExamTargetClassCustom" placeholder="Contoh: XII RPL 1, XII RPL 2" class="hidden mt-2 w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500 font-mono">
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -781,7 +796,7 @@
                 title: 'Ujian Akhir Semester Web Programming', 
                 session: 'Sesi 1', 
                 startTime: '08:00 WIB', 
-                targetClass: 'XII RPL 1, XII RPL 2',
+                targetClass: 'XII RPL 1',
                 duration: 90, 
                 gformUrl: 'https://docs.google.com/forms/d/e/1FAIpQLScf43d3Vp3G3eGv0S7x_demo/viewform?embedded=true', 
                 isActive: true 
@@ -792,10 +807,10 @@
                 title: 'PTS Matematika Wajib Semester 2', 
                 session: 'Sesi 2', 
                 startTime: '10:00 WIB', 
-                targetClass: 'XI IPA 1, XII TKJ 1',
+                targetClass: 'Kelas XII',
                 duration: 90, 
                 gformUrl: 'https://docs.google.com/forms/d/e/1FAIpQLScf43d3Vp3G3eGv0S7x_demo/viewform?embedded=true', 
-                isActive: false 
+                isActive: true 
             }
         ];
 
@@ -840,10 +855,9 @@
                     }
                 }
             } catch (err) {
-                console.warn("Membaca config.csv via fetch gagal (mungkin protokol file://), menggunakan kredensial default:", err);
+                console.warn("Membaca config.csv via fetch gagal (mungkin file:// protocol), menggunakan default:", err);
             }
 
-            // Fallback ke kredensial tersimpan atau direct constant
             const savedUrl = localStorage.getItem('EXAM_SHIELD_SUPABASE_URL') || DIRECT_SUPABASE_URL;
             const savedKey = localStorage.getItem('EXAM_SHIELD_SUPABASE_KEY') || DIRECT_SUPABASE_KEY;
 
@@ -855,7 +869,7 @@
 
         async function initSupabase(url, key) {
             if (!url || !key || !window.supabase) {
-                setDbStatusUI(false, "In-Memory Engine (Library/Key error)");
+                setDbStatusUI(false, "In-Memory Engine");
                 return;
             }
 
@@ -866,9 +880,8 @@
                 }
 
                 supabaseClient = window.supabase.createClient(url, key);
-                setDbStatusUI(true, "Terhubung Supabase DB (Live Sync)");
+                setDbStatusUI(true, "Terhubung Supabase DB");
                 
-                // Immediate initial fetch & start persistent auto-polling sync
                 await syncDataFromSupabase();
                 startPollingFallback();
             } catch (err) {
@@ -879,7 +892,7 @@
 
         function startPollingFallback() {
             if (pollingIntervalHandle) return;
-            setDbStatusUI(true, "Terhubung Supabase DB (Live Sync)");
+            setDbStatusUI(true, "Terhubung Supabase DB");
             syncDataFromSupabase();
             pollingIntervalHandle = setInterval(() => {
                 syncDataFromSupabase();
@@ -901,11 +914,11 @@
             if (!supabaseClient) return;
 
             try {
-                // 1. Fetch Students Master
+                // 1. Fetch Master Data Siswa
                 const { data: stdData, error: stdErr } = await supabaseClient
                     .from('students')
                     .select('*')
-                    .order('created_at', { ascending: false });
+                    .order('class_name', { ascending: true });
                     
                 if (!stdErr && stdData && stdData.length > 0) {
                     studentsMaster = stdData.map(s => ({
@@ -916,7 +929,7 @@
                     }));
                 }
 
-                // 2. Fetch Exams Master
+                // 2. Fetch Master Ujian
                 const { data: exData, error: exErr } = await supabaseClient
                     .from('exams')
                     .select('*')
@@ -934,7 +947,6 @@
                         gformUrl: e.gform_embed_url,
                         isActive: e.is_active
                     }));
-                    populateStudentExamSelect();
                 }
 
                 // 3. Fetch Active Sessions
@@ -990,6 +1002,11 @@
                     });
                 }
 
+                // Populate dynamic selectors based on fresh database content
+                populateStudentClassDropdown();
+                populateStudentExamSelect();
+                populateAdminTargetClassCombo();
+
                 // Refresh UI Views
                 renderProctorGrid();
                 updateProctorStats();
@@ -998,6 +1015,130 @@
                 renderAuditFeed();
             } catch (err) {
                 console.warn("Sync Supabase Exception:", err);
+            }
+        }
+
+        // DYNAMIC CLASS SELECTOR & EXAM FILTERING ENGINE
+        function populateStudentClassDropdown() {
+            const classSelect = document.getElementById('inputStudentClass');
+            if (!classSelect) return;
+
+            const currentVal = classSelect.value;
+            classSelect.innerHTML = '';
+
+            // Extract unique sorted class names from database master students
+            const uniqueClasses = Array.from(new Set(studentsMaster.map(s => s.class))).filter(Boolean).sort();
+
+            if (uniqueClasses.length === 0) {
+                classSelect.innerHTML = `<option value="Umum">Umum / Semua Kelas</option>`;
+                return;
+            }
+
+            uniqueClasses.forEach(cls => {
+                const opt = document.createElement('option');
+                opt.value = cls;
+                opt.textContent = cls;
+                if (cls === currentVal) opt.selected = true;
+                classSelect.appendChild(opt);
+            });
+
+            // Re-trigger exam list filter based on active class selection
+            populateStudentExamSelect();
+        }
+
+        function populateAdminTargetClassCombo() {
+            const optGroup = document.getElementById('dynamicClassesOptGroup');
+            if (!optGroup) return;
+
+            optGroup.innerHTML = '';
+            const uniqueClasses = Array.from(new Set(studentsMaster.map(s => s.class))).filter(Boolean).sort();
+
+            uniqueClasses.forEach(cls => {
+                const opt = document.createElement('option');
+                opt.value = cls;
+                opt.textContent = `Khusus Kelas: ${cls}`;
+                optGroup.appendChild(opt);
+            });
+        }
+
+        function handleNisnAutoLookup() {
+            const nisnInput = document.getElementById('inputStudentNisn').value.trim();
+            if (!nisnInput) return;
+
+            const matchedStudent = studentsMaster.find(s => s.nisn === nisnInput);
+            if (matchedStudent) {
+                document.getElementById('inputStudentName').value = matchedStudent.name;
+                const classSelect = document.getElementById('inputStudentClass');
+                if (classSelect) {
+                    classSelect.value = matchedStudent.class;
+                    onStudentClassChange();
+                }
+            }
+        }
+
+        function onStudentClassChange() {
+            populateStudentExamSelect();
+        }
+
+        function populateStudentExamSelect() {
+            const select = document.getElementById('inputStudentExamSelect');
+            const selectedClass = document.getElementById('inputStudentClass')?.value || '';
+            const noticeEl = document.getElementById('examFilterNotice');
+            if (!select) return;
+
+            select.innerHTML = '';
+
+            const activeExams = examsMaster.filter(e => e.isActive);
+            if (activeExams.length === 0) {
+                select.innerHTML = `<option value="">-- Tidak ada ujian aktif --</option>`;
+                return;
+            }
+
+            // Filter exams according to target class matching logic
+            const filteredExams = activeExams.filter(e => {
+                const target = (e.targetClass || 'Semua Kelas').trim();
+
+                if (target === 'Semua Kelas' || target === 'Semua') return true;
+                if (target === selectedClass) return true;
+                
+                // Grade-level targeting (e.g., 'Kelas XII' matching 'XII RPL 1')
+                if (target === 'Kelas X' && (selectedClass.startsWith('X ') || selectedClass === 'X')) return true;
+                if (target === 'Kelas XI' && (selectedClass.startsWith('XI ') || selectedClass === 'XI')) return true;
+                if (target === 'Kelas XII' && (selectedClass.startsWith('XII ') || selectedClass === 'XII')) return true;
+
+                // Multi-class comma separated check
+                if (target.includes(',')) {
+                    const targetsList = target.split(',').map(t => t.trim());
+                    if (targetsList.includes(selectedClass)) return true;
+                }
+
+                return false;
+            });
+
+            if (noticeEl) {
+                noticeEl.innerText = `Menampilkan ${filteredExams.length} ujian untuk ${selectedClass || 'Siswa'}`;
+            }
+
+            if (filteredExams.length === 0) {
+                select.innerHTML = `<option value="">-- Tidak ada ujian untuk kelas ${selectedClass} --</option>`;
+                return;
+            }
+
+            filteredExams.forEach(e => {
+                select.innerHTML += `<option value="${e.id}">${e.subject} - ${e.session} (${e.startTime}) [Target: ${e.targetClass}]</option>`;
+            });
+        }
+
+        function handleTargetClassSelectChange() {
+            const select = document.getElementById('modalExamTargetClassSelect');
+            const customInput = document.getElementById('modalExamTargetClassCustom');
+
+            if (select.value === 'CUSTOM') {
+                customInput.classList.remove('hidden');
+                customInput.required = true;
+            } else {
+                customInput.classList.add('hidden');
+                customInput.required = false;
             }
         }
 
@@ -1098,7 +1239,7 @@
             }, 3000);
         }
 
-        // ROLE SWITCHING & AUTH SYSTEM (SUPABASE INTEGRATED)
+        // ROLE SWITCHING & AUTH SYSTEM
         function switchRole(role) {
             if (role === 'student') {
                 currentRole = 'student';
@@ -1308,23 +1449,6 @@
             }
         }
 
-        function populateStudentExamSelect() {
-            const select = document.getElementById('inputStudentExamSelect');
-            if (!select) return;
-            select.innerHTML = '';
-
-            const activeExams = examsMaster.filter(e => e.isActive);
-            if (activeExams.length === 0) {
-                select.innerHTML = `<option value="">-- Tidak ada ujian aktif --</option>`;
-                return;
-            }
-
-            activeExams.forEach(e => {
-                const targetInfo = e.targetClass ? ` [Kelas: ${e.targetClass}]` : '';
-                select.innerHTML += `<option value="${e.id}">${e.subject} - ${e.session} (${e.startTime})${targetInfo}</option>`;
-            });
-        }
-
         async function handleStudentLogin(e) {
             e.preventDefault();
             initAudioContext();
@@ -1334,8 +1458,8 @@
             const className = document.getElementById('inputStudentClass').value;
             const selectedExamId = document.getElementById('inputStudentExamSelect').value;
 
-            if (!name || !nisn) {
-                showNoticeModal("Input Kosong", "Silakan isi Nama dan NISN dengan lengkap.");
+            if (!name || !nisn || !selectedExamId) {
+                showNoticeModal("Input Kosong", "Silakan lengkapi NISN, Nama, dan Pilih Ujian yang tersedia.");
                 return;
             }
 
@@ -1862,6 +1986,7 @@
                         class: className
                     });
                 }
+                populateStudentClassDropdown();
                 renderAdminStudentsTable();
             }
 
@@ -1882,6 +2007,7 @@
                 await syncDataFromSupabase();
             } else {
                 studentsMaster = studentsMaster.filter(item => item.id !== id);
+                populateStudentClassDropdown();
                 renderAdminStudentsTable();
             }
             showNoticeModal("Siswa Dihapus", `Siswa ${s.name} telah dihapus.`);
@@ -1944,13 +2070,12 @@
                     </div>
                 `;
             });
-
-            populateStudentExamSelect();
         }
 
         function openExamModal(id = null) {
             document.getElementById('examModal').classList.remove('hidden');
             const title = document.getElementById('examModalTitle');
+            populateAdminTargetClassCombo();
 
             if (id) {
                 const ex = examsMaster.find(item => item.id === id);
@@ -1959,7 +2084,29 @@
                 document.getElementById('editExamId').value = ex.id;
                 document.getElementById('modalExamSubject').value = ex.subject;
                 document.getElementById('modalExamTitle').value = ex.title;
-                document.getElementById('modalExamTargetClass').value = ex.targetClass || 'Semua Kelas';
+
+                const selectTarget = document.getElementById('modalExamTargetClassSelect');
+                const customInput = document.getElementById('modalExamTargetClassCustom');
+                const val = ex.targetClass || 'Semua Kelas';
+
+                // Match with select option or switch to custom
+                let matched = false;
+                for (let i = 0; i < selectTarget.options.length; i++) {
+                    if (selectTarget.options[i].value === val) {
+                        selectTarget.selectedIndex = i;
+                        matched = true;
+                        break;
+                    }
+                }
+
+                if (!matched) {
+                    selectTarget.value = 'CUSTOM';
+                    customInput.value = val;
+                    customInput.classList.remove('hidden');
+                } else {
+                    customInput.classList.add('hidden');
+                }
+
                 document.getElementById('modalExamSession').value = ex.session || 'Sesi 1';
                 document.getElementById('modalExamStartTime').value = ex.startTime || '08:00 WIB';
                 document.getElementById('modalExamDuration').value = ex.duration;
@@ -1969,7 +2116,11 @@
                 document.getElementById('editExamId').value = '';
                 document.getElementById('modalExamSubject').value = '';
                 document.getElementById('modalExamTitle').value = '';
-                document.getElementById('modalExamTargetClass').value = 'XII RPL 1, XII RPL 2';
+                
+                const selectTarget = document.getElementById('modalExamTargetClassSelect');
+                selectTarget.value = 'Semua Kelas';
+                document.getElementById('modalExamTargetClassCustom').classList.add('hidden');
+                
                 document.getElementById('modalExamSession').value = 'Sesi 1';
                 document.getElementById('modalExamStartTime').value = '08:00 WIB';
                 document.getElementById('modalExamDuration').value = 90;
@@ -1986,7 +2137,11 @@
             const editId = document.getElementById('editExamId').value;
             const subject = document.getElementById('modalExamSubject').value.trim();
             const examTitle = document.getElementById('modalExamTitle').value.trim();
-            const targetClass = document.getElementById('modalExamTargetClass').value.trim();
+            
+            const targetSelect = document.getElementById('modalExamTargetClassSelect').value;
+            const targetCustom = document.getElementById('modalExamTargetClassCustom').value.trim();
+            const targetClass = targetSelect === 'CUSTOM' ? (targetCustom || 'Semua Kelas') : targetSelect;
+
             const session = document.getElementById('modalExamSession').value.trim();
             const startTime = document.getElementById('modalExamStartTime').value.trim();
             const duration = parseInt(document.getElementById('modalExamDuration').value) || 90;
@@ -2048,10 +2203,11 @@
                     });
                 }
                 renderAdminExamsList();
+                populateStudentExamSelect();
             }
 
             closeExamModal();
-            showNoticeModal("Ujian Disimpan", `Mata pelajaran ${subject} (${session} - ${startTime}) untuk kelas [${targetClass}] berhasil tersimpan.`);
+            showNoticeModal("Ujian Disimpan", `Mata pelajaran ${subject} (${session} - ${startTime}) untuk [${targetClass}] berhasil tersimpan.`);
         }
 
         async function toggleExamActive(id) {
@@ -2069,6 +2225,7 @@
             } else {
                 ex.isActive = newStatus;
                 renderAdminExamsList();
+                populateStudentExamSelect();
             }
         }
 
@@ -2086,6 +2243,7 @@
             } else {
                 examsMaster = examsMaster.filter(item => item.id !== id);
                 renderAdminExamsList();
+                populateStudentExamSelect();
             }
             showNoticeModal("Ujian Dihapus", `Mapel ${ex.subject} telah dihapus.`);
         }
@@ -2150,9 +2308,8 @@
         // INITIAL LOAD
         window.onload = async function() {
             initClock();
-            populateStudentExamSelect();
+            populateStudentClassDropdown();
             
-            // Baca config.csv terlebih dahulu sebelum inisialisasi Supabase
             const config = await loadConfigFromCSV();
             if (config.url && config.key) {
                 initSupabase(config.url, config.key);
