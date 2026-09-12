@@ -751,6 +751,9 @@
         let isSirenActive = false;
         let sirenOscillator = null;
 
+        // Active Sessions & Master State Containers
+        let activeSessions = [];
+
         // Supabase Client & Polling Handles
         let supabaseClient = null;
         let pollingIntervalHandle = null;
@@ -805,8 +808,8 @@
 
         let configSettings = {
             gformUrl: "https://docs.google.com/forms/d/e/1FAIpQLScf43d3Vp3G3eGv0S7x_demo/viewform?embedded=true",
-            supabaseUrl: localStorage.getItem('EXAM_SHIELD_SUPABASE_URL') || NEW_SUPABASE_URL,
-            supabaseKey: localStorage.getItem('EXAM_SHIELD_SUPABASE_KEY') || NEW_SUPABASE_KEY
+            supabaseUrl: NEW_SUPABASE_URL,
+            supabaseKey: NEW_SUPABASE_KEY
         };
 
         async function loadConfigFromCSV() {
@@ -814,7 +817,7 @@
                 const response = await fetch('config.csv');
                 if (response.ok) {
                     const csvText = await response.text();
-                    const lines = csvText.split('\n');
+                    const lines = csvText.split(/\r?\n/);
                     let fetchedUrl = '';
                     let fetchedKey = '';
 
@@ -823,8 +826,8 @@
                         if (parts.length >= 2) {
                             const key = parts[0].trim();
                             const val = parts.slice(1).join(',').trim();
-                            if (key === 'SUPABASE_URL') fetchedUrl = val;
-                            if (key === 'SUPABASE_ANON_KEY') fetchedKey = val;
+                            if (key === 'SUPABASE_URL' && val) fetchedUrl = val;
+                            if (key === 'SUPABASE_ANON_KEY' && val) fetchedKey = val;
                         }
                     });
 
@@ -837,8 +840,10 @@
                     }
                 }
             } catch (err) {
-                console.warn("Membaca config.csv gagal, menggunakan fallback default/localStorage:", err);
+                console.warn("Membaca config.csv gagal/tidak ditemukan, menggunakan URL Supabase bawaan:", err);
             }
+
+            // Fallback ke NEW_SUPABASE_URL jika csv gagal
             return {
                 url: configSettings.supabaseUrl,
                 key: configSettings.supabaseKey
@@ -846,7 +851,10 @@
         }
 
         async function initSupabase(url, key) {
-            if (!url || !key || !window.supabase) return;
+            if (!url || !key || !window.supabase) {
+                setDbStatusUI(false, "In-Memory Engine (Library/Key error)");
+                return;
+            }
 
             try {
                 if (pollingIntervalHandle) {
@@ -855,13 +863,139 @@
                 }
 
                 supabaseClient = window.supabase.createClient(url, key);
+                setDbStatusUI(true, "Terhubung Supabase DB (Live Sync)");
                 
                 // Immediate initial fetch & start persistent auto-polling sync
                 await syncDataFromSupabase();
                 startPollingFallback();
             } catch (err) {
                 console.error("Supabase Connection Error:", err);
-                setDbStatusUI(false, "In-Memory Engine");
+                setDbStatusUI(false, "Error Koneksi Supabase");
+            }
+        }
+
+        function startPollingFallback() {
+            if (pollingIntervalHandle) return;
+            setDbStatusUI(true, "Terhubung Supabase DB (Live Sync)");
+            syncDataFromSupabase();
+            pollingIntervalHandle = setInterval(() => {
+                syncDataFromSupabase();
+            }, 2000);
+        }
+
+        function setDbStatusUI(isConnected, labelText) {
+            const dot = document.getElementById('dbStatusDot');
+            const label = document.getElementById('dbStatusLabel');
+            if (dot && label) {
+                label.innerText = labelText;
+                dot.className = isConnected 
+                    ? "w-2 h-2 rounded-full bg-emerald-400 animate-pulse" 
+                    : "w-2 h-2 rounded-full bg-amber-400";
+            }
+        }
+
+        async function syncDataFromSupabase() {
+            if (!supabaseClient) return;
+
+            try {
+                // 1. Fetch Students Master
+                const { data: stdData, error: stdErr } = await supabaseClient
+                    .from('students')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                    
+                if (!stdErr && stdData && stdData.length > 0) {
+                    studentsMaster = stdData.map(s => ({
+                        id: s.id,
+                        nisn: s.nisn,
+                        name: s.full_name,
+                        class: s.class_name
+                    }));
+                }
+
+                // 2. Fetch Exams Master
+                const { data: exData, error: exErr } = await supabaseClient
+                    .from('exams')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                    
+                if (!exErr && exData && exData.length > 0) {
+                    examsMaster = exData.map(e => ({
+                        id: e.id,
+                        subject: e.subject,
+                        title: e.exam_title,
+                        session: e.session_name || e.session || 'Sesi 1',
+                        startTime: e.start_time || '08:00 WIB',
+                        targetClass: e.target_class || 'Semua Kelas',
+                        duration: e.duration_minutes || 90,
+                        gformUrl: e.gform_embed_url,
+                        isActive: e.is_active
+                    }));
+                    populateStudentExamSelect();
+                }
+
+                // 3. Fetch Active Sessions (dengan fallback jika join relation gagal)
+                let sessData = null;
+                const { data: joinedSess, error: joinedErr } = await supabaseClient
+                    .from('active_sessions')
+                    .select('*, students(full_name, nisn, class_name)')
+                    .order('last_seen', { ascending: false });
+
+                if (!joinedErr && joinedSess) {
+                    sessData = joinedSess;
+                } else {
+                    // Fallback query tanpa join jika relational FK belum aktif
+                    const { data: rawSess } = await supabaseClient
+                        .from('active_sessions')
+                        .select('*')
+                        .order('last_seen', { ascending: false });
+                    sessData = rawSess;
+                }
+
+                if (sessData && sessData.length > 0) {
+                    activeSessions = sessData.map(s => {
+                        const matchedStudent = studentsMaster.find(st => st.id === s.student_id);
+                        return {
+                            id: s.id,
+                            name: s.students?.full_name || matchedStudent?.name || 'Siswa',
+                            nisn: s.students?.nisn || matchedStudent?.nisn || '-',
+                            class: s.students?.class_name || matchedStudent?.class || '-',
+                            status: s.status || 'NORMAL',
+                            cheats: s.cheat_count || 0,
+                            integrity: s.integrity_score !== undefined ? s.integrity_score : 100,
+                            lastSeen: s.last_seen ? new Date(s.last_seen).toLocaleTimeString('id-ID') : 'Live DB',
+                            device: s.device_info || 'Web Device'
+                        };
+                    });
+                }
+
+                // 4. Fetch Cheat Logs Feed
+                const { data: logData, error: logErr } = await supabaseClient
+                    .from('cheat_logs')
+                    .select('*')
+                    .order('logged_at', { ascending: false })
+                    .limit(30);
+
+                if (!logErr && logData && logData.length > 0) {
+                    cheatLogs = logData.map(l => {
+                        const matchedStudent = studentsMaster.find(st => st.id === l.student_id);
+                        return {
+                            time: l.logged_at ? new Date(l.logged_at).toLocaleTimeString('id-ID') : 'Baru saja',
+                            student: matchedStudent?.name || 'Siswa',
+                            type: l.violation_type,
+                            severity: l.severity || 'HIGH'
+                        };
+                    });
+                }
+
+                // Refresh UI Views
+                renderProctorGrid();
+                updateProctorStats();
+                renderAdminStudentsTable();
+                renderAdminExamsList();
+                renderAuditFeed();
+            } catch (err) {
+                console.warn("Sync Supabase Exception:", err);
             }
         }
 
