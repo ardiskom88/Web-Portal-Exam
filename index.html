@@ -611,6 +611,10 @@
                     <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Judul Ujian</label>
                     <input type="text" id="modalExamTitle" required placeholder="Contoh: Ujian Akhir Semester Genap" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500">
                 </div>
+                <div>
+                    <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Target Pilihan Kelas</label>
+                    <input type="text" id="modalExamTargetClass" required placeholder="Contoh: XII RPL 1, XII RPL 2 (atau Semua Kelas)" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500">
+                </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
@@ -618,7 +622,7 @@
                         <input type="text" id="modalExamSession" required placeholder="Sesi 1" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500">
                     </div>
                     <div>
-                        <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Jam Mulai</label>
+                        <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Jam Mulai Ujian</label>
                         <input type="text" id="modalExamStartTime" required placeholder="08:00 WIB" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500">
                     </div>
                     <div>
@@ -774,6 +778,7 @@
                 title: 'Ujian Akhir Semester Web Programming', 
                 session: 'Sesi 1', 
                 startTime: '08:00 WIB', 
+                targetClass: 'XII RPL 1, XII RPL 2',
                 duration: 90, 
                 gformUrl: 'https://docs.google.com/forms/d/e/1FAIpQLScf43d3Vp3G3eGv0S7x_demo/viewform?embedded=true', 
                 isActive: true 
@@ -784,35 +789,34 @@
                 title: 'PTS Matematika Wajib Semester 2', 
                 session: 'Sesi 2', 
                 startTime: '10:00 WIB', 
+                targetClass: 'XI IPA 1, XII TKJ 1',
                 duration: 90, 
                 gformUrl: 'https://docs.google.com/forms/d/e/1FAIpQLScf43d3Vp3G3eGv0S7x_demo/viewform?embedded=true', 
                 isActive: false 
             }
         ];
 
-        // Active Sessions & Audit Feed
-        let activeSessions = [
-            { id: '1', name: 'Ahmad Rizky', nisn: '10012831', class: 'XII RPL 1', status: 'NORMAL', cheats: 0, integrity: 100, lastSeen: 'Baru saja', device: 'Windows / Chrome' },
-            { id: '2', name: 'Siti Sarah', nisn: '10012832', class: 'XII RPL 1', status: 'NORMAL', cheats: 0, integrity: 100, lastSeen: 'Baru saja', device: 'Android / Chrome' },
-            { id: '3', name: 'Budi Santoso', nisn: '10012833', class: 'XII RPL 2', status: 'WARNING', cheats: 1, integrity: 90, lastSeen: '1 mnt lalu', device: 'macOS / Safari' },
-        ];
-
         let cheatLogs = [
             { time: '10:14:02', student: 'Budi Santoso', type: 'Window Blur / Tab Switch', severity: 'HIGH' }
         ];
 
+        const NEW_SUPABASE_URL = "https://wqdgowxulrhtngmyrjmz.supabase.co";
+        const NEW_SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxZGdvd3h1bHJodG5nbXlyam16Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkyMTA2OTYsImV4cCI6MjEwNDc4NjY5Nn0.Fcjtf_iWGHzIQL0Mph0GWMfDfbl8JvjuKF3LQwEUGxs";
+
         let configSettings = {
             gformUrl: "https://docs.google.com/forms/d/e/1FAIpQLScf43d3Vp3G3eGv0S7x_demo/viewform?embedded=true",
-            supabaseUrl: localStorage.getItem('EXAM_SHIELD_SUPABASE_URL') || "https://dvgtqsqqywxbggogbkan.supabase.co",
-            supabaseKey: localStorage.getItem('EXAM_SHIELD_SUPABASE_KEY') || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2Z3Rxc3FxeXd4Ymdnb2dia2FuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkxMzU3MzgsImV4cCI6MjEwNDcxMTczOH0.JL74dvxilW6-9ha6w5xC5SGzMVr8e6-bnRqEVWevnmg"
+            supabaseUrl: localStorage.getItem('EXAM_SHIELD_SUPABASE_URL') || NEW_SUPABASE_URL,
+            supabaseKey: localStorage.getItem('EXAM_SHIELD_SUPABASE_KEY') || NEW_SUPABASE_KEY
         };
 
-        // INITIALIZE SUPABASE WITH HTTP REST POLLING
+        // Ensure current keys in localStorage match latest supplied credentials
+        if (!localStorage.getItem('EXAM_SHIELD_SUPABASE_URL')) {
+            localStorage.setItem('EXAM_SHIELD_SUPABASE_URL', NEW_SUPABASE_URL);
+            localStorage.setItem('EXAM_SHIELD_SUPABASE_KEY', NEW_SUPABASE_KEY);
+        }
+
         async function initSupabase(url, key) {
-            if (!url || !key || !window.supabase) {
-                setDbStatusUI(false, "In-Memory Engine");
-                return;
-            }
+            if (!url || !key || !window.supabase) return;
 
             try {
                 if (pollingIntervalHandle) {
@@ -866,15 +870,15 @@
                     }));
                 }
 
-                // Fetch Exams Master
                 const { data: exData } = await supabaseClient.from('exams').select('*').order('created_at', { ascending: false });
                 if (exData && exData.length > 0) {
                     examsMaster = exData.map(e => ({
                         id: e.id,
                         subject: e.subject,
                         title: e.exam_title,
-                        session: 'Sesi 1',
-                        startTime: '08:00 WIB',
+                        session: e.session_name || e.session || 'Sesi 1',
+                        startTime: e.start_time || '08:00 WIB',
+                        targetClass: e.target_class || 'Semua Kelas',
                         duration: e.duration_minutes || 90,
                         gformUrl: e.gform_embed_url,
                         isActive: e.is_active
@@ -1247,7 +1251,8 @@
             }
 
             activeExams.forEach(e => {
-                select.innerHTML += `<option value="${e.id}">${e.subject} - ${e.session} (${e.startTime})</option>`;
+                const targetInfo = e.targetClass ? ` [Kelas: ${e.targetClass}]` : '';
+                select.innerHTML += `<option value="${e.id}">${e.subject} - ${e.session} (${e.startTime})${targetInfo}</option>`;
             });
         }
 
@@ -1838,19 +1843,24 @@
                     <div class="bg-slate-900 border ${ex.isActive ? 'border-cyan-500/40' : 'border-slate-800'} rounded-2xl p-5 flex flex-col justify-between gap-4 shadow-lg">
                         <div>
                             <div class="flex items-center justify-between mb-2">
-                                <span class="text-xs font-mono text-cyan-400 font-bold">${ex.session} • ${ex.startTime}</span>
+                                <span class="text-xs font-mono text-cyan-400 font-bold"><i class="ph-bold ph-clock text-amber-400 mr-1"></i>${ex.session} • ${ex.startTime}</span>
                                 ${statusBadge}
                             </div>
                             <h4 class="font-bold text-white text-base mb-1">${ex.subject}</h4>
-                            <p class="text-xs text-slate-400 mb-3">${ex.title}</p>
+                            <p class="text-xs text-slate-400 mb-2">${ex.title}</p>
                             
+                            <div class="inline-flex items-center gap-1.5 bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800 text-[11px] text-cyan-300 mb-3">
+                                <i class="ph-bold ph-users-three text-cyan-400"></i>
+                                <span>Target Kelas: <strong>${ex.targetClass || 'Semua Kelas'}</strong></span>
+                            </div>
+
                             <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-[11px] font-mono text-slate-400 truncate">
                                 <i class="ph-bold ph-link text-cyan-400 mr-1"></i>${ex.gformUrl}
                             </div>
                         </div>
 
                         <div class="flex items-center justify-between pt-2 border-t border-slate-800 text-xs">
-                            <span class="text-slate-400"><i class="ph-bold ph-clock text-amber-400 mr-1"></i>${ex.duration} Menit</span>
+                            <span class="text-slate-400"><i class="ph-bold ph-hourglass-high text-cyan-400 mr-1"></i>${ex.duration} Menit</span>
                             
                             <div class="flex items-center gap-2">
                                 <button onclick="toggleExamActive('${ex.id}')" class="px-2.5 py-1.5 ${ex.isActive ? 'bg-amber-600/20 text-amber-300 border border-amber-500/30' : 'bg-emerald-600/20 text-emerald-300 border border-emerald-500/30'} hover:opacity-80 rounded-lg text-[11px] font-semibold transition-all">
@@ -1882,8 +1892,9 @@
                 document.getElementById('editExamId').value = ex.id;
                 document.getElementById('modalExamSubject').value = ex.subject;
                 document.getElementById('modalExamTitle').value = ex.title;
-                document.getElementById('modalExamSession').value = ex.session;
-                document.getElementById('modalExamStartTime').value = ex.startTime;
+                document.getElementById('modalExamTargetClass').value = ex.targetClass || 'Semua Kelas';
+                document.getElementById('modalExamSession').value = ex.session || 'Sesi 1';
+                document.getElementById('modalExamStartTime').value = ex.startTime || '08:00 WIB';
                 document.getElementById('modalExamDuration').value = ex.duration;
                 document.getElementById('modalExamGformUrl').value = ex.gformUrl;
             } else {
@@ -1891,6 +1902,7 @@
                 document.getElementById('editExamId').value = '';
                 document.getElementById('modalExamSubject').value = '';
                 document.getElementById('modalExamTitle').value = '';
+                document.getElementById('modalExamTargetClass').value = 'XII RPL 1, XII RPL 2';
                 document.getElementById('modalExamSession').value = 'Sesi 1';
                 document.getElementById('modalExamStartTime').value = '08:00 WIB';
                 document.getElementById('modalExamDuration').value = 90;
@@ -1907,19 +1919,25 @@
             const editId = document.getElementById('editExamId').value;
             const subject = document.getElementById('modalExamSubject').value.trim();
             const examTitle = document.getElementById('modalExamTitle').value.trim();
+            const targetClass = document.getElementById('modalExamTargetClass').value.trim();
             const session = document.getElementById('modalExamSession').value.trim();
             const startTime = document.getElementById('modalExamStartTime').value.trim();
             const duration = parseInt(document.getElementById('modalExamDuration').value) || 90;
             const gformUrl = document.getElementById('modalExamGformUrl').value.trim();
 
             if (supabaseClient) {
+                const examPayload = {
+                    subject: subject,
+                    exam_title: examTitle,
+                    target_class: targetClass,
+                    session_name: session,
+                    start_time: startTime,
+                    gform_embed_url: gformUrl,
+                    duration_minutes: duration
+                };
+
                 if (editId && !editId.startsWith('ex_')) {
-                    const { error } = await supabaseClient.from('exams').update({
-                        subject: subject,
-                        exam_title: examTitle,
-                        gform_embed_url: gformUrl,
-                        duration_minutes: duration
-                    }).eq('id', editId);
+                    const { error } = await supabaseClient.from('exams').update(examPayload).eq('id', editId);
 
                     if (error) {
                         showNoticeModal("Gagal Menyimpan", `Error Supabase: ${error.message}`);
@@ -1927,10 +1945,7 @@
                     }
                 } else {
                     const { error } = await supabaseClient.from('exams').insert([{
-                        subject: subject,
-                        exam_title: examTitle,
-                        gform_embed_url: gformUrl,
-                        duration_minutes: duration,
+                        ...examPayload,
                         is_active: true
                     }]);
 
@@ -1946,6 +1961,7 @@
                     if (ex) {
                         ex.subject = subject;
                         ex.title = examTitle;
+                        ex.targetClass = targetClass;
                         ex.session = session;
                         ex.startTime = startTime;
                         ex.duration = duration;
@@ -1956,6 +1972,7 @@
                         id: 'ex_' + Date.now(),
                         subject: subject,
                         title: examTitle,
+                        targetClass: targetClass,
                         session: session,
                         startTime: startTime,
                         duration: duration,
@@ -1967,7 +1984,7 @@
             }
 
             closeExamModal();
-            showNoticeModal("Ujian Disimpan", `Mata pelajaran ${subject} telah tersimpan di Database.`);
+            showNoticeModal("Ujian Disimpan", `Mata pelajaran ${subject} (${session} - ${startTime}) untuk kelas [${targetClass}] berhasil tersimpan.`);
         }
 
         async function toggleExamActive(id) {
