@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -52,7 +51,6 @@
         }
     </script>
     <style>
-        /* Custom scrollbar and lockdown utilities */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -70,10 +68,6 @@
             -ms-user-select: none;
             user-select: none;
         }
-        .no-context-menu {
-            -webkit-touch-callout: none;
-        }
-        /* Mask Google form extra frame header gaps if needed */
         .gform-container iframe {
             width: 100%;
             height: 100%;
@@ -137,9 +131,7 @@
     <!-- MAIN VIEW CONTAINER -->
     <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 flex flex-col">
 
-        <!-- ================================================================= -->
         <!-- STUDENT VIEW SECTION -->
-        <!-- ================================================================= -->
         <section id="studentView" class="flex-1 flex flex-col justify-center max-w-4xl w-full mx-auto">
             
             <!-- STEP 1: LOGIN & AUDIO HANDSHAKE CARD -->
@@ -325,17 +317,17 @@
                     </div>
                 </div>
 
-                <!-- ALARM OVERLAY (Appears when cheating is detected) -->
+                <!-- ALARM OVERLAY -->
                 <div id="cheatAlarmOverlay" class="hidden absolute inset-0 bg-rose-950/90 backdrop-blur-md z-50 flex flex-col items-center justify-center p-6 text-center animate-siren-flash">
                     <div class="w-24 h-24 rounded-full bg-rose-600 text-white flex items-center justify-center text-5xl mb-4 shadow-2xl animate-bounce">
                         <i class="ph-bold ph-siren"></i>
                     </div>
                     <h2 class="text-3xl font-black text-white tracking-wide mb-2">PERINGATAN KECURANGAN TERDETEKSI!</h2>
-                    <p id="cheatReasonText" class="text-rose-200 text-lg max-w-md mb-6 font-medium">Anda terdeteksi melakukan tindakan kecurangan (Pindah Tab / Keluar Fullscreen)!</p>
+                    <p id="cheatReasonText" class="text-rose-200 text-lg max-w-md mb-6 font-medium">Anda terdeteksi melakukan tindakan kecurangan!</p>
 
                     <div class="bg-slate-950/80 border border-rose-500/50 p-4 rounded-xl max-w-sm w-full mb-6">
                         <p class="text-xs text-slate-300 mb-1">Peringatan Suara Sirene Sedang Berbunyi!</p>
-                        <p class="text-xs text-rose-400 font-mono">Log pelanggaran ini telah terikirim ke Dashboard Guru secara realtime.</p>
+                        <p class="text-xs text-rose-400 font-mono">Log pelanggaran ini telah terkirim ke Dashboard Guru secara realtime.</p>
                     </div>
 
                     <button onclick="dismissCheatAlarm()" class="bg-white hover:bg-slate-100 text-slate-950 font-extrabold text-base px-8 py-3.5 rounded-xl shadow-2xl transform active:scale-95 transition-all">
@@ -346,9 +338,7 @@
 
         </section>
 
-        <!-- ================================================================= -->
         <!-- PROCTOR / TEACHER MONITORING DASHBOARD -->
-        <!-- ================================================================= -->
         <section id="proctorView" class="hidden flex-1 flex flex-col gap-6">
             
             <!-- STAFF ROLE BANNER -->
@@ -366,7 +356,7 @@
                     </div>
                 </div>
 
-                <!-- ADMIN EXCLUSIVE: IN-MEMORY ENGINE & DATABASE SETTINGS BUTTON -->
+                <!-- ADMIN EXCLUSIVE CONTROLS -->
                 <div id="adminExclusiveControls" class="hidden items-center gap-2">
                     <button onclick="toggleConfigModal()" class="flex items-center gap-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-semibold text-xs px-3.5 py-2 rounded-xl shadow-lg transition-all">
                         <span id="dbStatusDot" class="w-2 h-2 rounded-full bg-emerald-300 animate-pulse"></span>
@@ -424,7 +414,7 @@
                 </div>
             </div>
 
-            <!-- ADMIN TABS NAVIGATION (VISIBLE TO ADMIN ONLY) -->
+            <!-- ADMIN TABS NAVIGATION -->
             <div id="adminTabNav" class="hidden bg-slate-900 border border-slate-800 p-1.5 rounded-2xl flex items-center gap-2 text-xs font-medium">
                 <button id="btnAdminTabMonitoring" onclick="switchAdminTab('monitoring')" class="px-4 py-2 rounded-xl text-white bg-cyan-600 font-semibold shadow transition-all flex items-center gap-2">
                     <i class="ph-bold ph-desktop text-base"></i>
@@ -458,7 +448,6 @@
                     </div>
 
                     <div class="flex items-center gap-2">
-                        <!-- ADMIN EXCLUSIVE ACTION BUTTONS -->
                         <button id="btnAdminSimulateStudent" onclick="simulateAddStudent()" class="hidden px-3 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-semibold rounded-xl items-center gap-1.5 transition-colors">
                             <i class="ph-bold ph-plus-circle"></i>
                             <span>+ Simulasi Siswa Test</span>
@@ -473,8 +462,6 @@
 
                 <!-- MAIN GRID & AUDIT FEED -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    
-                    <!-- Live Student Grid (2 Cols on lg) -->
                     <div class="lg:col-span-2 flex flex-col gap-4">
                         <div class="flex items-center justify-between">
                             <h3 class="text-base font-bold text-white flex items-center gap-2">
@@ -489,7 +476,6 @@
                         </div>
                     </div>
 
-                    <!-- Realtime Audit Feed Sidebar -->
                     <div class="flex flex-col gap-4">
                         <div class="flex items-center justify-between">
                             <h3 class="text-base font-bold text-white flex items-center gap-2">
@@ -509,7 +495,7 @@
                 </div>
             </div>
 
-            <!-- TAB 2: KELOLA DATA SISWA (ADMIN ONLY CRUD) -->
+            <!-- TAB 2: KELOLA DATA SISWA -->
             <div id="adminSectionStudents" class="hidden flex-1 flex-col gap-4">
                 <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex flex-wrap items-center justify-between gap-4">
                     <div class="flex items-center gap-3">
@@ -524,7 +510,6 @@
                     </button>
                 </div>
 
-                <!-- Students Table Card -->
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-xs text-slate-300">
@@ -544,7 +529,7 @@
                 </div>
             </div>
 
-            <!-- TAB 3: KELOLA MAPEL, SESI & GFORM (ADMIN ONLY CONFIG) -->
+            <!-- TAB 3: KELOLA MAPEL, SESI & GFORM -->
             <div id="adminSectionExams" class="hidden flex-1 flex-col gap-4">
                 <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex flex-wrap items-center justify-between gap-4">
                     <div>
@@ -560,7 +545,6 @@
                     </button>
                 </div>
 
-                <!-- Exams List Container -->
                 <div id="adminExamsGridContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <!-- Exam cards populated dynamically -->
                 </div>
@@ -605,7 +589,7 @@
         </div>
     </div>
 
-    <!-- MODAL: ADD / EDIT EXAM SUBJECT & GFORM -->
+    <!-- MODAL: ADD / EDIT EXAM -->
     <div id="examModal" class="hidden fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-2xl p-6 shadow-2xl relative">
             <button onclick="closeExamModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl">
@@ -646,7 +630,6 @@
                 <div>
                     <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Google Form Embed URL (Soal)</label>
                     <input type="text" id="modalExamGformUrl" required placeholder="https://docs.google.com/forms/d/e/.../viewform?embedded=true" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500 font-mono">
-                    <p class="text-[11px] text-slate-500 mt-1">Pastikan akhiran URL memiliki atribut <code class="text-cyan-300">?embedded=true</code></p>
                 </div>
 
                 <div class="mt-6 flex justify-end gap-2 pt-2 border-t border-slate-800">
@@ -657,7 +640,7 @@
         </div>
     </div>
 
-    <!-- STAFF LOGIN MODAL (PENGAWAS & ADMIN) -->
+    <!-- STAFF LOGIN MODAL -->
     <div id="staffLoginModal" class="hidden fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
             <button onclick="cancelStaffLogin()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl">
@@ -668,8 +651,8 @@
                 <div id="staffLoginIcon" class="w-14 h-14 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 rounded-2xl flex items-center justify-center mx-auto mb-3 text-2xl shadow-inner">
                     <i class="ph-bold ph-lock-key"></i>
                 </div>
-                <h3 id="staffLoginTitle" class="text-xl font-bold text-white">Otentikasi Pengawas</h3>
-                <p id="staffLoginSubtitle" class="text-xs text-slate-400 mt-1">Masukkan kredensial akun untuk mengakses portal pemantauan.</p>
+                <h3 id="staffLoginTitle" class="text-xl font-bold text-white">Otentikasi Staf</h3>
+                <p id="staffLoginSubtitle" class="text-xs text-slate-400 mt-1">Masukkan kredensial akun untuk mengakses portal.</p>
             </div>
 
             <form onsubmit="handleStaffAuth(event)" class="space-y-4">
@@ -694,7 +677,7 @@
                 <div class="bg-slate-950 p-3 rounded-xl border border-slate-800/80 text-[11px] text-slate-400 flex items-start gap-2">
                     <i class="ph-bold ph-info text-cyan-400 text-base shrink-0 mt-0.5"></i>
                     <div>
-                        <p class="font-semibold text-slate-300">Akses Bawaan Demo:</p>
+                        <p class="font-semibold text-slate-300">Default Kredensial (Supabase / In-Memory):</p>
                         <p>Pengawas: <code class="text-cyan-300">pengawas</code> / <code class="text-cyan-300">pengawas123</code></p>
                         <p>Admin: <code class="text-amber-300">admin</code> / <code class="text-amber-300">admin123</code></p>
                     </div>
@@ -720,14 +703,13 @@
 
             <div class="space-y-4 text-xs">
                 <div>
-                    <label class="block font-semibold text-slate-300 mb-1">Supabase URL (Opsional)</label>
+                    <label class="block font-semibold text-slate-300 mb-1">Supabase URL</label>
                     <input type="text" id="configSupabaseUrl" placeholder="https://xyzcompany.supabase.co" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500">
                 </div>
 
                 <div>
-                    <label class="block font-semibold text-slate-300 mb-1">Supabase Anon Key (Opsional)</label>
+                    <label class="block font-semibold text-slate-300 mb-1">Supabase Anon Key</label>
                     <input type="password" id="configSupabaseKey" placeholder="eyJhbGciOiJIUzI1NiIsInR..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500">
-                    <p class="text-[11px] text-slate-500 mt-1">Jika dikosongkan, aplikasi berjalan dalam mode In-Memory Realtime Simulation.</p>
                 </div>
             </div>
 
@@ -738,7 +720,7 @@
         </div>
     </div>
 
-    <!-- CUSTOM MESSAGE MODAL (Replaces Browser Alert) -->
+    <!-- CUSTOM MESSAGE MODAL -->
     <div id="customNoticeModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 max-w-sm w-full rounded-2xl p-6 text-center shadow-2xl">
             <div id="noticeIconContainer" class="w-14 h-14 rounded-full bg-cyan-500/10 text-cyan-400 flex items-center justify-center text-3xl mx-auto mb-3">
@@ -756,7 +738,7 @@
         let currentRole = 'student';
         let authenticatedStaffRole = null; // 'pengawas' | 'admin' | null
         let targetStaffRoleToLogin = null;
-        let activeAdminTab = 'monitoring'; // 'monitoring' | 'students' | 'exams'
+        let activeAdminTab = 'monitoring';
         let currentStudent = null;
         let examStarted = false;
         let cheatCount = 0;
@@ -765,12 +747,12 @@
         let isSirenActive = false;
         let sirenOscillator = null;
 
-        // Supabase Client Handle
+        // Supabase Client & Polling Handles
         let supabaseClient = null;
-        let supabaseChannel = null;
         let pollingIntervalHandle = null;
+        let heartbeatIntervalHandle = null;
 
-        // Default Credentials for Staff
+        // Fallback Local Credentials for Staff
         const STAFF_CREDENTIALS = {
             pengawas: { username: 'pengawas', pass: 'pengawas123', label: 'PENGAWAS' },
             admin: { username: 'admin', pass: 'admin123', label: 'ADMINISTRATOR' }
@@ -808,7 +790,7 @@
             }
         ];
 
-        // Simulated/Local In-memory DB for Realtime Proctoring
+        // Active Sessions & Audit Feed
         let activeSessions = [
             { id: '1', name: 'Ahmad Rizky', nisn: '10012831', class: 'XII RPL 1', status: 'NORMAL', cheats: 0, integrity: 100, lastSeen: 'Baru saja', device: 'Windows / Chrome' },
             { id: '2', name: 'Siti Sarah', nisn: '10012832', class: 'XII RPL 1', status: 'NORMAL', cheats: 0, integrity: 100, lastSeen: 'Baru saja', device: 'Android / Chrome' },
@@ -819,23 +801,13 @@
             { time: '10:14:02', student: 'Budi Santoso', type: 'Window Blur / Tab Switch', severity: 'HIGH' }
         ];
 
-        // Preset user Supabase credentials
         let configSettings = {
             gformUrl: "https://docs.google.com/forms/d/e/1FAIpQLScf43d3Vp3G3eGv0S7x_demo/viewform?embedded=true",
             supabaseUrl: "https://dvgtqsqqywxbggogbkan.supabase.co",
             supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2Z3Rxc3FxeXd4Ymdnb2dia2FuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkxMzU3MzgsImV4cCI6MjEwNDcxMTczOH0.JL74dvxilW6-9ha6w5xC5SGzMVr8e6-bnRqEVWevnmg"
         };
 
-        function isWebSocketAllowed() {
-            try {
-                const testWs = new WebSocket('wss://example.com');
-                testWs.close();
-                return true;
-            } catch (e) {
-                return false;
-            }
-        }
-
+        // INITIALIZE SUPABASE WITH HTTP REST POLLING
         async function initSupabase(url, key) {
             if (!url || !key || !window.supabase) {
                 setDbStatusUI(false, "In-Memory Engine");
@@ -843,7 +815,6 @@
             }
 
             try {
-                // Clear any previous polling interval
                 if (pollingIntervalHandle) {
                     clearInterval(pollingIntervalHandle);
                     pollingIntervalHandle = null;
@@ -851,38 +822,21 @@
 
                 supabaseClient = window.supabase.createClient(url, key);
                 
-                // Test connectivity by checking 'exams' or 'students' table via REST HTTP
-                const { data, error } = await supabaseClient.from('exams').select('id').limit(1);
-                
-                if (error && error.code !== 'PGRST116') {
-                    console.warn("Supabase Warning:", error.message);
-                }
-
                 await syncDataFromSupabase();
-
-                if (isWebSocketAllowed()) {
-                    setDbStatusUI(true, "Terhubung Supabase DB");
-                    subscribeSupabaseRealtime();
-                } else {
-                    console.warn("WebSocket connections are restricted in Canvas. Falling back to HTTP REST Polling.");
-                    startPollingFallback();
-                }
+                startPollingFallback();
             } catch (err) {
                 console.error("Supabase Connection Error:", err);
-                if (supabaseClient) {
-                    startPollingFallback();
-                } else {
-                    setDbStatusUI(false, "In-Memory Engine");
-                }
+                setDbStatusUI(false, "In-Memory Engine");
             }
         }
 
         function startPollingFallback() {
-            if (pollingIntervalHandle) return; // already active
-            setDbStatusUI(true, "Terhubung Supabase (Polling)");
+            if (pollingIntervalHandle) return;
+            setDbStatusUI(true, "Terhubung Supabase DB (Live Sync)");
+            syncDataFromSupabase();
             pollingIntervalHandle = setInterval(() => {
                 syncDataFromSupabase();
-            }, 4000);
+            }, 2000);
         }
 
         function setDbStatusUI(isConnected, labelText) {
@@ -901,7 +855,7 @@
 
             try {
                 // Fetch Students Master
-                const { data: stdData } = await supabaseClient.from('students').select('*');
+                const { data: stdData } = await supabaseClient.from('students').select('*').order('created_at', { ascending: false });
                 if (stdData && stdData.length > 0) {
                     studentsMaster = stdData.map(s => ({
                         id: s.id,
@@ -912,7 +866,7 @@
                 }
 
                 // Fetch Exams Master
-                const { data: exData } = await supabaseClient.from('exams').select('*');
+                const { data: exData } = await supabaseClient.from('exams').select('*').order('created_at', { ascending: false });
                 if (exData && exData.length > 0) {
                     examsMaster = exData.map(e => ({
                         id: e.id,
@@ -927,73 +881,77 @@
                     populateStudentExamSelect();
                 }
 
-                // Fetch Active Sessions
-                const { data: sessData } = await supabaseClient.from('active_sessions').select('*, students(full_name, nisn, class_name)');
+                // Fetch Active Sessions with robust fallback mapping
+                const { data: sessData } = await supabaseClient.from('active_sessions').select('*, students(full_name, nisn, class_name)').order('last_seen', { ascending: false });
                 if (sessData && sessData.length > 0) {
-                    activeSessions = sessData.map(s => ({
-                        id: s.id,
-                        name: s.students ? s.students.full_name : 'Siswa',
-                        nisn: s.students ? s.students.nisn : '-',
-                        class: s.students ? s.students.class_name : '-',
-                        status: s.status,
-                        cheats: s.cheat_count,
-                        integrity: s.integrity_score,
-                        lastSeen: 'Live DB',
-                        device: s.device_info || 'Web Device'
-                    }));
+                    activeSessions = sessData.map(s => {
+                        const matchedStudent = studentsMaster.find(st => st.id === s.student_id);
+                        return {
+                            id: s.id,
+                            name: s.students?.full_name || matchedStudent?.name || 'Siswa',
+                            nisn: s.students?.nisn || matchedStudent?.nisn || '-',
+                            class: s.students?.class_name || matchedStudent?.class || '-',
+                            status: s.status || 'NORMAL',
+                            cheats: s.cheat_count || 0,
+                            integrity: s.integrity_score !== undefined ? s.integrity_score : 100,
+                            lastSeen: s.last_seen ? new Date(s.last_seen).toLocaleTimeString('id-ID') : 'Live DB',
+                            device: s.device_info || 'Web Device'
+                        };
+                    });
+                }
+
+                // Fetch Cheat Logs Feed
+                const { data: logData } = await supabaseClient.from('cheat_logs').select('*, students(full_name)').order('logged_at', { ascending: false }).limit(30);
+                if (logData && logData.length > 0) {
+                    cheatLogs = logData.map(l => {
+                        const matchedStudent = studentsMaster.find(st => st.id === l.student_id);
+                        return {
+                            time: l.logged_at ? new Date(l.logged_at).toLocaleTimeString('id-ID') : 'Baru saja',
+                            student: l.students?.full_name || matchedStudent?.name || 'Siswa',
+                            type: l.violation_type,
+                            severity: l.severity
+                        };
+                    });
                 }
 
                 renderProctorGrid();
                 updateProctorStats();
                 renderAdminStudentsTable();
                 renderAdminExamsList();
+                renderAuditFeed();
             } catch (err) {
                 console.warn("Sync Supabase REST Exception:", err);
             }
         }
 
-        function subscribeSupabaseRealtime() {
-            if (!supabaseClient || !isWebSocketAllowed()) {
-                startPollingFallback();
-                return;
-            }
+        // STUDENT LIVE SESSION HEARTBEAT
+        function startStudentHeartbeat() {
+            if (heartbeatIntervalHandle) clearInterval(heartbeatIntervalHandle);
+            heartbeatIntervalHandle = setInterval(async () => {
+                if (!examStarted || !currentStudent) return;
+                
+                currentStudent.lastSeen = new Date().toLocaleTimeString('id-ID');
+                
+                if (supabaseClient && currentStudent.sessionUuid) {
+                    try {
+                        await supabaseClient.from('active_sessions').update({
+                            last_seen: new Date().toISOString()
+                        }).eq('id', currentStudent.sessionUuid);
+                    } catch(err) {
+                        console.warn("Heartbeat update failed:", err);
+                    }
+                }
+            }, 4000);
+        }
 
-            if (supabaseChannel) {
-                try {
-                    supabaseClient.removeChannel(supabaseChannel);
-                } catch(e) {}
-            }
-
-            try {
-                supabaseChannel = supabaseClient.channel('public:exam_realtime')
-                    .on('postgres_changes', { event: '*', schema: 'public', table: 'active_sessions' }, payload => {
-                        syncDataFromSupabase();
-                    })
-                    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'cheat_logs' }, payload => {
-                        const newLog = payload.new;
-                        cheatLogs.unshift({
-                            time: new Date(newLog.logged_at || Date.now()).toLocaleTimeString('id-ID'),
-                            student: 'Siswa DB',
-                            type: newLog.violation_type,
-                            severity: newLog.severity || 'HIGH'
-                        });
-                        renderAuditFeed();
-                    })
-                    .subscribe((status, err) => {
-                        if (status === 'SUBSCRIBED') {
-                            setDbStatusUI(true, "Terhubung Supabase Realtime");
-                        } else if (status === 'CHANNEL_ERROR' || status === 'CLOSED' || err) {
-                            console.warn("Realtime WebSocket unavailable in environment, switching to REST polling.");
-                            startPollingFallback();
-                        }
-                    });
-            } catch (e) {
-                console.warn("WebSocket blocked in this environment (Canvas / Sandbox). Falling back to HTTP REST Polling.");
-                startPollingFallback();
+        function stopStudentHeartbeat() {
+            if (heartbeatIntervalHandle) {
+                clearInterval(heartbeatIntervalHandle);
+                heartbeatIntervalHandle = null;
             }
         }
 
-        // WEB AUDIO API SOUND ENGINE (Anti-Cheat Alarm)
+        // WEB AUDIO API SOUND ENGINE
         function initAudioContext() {
             if (!audioContext) {
                 const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -1004,7 +962,6 @@
             }
         }
 
-        // Web Audio Siren Synthesizer (Oscillating sound)
         function playSirenSound() {
             initAudioContext();
             if (isSirenActive) return;
@@ -1016,7 +973,6 @@
             osc.type = 'sawtooth';
             gain.gain.setValueAtTime(0.3, audioContext.currentTime);
 
-            // Frequency oscillation sweep (800Hz to 1200Hz siren frequency)
             let high = false;
             const freqInterval = setInterval(() => {
                 if (!isSirenActive) {
@@ -1045,10 +1001,9 @@
             }
         }
 
-        // Text-to-Speech (TTS) Voice Alert
         function speakWarningTTS(text) {
             if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel(); // Stop ongoing speech
+                window.speechSynthesis.cancel();
                 const utterance = new SpeechSynthesisUtterance(text);
                 utterance.lang = 'id-ID';
                 utterance.rate = 1.0;
@@ -1066,7 +1021,7 @@
             }, 3000);
         }
 
-        // ROLE SWITCHING & AUTH SYSTEM
+        // ROLE SWITCHING & AUTH SYSTEM (SUPABASE INTEGRATED)
         function switchRole(role) {
             if (role === 'student') {
                 currentRole = 'student';
@@ -1074,7 +1029,6 @@
                 return;
             }
 
-            // Check if staff is already logged in with adequate permissions
             if (authenticatedStaffRole) {
                 if (role === 'admin' && authenticatedStaffRole !== 'admin') {
                     promptStaffLogin('admin');
@@ -1113,27 +1067,54 @@
             updateRoleUI(currentRole);
         }
 
-        function handleStaffAuth(e) {
+        async function handleStaffAuth(e) {
             e.preventDefault();
             const user = document.getElementById('inputStaffUsername').value.trim();
             const pass = document.getElementById('inputStaffPassword').value.trim();
 
-            if (user === STAFF_CREDENTIALS.admin.username && pass === STAFF_CREDENTIALS.admin.pass) {
-                authenticatedStaffRole = 'admin';
-                currentRole = 'admin';
-                document.getElementById('staffLoginModal').classList.add('hidden');
-                updateRoleUI('admin');
-                showNoticeModal("Login Sukses", "Selamat datang Admin. Anda memiliki Akses Penuh Sistem Ujian & Engine DB.");
-            } else if (user === STAFF_CREDENTIALS.pengawas.username && pass === STAFF_CREDENTIALS.pengawas.pass) {
-                if (targetStaffRoleToLogin === 'admin') {
+            let authenticatedUser = null;
+
+            // 1. First, check against Supabase Database table 'staff_users'
+            if (supabaseClient) {
+                try {
+                    const { data: dbUser, error } = await supabaseClient
+                        .from('staff_users')
+                        .select('*')
+                        .eq('username', user)
+                        .single();
+
+                    if (dbUser && dbUser.password_hash === pass) {
+                        authenticatedUser = {
+                            role: dbUser.role,
+                            fullName: dbUser.full_name
+                        };
+                    }
+                } catch(err) {
+                    console.warn("Supabase Staff Login Check fallback to local:", err);
+                }
+            }
+
+            // 2. Fallback to Local Credentials if offline or DB not populated
+            if (!authenticatedUser) {
+                if (user === STAFF_CREDENTIALS.admin.username && pass === STAFF_CREDENTIALS.admin.pass) {
+                    authenticatedUser = { role: 'admin', fullName: 'Administrator' };
+                } else if (user === STAFF_CREDENTIALS.pengawas.username && pass === STAFF_CREDENTIALS.pengawas.pass) {
+                    authenticatedUser = { role: 'pengawas', fullName: 'Pengawas Ujian' };
+                }
+            }
+
+            // 3. Evaluate Authorization & Roles
+            if (authenticatedUser) {
+                if (targetStaffRoleToLogin === 'admin' && authenticatedUser.role !== 'admin') {
                     showNoticeModal("Akses Ditolak", "Kredensial Pengawas tidak memiliki otoritas Administrator.");
                     return;
                 }
-                authenticatedStaffRole = 'pengawas';
-                currentRole = 'proctor';
+
+                authenticatedStaffRole = authenticatedUser.role;
+                currentRole = authenticatedUser.role === 'admin' ? 'admin' : 'proctor';
                 document.getElementById('staffLoginModal').classList.add('hidden');
-                updateRoleUI('proctor');
-                showNoticeModal("Login Sukses", "Selamat datang Pengawas. Mode Monitoring Siswa aktif.");
+                updateRoleUI(currentRole);
+                showNoticeModal("Login Sukses", `Selamat datang ${authenticatedUser.fullName} (${authenticatedUser.role.toUpperCase()}).`);
             } else {
                 showNoticeModal("Login Gagal", "Username atau Password yang Anda masukkan salah.");
             }
@@ -1269,7 +1250,7 @@
             });
         }
 
-        function handleStudentLogin(e) {
+        async function handleStudentLogin(e) {
             e.preventDefault();
             initAudioContext();
 
@@ -1290,27 +1271,57 @@
 
             currentStudent = {
                 id: 'std_' + Date.now(),
+                dbUuid: null,
+                sessionUuid: null,
                 name: name,
                 nisn: nisn,
                 class: className,
+                examId: selectedExamId,
                 examTitle: chosenExam ? chosenExam.subject : 'Ujian Online',
                 status: 'NORMAL',
                 cheats: 0,
                 integrity: 100,
                 lastSeen: 'Baru saja',
-                device: navigator.platform || 'Web Device'
+                device: navigator.userAgent.includes('Mobile') ? 'Mobile Device' : 'Desktop Browser'
             };
 
-            activeSessions.unshift(currentStudent);
-
-            // Sync to Supabase if connected
             if (supabaseClient) {
-                supabaseClient.from('students').upsert({ nisn: nisn, full_name: name, class_name: className }, { onConflict: 'nisn' })
-                .then(() => {
-                    renderProctorGrid();
-                    updateProctorStats();
-                });
+                try {
+                    const { data: stdRes } = await supabaseClient
+                        .from('students')
+                        .upsert({ nisn: nisn, full_name: name, class_name: className }, { onConflict: 'nisn' })
+                        .select()
+                        .single();
+
+                    if (stdRes) {
+                        currentStudent.dbUuid = stdRes.id;
+                    }
+
+                    if (currentStudent.dbUuid && selectedExamId && !selectedExamId.startsWith('ex_')) {
+                        const { data: sessRes } = await supabaseClient
+                            .from('active_sessions')
+                            .upsert({
+                                student_id: currentStudent.dbUuid,
+                                exam_id: selectedExamId,
+                                device_info: currentStudent.device,
+                                status: 'NORMAL',
+                                cheat_count: 0,
+                                integrity_score: 100,
+                                last_seen: new Date().toISOString()
+                            }, { onConflict: 'student_id,exam_id' })
+                            .select()
+                            .single();
+
+                        if (sessRes) {
+                            currentStudent.sessionUuid = sessRes.id;
+                        }
+                    }
+                    await syncDataFromSupabase();
+                } catch (err) {
+                    console.error("Supabase login sync error:", err);
+                }
             } else {
+                activeSessions.unshift(currentStudent);
                 renderProctorGrid();
                 updateProctorStats();
             }
@@ -1342,12 +1353,12 @@
             document.getElementById('studentWorkspace').classList.remove('hidden');
             document.getElementById('activeStudentLabel').innerText = `Siswa: ${currentStudent.name} (${currentStudent.class})`;
 
-            // Load Google Form URL into iframe
             const iframe = document.getElementById('gformIframe');
             iframe.src = configSettings.gformUrl;
 
             examStarted = true;
             setupAntiCheatListeners();
+            startStudentHeartbeat();
         }
 
         function reenterExamFullscreen() {
@@ -1356,7 +1367,6 @@
         }
 
         function setupAntiCheatListeners() {
-            // Fullscreen status monitor
             const handleFullscreenChange = () => {
                 if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
                     if (examStarted) {
@@ -1373,32 +1383,26 @@
             document.addEventListener('mozfullscreenchange', handleFullscreenChange);
             document.addEventListener('MSFullscreenChange', handleFullscreenChange);
 
-            // Tab switch & visibility monitor
             document.addEventListener('visibilitychange', () => {
                 if (document.hidden && examStarted) {
                     triggerCheatViolation("Terdeteksi Berpindah Tab / Jendela Lain!");
                 }
             });
 
-            // Window Blur
             window.addEventListener('blur', () => {
                 if (examStarted) {
                     triggerCheatViolation("Fokus Jendela Ujian Terlepas!");
                 }
             });
 
-            // Prevent Context Menu (Right Click)
             document.addEventListener('contextmenu', (e) => e.preventDefault());
 
-            // Keybindings Trap (F12, Inspect, Copy Paste, Alt+Tab)
             document.addEventListener('keydown', (e) => {
                 if (!examStarted) return;
-                // F12 or Inspect shortcuts
                 if (e.keyCode === 123 || (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67))) {
                     e.preventDefault();
                     triggerCheatViolation("Mencoba Buka DevTools / Inspect Element!");
                 }
-                // Copy Paste Shortcuts
                 if (e.ctrlKey && (e.keyCode === 67 || e.keyCode === 86 || e.keyCode === 85 || e.keyCode === 65)) {
                     e.preventDefault();
                     triggerCheatViolation("Aksi Copy/Paste/Select All Diblokir!");
@@ -1406,9 +1410,10 @@
             });
         }
 
-        function triggerCheatViolation(reason) {
+        async function triggerCheatViolation(reason) {
             cheatCount++;
             integrityScore = Math.max(0, integrityScore - 15);
+            const newStatus = cheatCount >= 3 ? 'CHEATING' : 'WARNING';
 
             document.getElementById('studentCheatCounter').innerText = `${cheatCount} / 3`;
             document.getElementById('studentIntegrityScore').innerText = `${integrityScore}%`;
@@ -1416,7 +1421,7 @@
             if (currentStudent) {
                 currentStudent.cheats = cheatCount;
                 currentStudent.integrity = integrityScore;
-                currentStudent.status = cheatCount >= 3 ? 'CHEATING' : 'WARNING';
+                currentStudent.status = newStatus;
             }
 
             document.getElementById('cheatReasonText').innerText = reason;
@@ -1425,27 +1430,41 @@
             playSirenSound();
             speakWarningTTS(`Peringatan! Pelanggaran terdeteksi: ${reason}`);
 
-            // Log cheat to feed
-            const logItem = {
+            cheatLogs.unshift({
                 time: new Date().toLocaleTimeString('id-ID'),
                 student: currentStudent ? currentStudent.name : 'Siswa',
                 type: reason,
                 severity: 'HIGH'
-            };
-            cheatLogs.unshift(logItem);
+            });
 
-            // Push to Supabase if active
             if (supabaseClient && currentStudent) {
-                supabaseClient.from('cheat_logs').insert({
-                    student_id: currentStudent.id,
-                    violation_type: reason,
-                    severity: 'HIGH'
-                }).then(() => {});
-            }
+                try {
+                    if (currentStudent.sessionUuid) {
+                        await supabaseClient.from('active_sessions').update({
+                            status: newStatus,
+                            cheat_count: cheatCount,
+                            integrity_score: integrityScore,
+                            last_seen: new Date().toISOString()
+                        }).eq('id', currentStudent.sessionUuid);
 
-            renderProctorGrid();
-            updateProctorStats();
-            renderAuditFeed();
+                        if (currentStudent.dbUuid) {
+                            await supabaseClient.from('cheat_logs').insert([{
+                                session_id: currentStudent.sessionUuid,
+                                student_id: currentStudent.dbUuid,
+                                violation_type: reason,
+                                severity: 'HIGH'
+                            }]);
+                        }
+                    }
+                    await syncDataFromSupabase();
+                } catch (err) {
+                    console.error("Error logging cheat to Supabase:", err);
+                }
+            } else {
+                renderProctorGrid();
+                updateProctorStats();
+                renderAuditFeed();
+            }
         }
 
         function dismissCheatAlarm() {
@@ -1455,6 +1474,7 @@
 
         function finishExamStudent() {
             stopSirenSound();
+            stopStudentHeartbeat();
             examStarted = false;
             document.getElementById('studentWorkspace').classList.add('hidden');
             document.getElementById('studentLoginCard').classList.remove('hidden');
@@ -1524,9 +1544,6 @@
                                 <button onclick="triggerRemoteSirenForStudent('${s.id}')" class="p-1.5 bg-rose-950/60 hover:bg-rose-600 text-rose-300 hover:text-white rounded-lg transition-colors" title="Bunyikan Sirene Remote">
                                     <i class="ph-bold ph-bell-ringing"></i>
                                 </button>
-                                <button onclick="sendRemoteMessageToStudent('${s.id}')" class="p-1.5 bg-slate-800 hover:bg-slate-700 text-cyan-300 rounded-lg transition-colors" title="Kirim Pesan Teguran">
-                                    <i class="ph-bold ph-chat-text"></i>
-                                </button>
                                 <button onclick="kickStudentSession('${s.id}')" class="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-rose-400 rounded-lg transition-colors" title="Keluarkan Sesi">
                                     <i class="ph-bold ph-sign-out"></i>
                                 </button>
@@ -1580,35 +1597,43 @@
             });
         }
 
-        function triggerRemoteSirenForStudent(studentId) {
+        async function triggerRemoteSirenForStudent(studentId) {
             const student = activeSessions.find(s => s.id === studentId);
             if (student) {
                 student.status = 'CHEATING';
                 student.cheats++;
-                cheatLogs.unshift({
-                    time: new Date().toLocaleTimeString('id-ID'),
-                    student: student.name,
-                    type: 'Sirene Peringatan Demicu Oleh Pengawas Jarak Jauh',
-                    severity: 'HIGH'
-                });
-                renderProctorGrid();
-                updateProctorStats();
-                renderAuditFeed();
+
+                if (supabaseClient && !studentId.startsWith('1') && !studentId.startsWith('2') && !studentId.startsWith('3')) {
+                    await supabaseClient.from('active_sessions').update({
+                        status: 'CHEATING',
+                        cheat_count: student.cheats,
+                        last_seen: new Date().toISOString()
+                    }).eq('id', studentId);
+                    await syncDataFromSupabase();
+                } else {
+                    cheatLogs.unshift({
+                        time: new Date().toLocaleTimeString('id-ID'),
+                        student: student.name,
+                        type: 'Sirene Peringatan Dipicu Oleh Pengawas Jarak Jauh',
+                        severity: 'HIGH'
+                    });
+                    renderProctorGrid();
+                    updateProctorStats();
+                    renderAuditFeed();
+                }
                 showNoticeModal("Sirene Dideploy", `Sirene peringatan dikirimkan ke perangkat ${student.name}.`);
             }
         }
 
-        function sendRemoteMessageToStudent(studentId) {
-            const student = activeSessions.find(s => s.id === studentId);
-            if (student) {
-                showNoticeModal("Pesan Terkirim", `Pesan instruksi berhasil dikirimkan ke layar ${student.name}.`);
+        async function kickStudentSession(studentId) {
+            if (supabaseClient && !studentId.startsWith('1') && !studentId.startsWith('2') && !studentId.startsWith('3')) {
+                await supabaseClient.from('active_sessions').delete().eq('id', studentId);
+                await syncDataFromSupabase();
+            } else {
+                activeSessions = activeSessions.filter(s => s.id !== studentId);
+                renderProctorGrid();
+                updateProctorStats();
             }
-        }
-
-        function kickStudentSession(studentId) {
-            activeSessions = activeSessions.filter(s => s.id !== studentId);
-            renderProctorGrid();
-            updateProctorStats();
             showNoticeModal("Sesi Dikeluarkan", "Sesi siswa telah dikeluarkan dari ruang ujian.");
         }
 
@@ -1645,6 +1670,7 @@
             showNoticeModal("Feed Dibersihkan", "Audit feed pelanggaran telah dikosongkan.");
         }
 
+        // ADMIN STUDENT MANAGEMENT
         function renderAdminStudentsTable() {
             const tbody = document.getElementById('adminStudentsTableBody');
             if (!tbody) return;
@@ -1714,44 +1740,80 @@
             document.getElementById('studentModal').classList.add('hidden');
         }
 
-        function saveStudentForm(e) {
+        async function saveStudentForm(e) {
             e.preventDefault();
             const editId = document.getElementById('editStudentId').value;
             const nisn = document.getElementById('modalStudentNisn').value.trim();
             const name = document.getElementById('modalStudentName').value.trim();
             const className = document.getElementById('modalStudentClass').value.trim();
 
-            if (editId) {
-                const s = studentsMaster.find(item => item.id === editId);
-                if (s) {
-                    s.nisn = nisn;
-                    s.name = name;
-                    s.class = className;
+            if (supabaseClient) {
+                if (editId && !editId.startsWith('std_')) {
+                    const { error } = await supabaseClient.from('students').update({
+                        nisn: nisn,
+                        full_name: name,
+                        class_name: className
+                    }).eq('id', editId);
+
+                    if (error) {
+                        showNoticeModal("Gagal Menyimpan", `Error Supabase: ${error.message}`);
+                        return;
+                    }
+                } else {
+                    const { error } = await supabaseClient.from('students').insert([{
+                        nisn: nisn,
+                        full_name: name,
+                        class_name: className
+                    }]);
+
+                    if (error) {
+                        showNoticeModal("Gagal Menyimpan", `Error Supabase: ${error.message}`);
+                        return;
+                    }
                 }
-                showNoticeModal("Siswa Diperbarui", `Data siswa ${name} berhasil disimpan.`);
+                await syncDataFromSupabase();
             } else {
-                studentsMaster.unshift({
-                    id: 'std_' + Date.now(),
-                    nisn: nisn,
-                    name: name,
-                    class: className
-                });
-                showNoticeModal("Siswa Ditambahkan", `Siswa ${name} telah didaftarkan.`);
+                if (editId) {
+                    const s = studentsMaster.find(item => item.id === editId);
+                    if (s) {
+                        s.nisn = nisn;
+                        s.name = name;
+                        s.class = className;
+                    }
+                } else {
+                    studentsMaster.unshift({
+                        id: 'std_' + Date.now(),
+                        nisn: nisn,
+                        name: name,
+                        class: className
+                    });
+                }
+                renderAdminStudentsTable();
             }
 
             closeStudentModal();
-            renderAdminStudentsTable();
+            showNoticeModal("Siswa Disimpan", `Data siswa ${name} berhasil disimpan.`);
         }
 
-        function deleteStudent(id) {
+        async function deleteStudent(id) {
             const s = studentsMaster.find(item => item.id === id);
             if (!s) return;
 
-            studentsMaster = studentsMaster.filter(item => item.id !== id);
-            renderAdminStudentsTable();
-            showNoticeModal("Siswa Dihapus", `Siswa ${s.name} telah dihapus dari database.`);
+            if (supabaseClient && !id.startsWith('std_')) {
+                const { error } = await supabaseClient.from('students').delete().eq('id', id);
+                if (error) {
+                    showNoticeModal("Gagal Menghapus", `Error Supabase: ${error.message}`);
+                    return;
+                }
+                await syncDataFromSupabase();
+            } else {
+                studentsMaster = studentsMaster.filter(item => item.id !== id);
+                renderAdminStudentsTable();
+            }
+            showNoticeModal("Siswa Dihapus", `Siswa ${s.name} telah dihapus.`);
         }
 
+        // ADMIN EXAM MANAGEMENT
         function renderAdminExamsList() {
             const container = document.getElementById('adminExamsGridContainer');
             if (!container) return;
@@ -1839,426 +1901,6 @@
             document.getElementById('examModal').classList.add('hidden');
         }
 
-        function saveExamForm(e) {
-            e.preventDefault();
-            const editId = document.getElementById('editExamId').value;
-            const subject = document.getElementById('modalExamSubject').value.trim();
-            const examTitle = document.getElementById('modalExamTitle').value.trim();
-            const session = document.getElementById('modalExamSession').value.trim();
-            const startTime = document.getElementById('modalExamStartTime').value.trim();
-            const duration = parseInt(document.getElementById('modalExamDuration').value) || 90;
-            const gformUrl = document.getElementById('modalExamGformUrl').value.trim();
-
-            if (editId) {
-                const ex = examsMaster.find(item => item.id === editId);
-                if (ex) {
-                    ex.subject = subject;
-                    ex.title = examTitle;
-                    ex.session = session;
-                    ex.startTime = startTime;
-                    ex.duration = duration;
-                    ex.gformUrl = gformUrl;
-                }
-                showNoticeModal("Ujian Diperbarui", `Mata pelajaran ${subject} berhasil diperbarui.`);
-            } else {
-                examsMaster.unshift({
-                    id: 'ex_' + Date.now(),
-                    subject: subject,
-                    title: examTitle,
-                    session: session,
-                    startTime: startTime,
-                    duration: duration,
-                    gformUrl: gformUrl,
-                    isActive: true
-                });
-                showNoticeModal("Ujian Ditambahkan", `Mata pelajaran ${subject} telah didaftarkan.`);
-            }
-
-            closeExamModal();
-            renderAdminExamsList();
-        }
-
-        function toggleExamActive(id) {
-            const ex = examsMaster.find(item => item.id === id);
-            if (!ex) return;
-            ex.isActive = !ex.isActive;
-            renderAdminExamsList();
-        }
-
-        function deleteExam(id) {
-            const ex = examsMaster.find(item => item.id === id);
-            if (!ex) return;
-
-            examsMaster = examsMaster.filter(item => item.id !== id);
-            renderAdminExamsList();
-            showNoticeModal("Ujian Dihapus", `Mapel ${ex.subject} telah dihapus.`);
-        }
-
-        function toggleConfigModal() {
-            const modal = document.getElementById('configModal');
-            modal.classList.toggle('hidden');
-
-            document.getElementById('configSupabaseUrl').value = configSettings.supabaseUrl || '';
-            document.getElementById('configSupabaseKey').value = configSettings.supabaseKey || '';
-        }
-
-        function saveConfigurations() {
-            const supabaseUrl = document.getElementById('configSupabaseUrl').value.trim();
-            const supabaseKey = document.getElementById('configSupabaseKey').value.trim();
-
-            configSettings.supabaseUrl = supabaseUrl;
-            configSettings.supabaseKey = supabaseKey;
-
-            initSupabase(supabaseUrl, supabaseKey);
-
-            toggleConfigModal();
-            showNoticeModal("Pengaturan Disimpan", "Mencoba menghubungkan kembali ke Supabase Database.");
-        }
-
-        // NOTICE & CLOCK HELPER FUNCTIONS
-        function showNoticeModal(title, message) {
-            const modal = document.getElementById('customNoticeModal');
-            const titleEl = document.getElementById('noticeTitle');
-            const msgEl = document.getElementById('noticeMessage');
-            if (titleEl) titleEl.innerText = title;
-            if (msgEl) msgEl.innerText = message;
-            if (modal) modal.classList.remove('hidden');
-        }
-
-        function closeNoticeModal() {
-            const modal = document.getElementById('customNoticeModal');
-            if (modal) modal.classList.add('hidden');
-        }
-
-        function initClock() {
-            function updateClock() {
-                const now = new Date();
-                const hours = String(now.getHours()).padStart(2, '0');
-                const minutes = String(now.getMinutes()).padStart(2, '0');
-                const seconds = String(now.getSeconds()).padStart(2, '0');
-                const clockEl = document.getElementById('realtimeClock');
-                if (clockEl) {
-                    clockEl.innerText = `${hours}:${minutes}:${seconds}`;
-                }
-            }
-            updateClock();
-            setInterval(updateClock, 1000);
-        }
-
-        // SUPABASE REALTIME & DATA SYNC ENGINE
-        async function syncDataFromSupabase() {
-            if (!supabaseClient) return;
-
-            try {
-                // 1. Fetch Students Master
-                const { data: stdData, error: stdErr } = await supabaseClient
-                    .from('students')
-                    .select('*')
-                    .order('created_at', { ascending: false });
-
-                if (stdErr) console.warn("Supabase Students Fetch Error:", stdErr.message);
-                if (stdData && stdData.length > 0) {
-                    studentsMaster = stdData.map(s => ({
-                        id: s.id,
-                        nisn: s.nisn,
-                        name: s.full_name,
-                        class: s.class_name
-                    }));
-                }
-
-                // 2. Fetch Exams Master
-                const { data: exData, error: exErr } = await supabaseClient
-                    .from('exams')
-                    .select('*')
-                    .order('created_at', { ascending: false });
-
-                if (exErr) console.warn("Supabase Exams Fetch Error:", exErr.message);
-                if (exData && exData.length > 0) {
-                    examsMaster = exData.map(e => ({
-                        id: e.id,
-                        subject: e.subject,
-                        title: e.exam_title,
-                        session: 'Sesi 1',
-                        startTime: '08:00 WIB',
-                        duration: e.duration_minutes || 90,
-                        gformUrl: e.gform_embed_url,
-                        isActive: e.is_active
-                    }));
-                    populateStudentExamSelect();
-                }
-
-                // 3. Fetch Active Sessions
-                const { data: sessData, error: sessErr } = await supabaseClient
-                    .from('active_sessions')
-                    .select('*, students(full_name, nisn, class_name)')
-                    .order('last_seen', { ascending: false });
-
-                if (sessErr) console.warn("Supabase Sessions Fetch Error:", sessErr.message);
-                if (sessData && sessData.length > 0) {
-                    activeSessions = sessData.map(s => ({
-                        id: s.id,
-                        name: s.students ? s.students.full_name : 'Siswa',
-                        nisn: s.students ? s.students.nisn : '-',
-                        class: s.students ? s.students.class_name : '-',
-                        status: s.status || 'NORMAL',
-                        cheats: s.cheat_count || 0,
-                        integrity: s.integrity_score !== undefined ? s.integrity_score : 100,
-                        lastSeen: s.last_seen ? new Date(s.last_seen).toLocaleTimeString('id-ID') : 'Live DB',
-                        device: s.device_info || 'Web Device'
-                    }));
-                }
-
-                // 4. Fetch Cheat Logs Feed
-                const { data: logData, error: logErr } = await supabaseClient
-                    .from('cheat_logs')
-                    .select('*, students(full_name)')
-                    .order('logged_at', { ascending: false })
-                    .limit(30);
-
-                if (logErr) console.warn("Supabase Logs Fetch Error:", logErr.message);
-                if (logData && logData.length > 0) {
-                    cheatLogs = logData.map(l => ({
-                        time: l.logged_at ? new Date(l.logged_at).toLocaleTimeString('id-ID') : 'Baru saja',
-                        student: l.students ? l.students.full_name : 'Siswa',
-                        type: l.violation_type,
-                        severity: l.severity
-                    }));
-                }
-
-                renderProctorGrid();
-                updateProctorStats();
-                renderAdminStudentsTable();
-                renderAdminExamsList();
-                renderAuditFeed();
-            } catch (err) {
-                console.warn("Sync Supabase REST Exception:", err);
-            }
-        }
-
-        async function handleStudentLogin(e) {
-            e.preventDefault();
-            initAudioContext();
-
-            const name = document.getElementById('inputStudentName').value.trim();
-            const nisn = document.getElementById('inputStudentNisn').value.trim();
-            const className = document.getElementById('inputStudentClass').value;
-            const selectedExamId = document.getElementById('inputStudentExamSelect').value;
-
-            if (!name || !nisn) {
-                showNoticeModal("Input Kosong", "Silakan isi Nama dan NISN dengan lengkap.");
-                return;
-            }
-
-            const chosenExam = examsMaster.find(ex => ex.id === selectedExamId);
-            if (chosenExam) {
-                configSettings.gformUrl = chosenExam.gformUrl;
-            }
-
-            currentStudent = {
-                id: 'std_' + Date.now(),
-                dbUuid: null,
-                sessionUuid: null,
-                name: name,
-                nisn: nisn,
-                class: className,
-                examId: selectedExamId,
-                examTitle: chosenExam ? chosenExam.subject : 'Ujian Online',
-                status: 'NORMAL',
-                cheats: 0,
-                integrity: 100,
-                lastSeen: 'Baru saja',
-                device: navigator.userAgent.includes('Mobile') ? 'Mobile Device' : 'Desktop Browser'
-            };
-
-            if (supabaseClient) {
-                try {
-                    // 1. Upsert Student into Supabase DB
-                    const { data: stdRes, error: stdErr } = await supabaseClient
-                        .from('students')
-                        .upsert({ nisn: nisn, full_name: name, class_name: className }, { onConflict: 'nisn' })
-                        .select()
-                        .single();
-
-                    if (stdErr) {
-                        console.error("Error saving student to Supabase:", stdErr);
-                    } else if (stdRes) {
-                        currentStudent.dbUuid = stdRes.id;
-                    }
-
-                    // 2. Insert Active Session if exam is linked to Supabase UUID
-                    if (currentStudent.dbUuid && selectedExamId && !selectedExamId.startsWith('ex_')) {
-                        const { data: sessRes, error: sessErr } = await supabaseClient
-                            .from('active_sessions')
-                            .upsert({
-                                student_id: currentStudent.dbUuid,
-                                exam_id: selectedExamId,
-                                device_info: currentStudent.device,
-                                status: 'NORMAL',
-                                cheat_count: 0,
-                                integrity_score: 100,
-                                last_seen: new Date().toISOString()
-                            }, { onConflict: 'student_id,exam_id' })
-                            .select()
-                            .single();
-
-                        if (sessErr) {
-                            console.error("Error saving session to Supabase:", sessErr);
-                        } else if (sessRes) {
-                            currentStudent.sessionUuid = sessRes.id;
-                        }
-                    }
-                    await syncDataFromSupabase();
-                } catch (err) {
-                    console.error("Supabase login sync error:", err);
-                }
-            } else {
-                activeSessions.unshift(currentStudent);
-                renderProctorGrid();
-                updateProctorStats();
-            }
-
-            document.getElementById('ruleStudentDetails').innerText = `${name} (${className}) - ${currentStudent.examTitle}`;
-            document.getElementById('ruleStudentNisn').innerText = nisn;
-
-            document.getElementById('studentLoginCard').classList.add('hidden');
-            document.getElementById('studentRulesCard').classList.remove('hidden');
-        }
-
-        async function triggerCheatViolation(reason) {
-            cheatCount++;
-            integrityScore = Math.max(0, integrityScore - 15);
-            const newStatus = cheatCount >= 3 ? 'CHEATING' : 'WARNING';
-
-            document.getElementById('studentCheatCounter').innerText = `${cheatCount} / 3`;
-            document.getElementById('studentIntegrityScore').innerText = `${integrityScore}%`;
-
-            if (currentStudent) {
-                currentStudent.cheats = cheatCount;
-                currentStudent.integrity = integrityScore;
-                currentStudent.status = newStatus;
-            }
-
-            document.getElementById('cheatReasonText').innerText = reason;
-            document.getElementById('cheatAlarmOverlay').classList.remove('hidden');
-
-            playSirenSound();
-            speakWarningTTS(`Peringatan! Pelanggaran terdeteksi: ${reason}`);
-
-            // Local feed log
-            const logItem = {
-                time: new Date().toLocaleTimeString('id-ID'),
-                student: currentStudent ? currentStudent.name : 'Siswa',
-                type: reason,
-                severity: 'HIGH'
-            };
-            cheatLogs.unshift(logItem);
-
-            // Sync violation & cheat log to Supabase
-            if (supabaseClient && currentStudent) {
-                try {
-                    if (currentStudent.sessionUuid) {
-                        await supabaseClient.from('active_sessions').update({
-                            status: newStatus,
-                            cheat_count: cheatCount,
-                            integrity_score: integrityScore,
-                            last_seen: new Date().toISOString()
-                        }).eq('id', currentStudent.sessionUuid);
-
-                        if (currentStudent.dbUuid) {
-                            await supabaseClient.from('cheat_logs').insert([{
-                                session_id: currentStudent.sessionUuid,
-                                student_id: currentStudent.dbUuid,
-                                violation_type: reason,
-                                severity: 'HIGH'
-                            }]);
-                        }
-                    }
-                    await syncDataFromSupabase();
-                } catch (err) {
-                    console.error("Error logging cheat to Supabase:", err);
-                }
-            } else {
-                renderProctorGrid();
-                updateProctorStats();
-                renderAuditFeed();
-            }
-        }
-
-        // ADMIN STUDENT MANAGEMENT (SUPABASE INTEGRATED)
-        async function saveStudentForm(e) {
-            e.preventDefault();
-            const editId = document.getElementById('editStudentId').value;
-            const nisn = document.getElementById('modalStudentNisn').value.trim();
-            const name = document.getElementById('modalStudentName').value.trim();
-            const className = document.getElementById('modalStudentClass').value.trim();
-
-            if (supabaseClient) {
-                if (editId && !editId.startsWith('std_')) {
-                    const { error } = await supabaseClient.from('students').update({
-                        nisn: nisn,
-                        full_name: name,
-                        class_name: className
-                    }).eq('id', editId);
-
-                    if (error) {
-                        showNoticeModal("Gagal Menyimpan", `Error Supabase: ${error.message}`);
-                        return;
-                    }
-                } else {
-                    const { error } = await supabaseClient.from('students').insert([{
-                        nisn: nisn,
-                        full_name: name,
-                        class_name: className
-                    }]);
-
-                    if (error) {
-                        showNoticeModal("Gagal Menyimpan", `Error Supabase: ${error.message}`);
-                        return;
-                    }
-                }
-                await syncDataFromSupabase();
-            } else {
-                if (editId) {
-                    const s = studentsMaster.find(item => item.id === editId);
-                    if (s) {
-                        s.nisn = nisn;
-                        s.name = name;
-                        s.class = className;
-                    }
-                } else {
-                    studentsMaster.unshift({
-                        id: 'std_' + Date.now(),
-                        nisn: nisn,
-                        name: name,
-                        class: className
-                    });
-                }
-                renderAdminStudentsTable();
-            }
-
-            closeStudentModal();
-            showNoticeModal("Siswa Disimpan", `Data siswa ${name} berhasil disimpan ke Database.`);
-        }
-
-        async function deleteStudent(id) {
-            const s = studentsMaster.find(item => item.id === id);
-            if (!s) return;
-
-            if (supabaseClient && !id.startsWith('std_')) {
-                const { error } = await supabaseClient.from('students').delete().eq('id', id);
-                if (error) {
-                    showNoticeModal("Gagal Menghapus", `Error Supabase: ${error.message}`);
-                    return;
-                }
-                await syncDataFromSupabase();
-            } else {
-                studentsMaster = studentsMaster.filter(item => item.id !== id);
-                renderAdminStudentsTable();
-            }
-            showNoticeModal("Siswa Dihapus", `Siswa ${s.name} telah dihapus dari Database.`);
-        }
-
-        // ADMIN EXAM MANAGEMENT (SUPABASE INTEGRATED)
         async function saveExamForm(e) {
             e.preventDefault();
             const editId = document.getElementById('editExamId').value;
@@ -2363,44 +2005,55 @@
             showNoticeModal("Ujian Dihapus", `Mapel ${ex.subject} telah dihapus.`);
         }
 
-        async function triggerRemoteSirenForStudent(studentId) {
-            const student = activeSessions.find(s => s.id === studentId);
-            if (student) {
-                student.status = 'CHEATING';
-                student.cheats++;
+        function toggleConfigModal() {
+            const modal = document.getElementById('configModal');
+            modal.classList.toggle('hidden');
 
-                if (supabaseClient && !studentId.startsWith('1') && !studentId.startsWith('2') && !studentId.startsWith('3')) {
-                    await supabaseClient.from('active_sessions').update({
-                        status: 'CHEATING',
-                        cheat_count: student.cheats,
-                        last_seen: new Date().toISOString()
-                    }).eq('id', studentId);
-                    await syncDataFromSupabase();
-                } else {
-                    cheatLogs.unshift({
-                        time: new Date().toLocaleTimeString('id-ID'),
-                        student: student.name,
-                        type: 'Sirene Peringatan Dipicu Oleh Pengawas Jarak Jauh',
-                        severity: 'HIGH'
-                    });
-                    renderProctorGrid();
-                    updateProctorStats();
-                    renderAuditFeed();
-                }
-                showNoticeModal("Sirene Dideploy", `Sirene peringatan dikirimkan ke perangkat ${student.name}.`);
-            }
+            document.getElementById('configSupabaseUrl').value = configSettings.supabaseUrl || '';
+            document.getElementById('configSupabaseKey').value = configSettings.supabaseKey || '';
         }
 
-        async function kickStudentSession(studentId) {
-            if (supabaseClient && !studentId.startsWith('1') && !studentId.startsWith('2') && !studentId.startsWith('3')) {
-                await supabaseClient.from('active_sessions').delete().eq('id', studentId);
-                await syncDataFromSupabase();
-            } else {
-                activeSessions = activeSessions.filter(s => s.id !== studentId);
-                renderProctorGrid();
-                updateProctorStats();
+        function saveConfigurations() {
+            const supabaseUrl = document.getElementById('configSupabaseUrl').value.trim();
+            const supabaseKey = document.getElementById('configSupabaseKey').value.trim();
+
+            configSettings.supabaseUrl = supabaseUrl;
+            configSettings.supabaseKey = supabaseKey;
+
+            initSupabase(supabaseUrl, supabaseKey);
+
+            toggleConfigModal();
+            showNoticeModal("Pengaturan Disimpan", "Mencoba menghubungkan kembali ke Supabase Database.");
+        }
+
+        // HELPERS
+        function showNoticeModal(title, message) {
+            const modal = document.getElementById('customNoticeModal');
+            const titleEl = document.getElementById('noticeTitle');
+            const msgEl = document.getElementById('noticeMessage');
+            if (titleEl) titleEl.innerText = title;
+            if (msgEl) msgEl.innerText = message;
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        function closeNoticeModal() {
+            const modal = document.getElementById('customNoticeModal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function initClock() {
+            function updateClock() {
+                const now = new Date();
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const seconds = String(now.getSeconds()).padStart(2, '0');
+                const clockEl = document.getElementById('realtimeClock');
+                if (clockEl) {
+                    clockEl.innerText = `${hours}:${minutes}:${seconds}`;
+                }
             }
-            showNoticeModal("Sesi Dikeluarkan", "Sesi siswa telah dikeluarkan dari ruang ujian.");
+            updateClock();
+            setInterval(updateClock, 1000);
         }
 
         // INITIAL LOAD
@@ -2408,7 +2061,6 @@
             initClock();
             populateStudentExamSelect();
             
-            // Auto initialize user's Supabase connection
             if (configSettings.supabaseUrl && configSettings.supabaseKey) {
                 initSupabase(configSettings.supabaseUrl, configSettings.supabaseKey);
             } else {
