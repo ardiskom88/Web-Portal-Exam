@@ -809,10 +809,40 @@
             supabaseKey: localStorage.getItem('EXAM_SHIELD_SUPABASE_KEY') || NEW_SUPABASE_KEY
         };
 
-        // Ensure current keys in localStorage match latest supplied credentials
-        if (!localStorage.getItem('EXAM_SHIELD_SUPABASE_URL')) {
-            localStorage.setItem('EXAM_SHIELD_SUPABASE_URL', NEW_SUPABASE_URL);
-            localStorage.setItem('EXAM_SHIELD_SUPABASE_KEY', NEW_SUPABASE_KEY);
+        async function loadConfigFromCSV() {
+            try {
+                const response = await fetch('config.csv');
+                if (response.ok) {
+                    const csvText = await response.text();
+                    const lines = csvText.split('\n');
+                    let fetchedUrl = '';
+                    let fetchedKey = '';
+
+                    lines.forEach(line => {
+                        const parts = line.split(',');
+                        if (parts.length >= 2) {
+                            const key = parts[0].trim();
+                            const val = parts.slice(1).join(',').trim();
+                            if (key === 'SUPABASE_URL') fetchedUrl = val;
+                            if (key === 'SUPABASE_ANON_KEY') fetchedKey = val;
+                        }
+                    });
+
+                    if (fetchedUrl && fetchedKey) {
+                        configSettings.supabaseUrl = fetchedUrl;
+                        configSettings.supabaseKey = fetchedKey;
+                        localStorage.setItem('EXAM_SHIELD_SUPABASE_URL', fetchedUrl);
+                        localStorage.setItem('EXAM_SHIELD_SUPABASE_KEY', fetchedKey);
+                        return { url: fetchedUrl, key: fetchedKey };
+                    }
+                }
+            } catch (err) {
+                console.warn("Membaca config.csv gagal, menggunakan fallback default/localStorage:", err);
+            }
+            return {
+                url: configSettings.supabaseUrl,
+                key: configSettings.supabaseKey
+            };
         }
 
         async function initSupabase(url, key) {
@@ -2083,12 +2113,14 @@
         }
 
         // INITIAL LOAD
-        window.onload = function() {
+        window.onload = async function() {
             initClock();
             populateStudentExamSelect();
             
-            if (configSettings.supabaseUrl && configSettings.supabaseKey) {
-                initSupabase(configSettings.supabaseUrl, configSettings.supabaseKey);
+            // Baca config.csv terlebih dahulu sebelum inisialisasi Supabase
+            const config = await loadConfigFromCSV();
+            if (config.url && config.key) {
+                initSupabase(config.url, config.key);
             } else {
                 renderProctorGrid();
                 updateProctorStats();
