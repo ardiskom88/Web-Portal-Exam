@@ -1181,15 +1181,24 @@
         }
 
         function handleSemuaClassesToggle(chkSemua) {
-            if (chkSemua.checked) {
-                document.querySelectorAll('.target-class-chk').forEach(chk => chk.checked = false);
-            }
+            const isChecked = chkSemua.checked;
+            document.querySelectorAll('.target-class-chk').forEach(chk => {
+                chk.checked = isChecked;
+            });
         }
 
         function handleIndividualClassToggle() {
             const chkSemua = document.getElementById('chkTargetSemua');
-            if (chkSemua && chkSemua.checked) {
-                chkSemua.checked = false;
+            const allCheckboxes = document.querySelectorAll('.target-class-chk');
+            const checkedCheckboxes = document.querySelectorAll('.target-class-chk:checked');
+            
+            // Jika semua kelas spesifik tercentang manual, aktifkan master "Semua Kelas"
+            if (chkSemua) {
+                if (allCheckboxes.length > 0 && allCheckboxes.length === checkedCheckboxes.length) {
+                    chkSemua.checked = true;
+                } else {
+                    chkSemua.checked = false;
+                }
             }
         }
 
