@@ -677,7 +677,10 @@
 
                 <div class="mt-6 flex justify-end gap-2 pt-2 border-t border-slate-800">
                     <button type="button" onclick="closeExamModal()" class="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl">Batal</button>
-                    <button type="submit" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl">Simpan Ujian</button>
+                    <button id="btnSaveExam" type="submit" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-xl flex items-center gap-2">
+                        <i class="ph-bold ph-floppy-disk"></i>
+                        <span id="btnSaveExamText">Simpan Ujian</span>
+                    </button>
                 </div>
             </form>
         </div>
@@ -2266,122 +2269,116 @@
 
         async function saveExamForm(e) {
             e.preventDefault();
-            const editId = document.getElementById('editExamId').value;
-            const subject = document.getElementById('modalExamSubject').value.trim();
-            const examTitle = document.getElementById('modalExamTitle').value.trim();
-            
-            let selectedClasses = [];
-            const chkSemua = document.getElementById('chkTargetSemua');
-            
-            if (chkSemua && chkSemua.checked) {
-                selectedClasses.push('Semua Kelas');
-            } else {
-                document.querySelectorAll('.target-class-chk:checked').forEach(chk => {
-                    selectedClasses.push(chk.value);
-                });
+            const saveBtn = document.getElementById('btnSaveExam');
+            const saveBtnText = document.getElementById('btnSaveExamText');
+            if (saveBtn) saveBtn.disabled = true;
+            if (saveBtnText) saveBtnText.innerText = "Menyimpan...";
 
-                const customVal = document.getElementById('modalExamTargetClassCustom').value.trim();
-                if (customVal) {
-                    customVal.split(',').forEach(c => {
-                        const trimmed = c.trim();
-                        if (trimmed && !selectedClasses.includes(trimmed)) {
-                            selectedClasses.push(trimmed);
-                        }
+            try {
+                const editId = document.getElementById('editExamId').value;
+                const subject = document.getElementById('modalExamSubject').value.trim();
+                const examTitle = document.getElementById('modalExamTitle').value.trim();
+                
+                let selectedClasses = [];
+                const chkSemua = document.getElementById('chkTargetSemua');
+                
+                if (chkSemua && chkSemua.checked) {
+                    selectedClasses.push('Semua Kelas');
+                } else {
+                    document.querySelectorAll('.target-class-chk:checked').forEach(chk => {
+                        selectedClasses.push(chk.value);
                     });
-                }
-            }
 
-            // Fallback default if nothing selected
-            if (selectedClasses.length === 0) {
-                selectedClasses.push('Semua Kelas');
-            }
-
-            const targetClass = selectedClasses.join(', ');
-
-            const session = document.getElementById('modalExamSession').value.trim();
-            const startTime = document.getElementById('modalExamStartTime').value.trim();
-            const duration = parseInt(document.getElementById('modalExamDuration').value) || 90;
-            const gformUrl = document.getElementById('modalExamGformUrl').value.trim();
-
-            if (supabaseClient) {
-                const examPayload = {
-                    subject: subject,
-                    exam_title: examTitle,
-                    target_class: targetClass,
-                    session_name: session,
-                    start_time: startTime,
-                    gform_embed_url: gformUrl,
-                    duration_minutes: duration
-                };
-
-                if (editId && !editId.startsWith('ex_')) {
-                    const { error } = await supabaseClient.from('exams').update(examPayload).eq('id', editId);
-
-                    if (error) {
-                        showNoticeModal("Gagal Menyimpan", `Error Supabase: ${error.message}`);
-                        return;
-                    }
-                } else {
-                    const { error } = await supabaseClient.from('exams').insert([{
-                        ...examPayload,
-                        is_active: true
-                    }]);
-
-                    if (error) {
-                        showNoticeModal("Gagal Menyimpan", `Error Supabase: ${error.message}`);
-                        return;
+                    const customVal = document.getElementById('modalExamTargetClassCustom').value.trim();
+                    if (customVal) {
+                        customVal.split(',').forEach(c => {
+                            const trimmed = c.trim();
+                            if (trimmed && !selectedClasses.includes(trimmed)) {
+                                selectedClasses.push(trimmed);
+                            }
+                        });
                     }
                 }
-                await syncDataFromSupabase();
-            } else {
-                if (editId) {
-                    const ex = examsMaster.find(item => item.id === editId);
-                    if (ex) {
-                        ex.subject = subject;
-                        ex.title = examTitle;
-                        ex.targetClass = targetClass;
-                        ex.session = session;
-                        ex.startTime = startTime;
-                        ex.duration = duration;
-                        ex.gformUrl = gformUrl;
-                    }
-                } else {
-                    examsMaster.unshift({
-                        id: 'ex_' + Date.now(),
+
+                // Fallback default jika tidak ada kelas yang dicentang
+                if (selectedClasses.length === 0) {
+                    selectedClasses.push('Semua Kelas');
+                }
+
+                const targetClass = selectedClasses.join(', ');
+
+                const session = document.getElementById('modalExamSession').value.trim();
+                const startTime = document.getElementById('modalExamStartTime').value.trim();
+                const duration = parseInt(document.getElementById('modalExamDuration').value) || 90;
+                const gformUrl = document.getElementById('modalExamGformUrl').value.trim();
+
+                if (supabaseClient) {
+                    const examPayload = {
                         subject: subject,
-                        title: examTitle,
-                        targetClass: targetClass,
-                        session: session,
-                        startTime: startTime,
-                        duration: duration,
-                        gformUrl: gformUrl,
-                        isActive: true
-                    });
+                        exam_title: examTitle,
+                        target_class: targetClass,
+                        session_name: session,
+                        start_time: startTime,
+                        gform_embed_url: gformUrl,
+                        duration_minutes: duration
+                    };
+
+                    if (editId && !editId.startsWith('ex_')) {
+                        const { error } = await supabaseClient.from('exams').update(examPayload).eq('id', editId);
+
+                        if (error) {
+                            showNoticeModal("Gagal Menyimpan", `Error Supabase: ${error.message}`);
+                            return;
+                        }
+                    } else {
+                        const { error } = await supabaseClient.from('exams').insert([{
+                            ...examPayload,
+                            is_active: true
+                        }]);
+
+                        if (error) {
+                            showNoticeModal("Gagal Menyimpan", `Error Supabase: ${error.message}`);
+                            return;
+                        }
+                    }
+                    await syncDataFromSupabase();
+                } else {
+                    if (editId) {
+                        const ex = examsMaster.find(item => item.id === editId);
+                        if (ex) {
+                            ex.subject = subject;
+                            ex.title = examTitle;
+                            ex.targetClass = targetClass;
+                            ex.session = session;
+                            ex.startTime = startTime;
+                            ex.duration = duration;
+                            ex.gformUrl = gformUrl;
+                        }
+                    } else {
+                        examsMaster.unshift({
+                            id: 'ex_' + Date.now(),
+                            subject: subject,
+                            title: examTitle,
+                            targetClass: targetClass,
+                            session: session,
+                            startTime: startTime,
+                            duration: duration,
+                            gformUrl: gformUrl,
+                            isActive: true
+                        });
+                    }
+                    renderAdminExamsList();
+                    populateStudentExamSelect();
                 }
-                renderAdminExamsList();
-                populateStudentExamSelect();
-            }
 
-            closeExamModal();
-            showNoticeModal("Ujian Disimpan", `Mata pelajaran ${subject} (${session} - ${startTime}) untuk target [${targetClass}] berhasil tersimpan.`);
-        }
-
-        async function toggleExamActive(id) {
-            const ex = examsMaster.find(item => item.id === id);
-            if (!ex) return;
-
-            const newStatus = !(ex.isActive !== false);
-            if (supabaseClient && !id.startsWith('ex_')) {
-                const { error } = await supabaseClient.from('exams').update({ is_active: newStatus }).eq('id', id);
-                if (error) {
-                    showNoticeModal("Gagal Mengubah Status", `Error Supabase: ${error.message}`);
-                    return;
-                }
-                await syncDataFromSupabase();
-            } else {
-                ex.isActive = newStatus;
-                renderAdminExamsList();
-                populateStudentExamSelect();
+                closeExamModal();
+                showNoticeModal("Ujian Disimpan", `Mata pelajaran ${subject} (${session} - ${startTime}) untuk target [${targetClass}] berhasil tersimpan.`);
+            } catch (err) {
+                console.error("Save exam error:", err);
+                showNoticeModal("Gagal Menyimpan", `Terjadi kesalahan: ${err.message || err}`);
+            } finally {
+                if (saveBtn) saveBtn.disabled = false;
+                if (saveBtnText) saveBtnText.innerText = "Simpan Ujian";
             }
         }
 
