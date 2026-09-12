@@ -613,22 +613,49 @@
                     <input type="text" id="modalExamTitle" required placeholder="Contoh: Ujian Akhir Semester Genap" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500">
                 </div>
                 
-                <!-- Target Class Combo Box Select -->
+                <!-- Target Class Multi-Select Checkbox Picker -->
                 <div>
-                    <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Target Pilihan Kelas Ujian</label>
-                    <select id="modalExamTargetClassSelect" onchange="handleTargetClassSelectChange()" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500 font-medium">
-                        <option value="Semua Kelas">Semua Kelas (Seluruh Tingkat)</option>
-                        <option value="Kelas X">Hanya Kelas X (Tingkat X)</option>
-                        <option value="Kelas XI">Hanya Kelas XI (Tingkat XI)</option>
-                        <option value="Kelas XII">Hanya Kelas XII (Tingkat XII)</option>
-                        <optgroup id="dynamicClassesOptGroup" label="-- Pilih Spesifik Kelas Dari Database --">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <label class="block font-semibold text-slate-300 uppercase tracking-wider">Target Pilihan Kelas Ujian (Bisa Pilih Banyak)</label>
+                        <div class="flex items-center gap-2 text-[11px]">
+                            <button type="button" onclick="selectAllTargetClasses(true)" class="text-cyan-400 hover:text-cyan-300 font-mono underline">Pilih Semua</button>
+                            <span class="text-slate-600">|</span>
+                            <button type="button" onclick="selectAllTargetClasses(false)" class="text-slate-400 hover:text-slate-300 font-mono underline">Reset</button>
+                        </div>
+                    </div>
+
+                    <!-- Quick Presets Badges -->
+                    <div class="flex flex-wrap gap-2 mb-2 text-xs">
+                        <label class="inline-flex items-center gap-1.5 bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800 cursor-pointer hover:border-cyan-500/50 transition-colors">
+                            <input type="checkbox" id="chkTargetSemua" onchange="handleSemuaClassesToggle(this)" class="rounded text-cyan-600 focus:ring-cyan-500 bg-slate-900 border-slate-700">
+                            <span class="text-white font-semibold">Semua Kelas</span>
+                        </label>
+                        <label class="inline-flex items-center gap-1.5 bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800 cursor-pointer hover:border-cyan-500/50 transition-colors">
+                            <input type="checkbox" value="Kelas X" class="target-class-chk rounded text-cyan-600 focus:ring-cyan-500 bg-slate-900 border-slate-700">
+                            <span class="text-slate-300">Tingkat X</span>
+                        </label>
+                        <label class="inline-flex items-center gap-1.5 bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800 cursor-pointer hover:border-cyan-500/50 transition-colors">
+                            <input type="checkbox" value="Kelas XI" class="target-class-chk rounded text-cyan-600 focus:ring-cyan-500 bg-slate-900 border-slate-700">
+                            <span class="text-slate-300">Tingkat XI</span>
+                        </label>
+                        <label class="inline-flex items-center gap-1.5 bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800 cursor-pointer hover:border-cyan-500/50 transition-colors">
+                            <input type="checkbox" value="Kelas XII" class="target-class-chk rounded text-cyan-600 focus:ring-cyan-500 bg-slate-900 border-slate-700">
+                            <span class="text-slate-300">Tingkat XII</span>
+                        </label>
+                    </div>
+
+                    <!-- Dynamic Individual Classes Checkbox Grid -->
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 max-h-36 overflow-y-auto space-y-2 mb-2">
+                        <p class="text-[10px] text-slate-500 uppercase font-mono tracking-wider mb-1">Pilih Spesifik Kelas dari Database Siswa:</p>
+                        <div id="dynamicClassesCheckboxes" class="grid grid-cols-2 sm:grid-cols-3 gap-2">
                             <!-- Populated dynamically from students master -->
-                        </optgroup>
-                        <option value="CUSTOM">-- Isikan Kelas Kustom Manual --</option>
-                    </select>
-                    
-                    <!-- Custom Manual Input (Hidden by default unless CUSTOM selected) -->
-                    <input type="text" id="modalExamTargetClassCustom" placeholder="Contoh: XII RPL 1, XII RPL 2" class="hidden mt-2 w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500 font-mono">
+                        </div>
+                    </div>
+
+                    <!-- Custom Extra Classes Input -->
+                    <div>
+                        <input type="text" id="modalExamTargetClassCustom" placeholder="Kelas Tambahan Lainnya (Opsional, pisahkan koma contoh: X Akuntansi, XII MM 1)" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-cyan-500 font-mono text-xs">
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -849,56 +876,53 @@
         function isClassMatching(targetClassRaw, studentClassRaw) {
             if (!targetClassRaw || !studentClassRaw) return false;
             
-            const target = targetClassRaw.trim();
             const student = studentClassRaw.trim();
-
-            const targetNorm = normalizeString(target);
             const studentNorm = normalizeString(student);
 
-            // 1. Target "Semua Kelas" / "Semua"
-            if (target === 'Semua Kelas' || target === 'Semua' || targetNorm === 'semuakelas' || targetNorm === 'semua') {
-                return true;
-            }
+            // Split multi-target comma-separated classes (e.g. "XII RPL 1, XII RPL 2, Kelas XI")
+            const targets = targetClassRaw.split(',').map(t => t.trim()).filter(Boolean);
+            
+            for (const target of targets) {
+                const targetNorm = normalizeString(target);
 
-            // 2. Exact Match (Case-insensitive & space-insensitive)
-            if (targetNorm === studentNorm) {
-                return true;
-            }
+                // 1. Target "Semua Kelas" / "Semua"
+                if (target === 'Semua Kelas' || target === 'Semua' || targetNorm === 'semuakelas' || targetNorm === 'semua') {
+                    return true;
+                }
 
-            // 3. Multi-class comma separated check (e.g., "XII RPL 1, XII RPL 2")
-            if (target.includes(',')) {
-                const targetList = target.split(',').map(t => normalizeString(t));
-                if (targetList.includes(studentNorm)) return true;
-            }
+                // 2. Exact Match (Case-insensitive & space-insensitive)
+                if (targetNorm === studentNorm) {
+                    return true;
+                }
 
-            // 4. Grade-level matching (e.g. "Kelas XII" matching "XII RPL 1", "12 RPL 1", "XII-TKJ-2")
-            // Check for Grade X (10)
-            if (target === 'Kelas X' || targetNorm === 'kelasx' || targetNorm === 'tingkatx' || targetNorm === 'x') {
-                if (studentNorm.startsWith('x') || studentNorm.startsWith('10') || studentNorm.includes('kelasx') || studentNorm.includes('10')) {
-                    // Exclude XI (11) and XII (12)
-                    if (!studentNorm.startsWith('xi') && !studentNorm.startsWith('11') && !studentNorm.startsWith('xii') && !studentNorm.startsWith('12')) {
+                // 3. Grade-level matching (e.g. "Kelas XII" matching "XII RPL 1", "12 RPL 1")
+                // Check for Grade X (10)
+                if (target === 'Kelas X' || targetNorm === 'kelasx' || targetNorm === 'tingkatx' || targetNorm === 'x') {
+                    if (studentNorm.startsWith('x') || studentNorm.startsWith('10') || studentNorm.includes('kelasx') || studentNorm.includes('10')) {
+                        if (!studentNorm.startsWith('xi') && !studentNorm.startsWith('11') && !studentNorm.startsWith('xii') && !studentNorm.startsWith('12')) {
+                            return true;
+                        }
+                    }
+                }
+
+                // Check for Grade XI (11)
+                if (target === 'Kelas XI' || targetNorm === 'kelasxi' || targetNorm === 'tingkatxi' || targetNorm === 'xi') {
+                    if ((studentNorm.startsWith('xi') && !studentNorm.startsWith('xii')) || studentNorm.startsWith('11') || studentNorm.includes('11')) {
                         return true;
                     }
                 }
-            }
 
-            // Check for Grade XI (11)
-            if (target === 'Kelas XI' || targetNorm === 'kelasxi' || targetNorm === 'tingkatxi' || targetNorm === 'xi') {
-                if ((studentNorm.startsWith('xi') && !studentNorm.startsWith('xii')) || studentNorm.startsWith('11') || studentNorm.includes('11')) {
+                // Check for Grade XII (12)
+                if (target === 'Kelas XII' || targetNorm === 'kelasxii' || targetNorm === 'tingkatxii' || targetNorm === 'xii') {
+                    if (studentNorm.startsWith('xii') || studentNorm.startsWith('12') || studentNorm.includes('12')) {
+                        return true;
+                    }
+                }
+
+                // 4. Partial Containment Check
+                if (studentNorm.length > 2 && (studentNorm.includes(targetNorm) || targetNorm.includes(studentNorm))) {
                     return true;
                 }
-            }
-
-            // Check for Grade XII (12)
-            if (target === 'Kelas XII' || targetNorm === 'kelasxii' || targetNorm === 'tingkatxii' || targetNorm === 'xii') {
-                if (studentNorm.startsWith('xii') || studentNorm.startsWith('12') || studentNorm.includes('12')) {
-                    return true;
-                }
-            }
-
-            // 5. Partial Containment Check
-            if (studentNorm.includes(targetNorm) || targetNorm.includes(studentNorm)) {
-                return true;
             }
 
             return false;
@@ -1081,7 +1105,7 @@
 
                 // Populate dynamic selectors based on fresh database content
                 populateStudentClassDropdown();
-                populateAdminTargetClassCombo();
+                populateAdminTargetClassCheckboxes();
 
                 // Refresh UI Views
                 renderProctorGrid();
@@ -1123,18 +1147,40 @@
             populateStudentExamSelect();
         }
 
-        function populateAdminTargetClassCombo() {
-            const optGroup = document.getElementById('dynamicClassesOptGroup');
-            if (!optGroup) return;
+        function populateAdminTargetClassCheckboxes() {
+            const container = document.getElementById('dynamicClassesCheckboxes');
+            if (!container) return;
 
-            optGroup.innerHTML = '';
+            container.innerHTML = '';
             const uniqueClasses = Array.from(new Set(studentsMaster.map(s => s.class))).filter(Boolean).sort();
 
+            if (uniqueClasses.length === 0) {
+                container.innerHTML = `<span class="text-slate-500 text-[11px] col-span-full">Belum ada data kelas di database siswa.</span>`;
+                return;
+            }
+
             uniqueClasses.forEach(cls => {
-                const opt = document.createElement('option');
-                opt.value = cls;
-                opt.textContent = `Khusus Kelas: ${cls}`;
-                optGroup.appendChild(opt);
+                container.innerHTML += `
+                    <label class="inline-flex items-center gap-1.5 text-xs text-slate-300 cursor-pointer hover:text-white transition-colors">
+                        <input type="checkbox" value="${cls}" class="target-class-chk rounded text-cyan-600 focus:ring-cyan-500 bg-slate-900 border-slate-700">
+                        <span class="truncate">${cls}</span>
+                    </label>
+                `;
+            });
+        }
+
+        function handleSemuaClassesToggle(chkSemua) {
+            if (chkSemua.checked) {
+                document.querySelectorAll('.target-class-chk').forEach(chk => chk.checked = false);
+            }
+        }
+
+        function selectAllTargetClasses(selectState) {
+            const chkSemua = document.getElementById('chkTargetSemua');
+            if (chkSemua) chkSemua.checked = false;
+
+            document.querySelectorAll('.target-class-chk').forEach(chk => {
+                chk.checked = selectState;
             });
         }
 
@@ -1192,19 +1238,6 @@
             filteredExams.forEach(e => {
                 select.innerHTML += `<option value="${e.id}">${e.subject} - ${e.session} (${e.startTime}) [Target: ${e.targetClass}]</option>`;
             });
-        }
-
-        function handleTargetClassSelectChange() {
-            const select = document.getElementById('modalExamTargetClassSelect');
-            const customInput = document.getElementById('modalExamTargetClassCustom');
-
-            if (select.value === 'CUSTOM') {
-                customInput.classList.remove('hidden');
-                customInput.required = true;
-            } else {
-                customInput.classList.add('hidden');
-                customInput.required = false;
-            }
         }
 
         // STUDENT LIVE SESSION HEARTBEAT
@@ -2141,7 +2174,13 @@
         function openExamModal(id = null) {
             document.getElementById('examModal').classList.remove('hidden');
             const title = document.getElementById('examModalTitle');
-            populateAdminTargetClassCombo();
+            populateAdminTargetClassCheckboxes();
+
+            // Reset checkboxes & custom input
+            const chkSemua = document.getElementById('chkTargetSemua');
+            if (chkSemua) chkSemua.checked = false;
+            document.querySelectorAll('.target-class-chk').forEach(chk => chk.checked = false);
+            document.getElementById('modalExamTargetClassCustom').value = '';
 
             if (id) {
                 const ex = examsMaster.find(item => item.id === id);
@@ -2151,26 +2190,27 @@
                 document.getElementById('modalExamSubject').value = ex.subject;
                 document.getElementById('modalExamTitle').value = ex.title;
 
-                const selectTarget = document.getElementById('modalExamTargetClassSelect');
-                const customInput = document.getElementById('modalExamTargetClassCustom');
                 const val = ex.targetClass || 'Semua Kelas';
+                const targetList = val.split(',').map(t => t.trim()).filter(Boolean);
+                const unmatched = [];
 
-                // Match with select option or switch to custom
-                let matched = false;
-                for (let i = 0; i < selectTarget.options.length; i++) {
-                    if (selectTarget.options[i].value === val) {
-                        selectTarget.selectedIndex = i;
-                        matched = true;
-                        break;
+                targetList.forEach(t => {
+                    if (t === 'Semua Kelas' || t === 'Semua') {
+                        if (chkSemua) chkSemua.checked = true;
+                    } else {
+                        let matched = false;
+                        document.querySelectorAll('.target-class-chk').forEach(chk => {
+                            if (chk.value.toLowerCase() === t.toLowerCase()) {
+                                chk.checked = true;
+                                matched = true;
+                            }
+                        });
+                        if (!matched) unmatched.push(t);
                     }
-                }
+                });
 
-                if (!matched) {
-                    selectTarget.value = 'CUSTOM';
-                    customInput.value = val;
-                    customInput.classList.remove('hidden');
-                } else {
-                    customInput.classList.add('hidden');
+                if (unmatched.length > 0) {
+                    document.getElementById('modalExamTargetClassCustom').value = unmatched.join(', ');
                 }
 
                 document.getElementById('modalExamSession').value = ex.session || 'Sesi 1';
@@ -2182,10 +2222,7 @@
                 document.getElementById('editExamId').value = '';
                 document.getElementById('modalExamSubject').value = '';
                 document.getElementById('modalExamTitle').value = '';
-                
-                const selectTarget = document.getElementById('modalExamTargetClassSelect');
-                selectTarget.value = 'Semua Kelas';
-                document.getElementById('modalExamTargetClassCustom').classList.add('hidden');
+                if (chkSemua) chkSemua.checked = true;
                 
                 document.getElementById('modalExamSession').value = 'Sesi 1';
                 document.getElementById('modalExamStartTime').value = '08:00 WIB';
@@ -2204,9 +2241,28 @@
             const subject = document.getElementById('modalExamSubject').value.trim();
             const examTitle = document.getElementById('modalExamTitle').value.trim();
             
-            const targetSelect = document.getElementById('modalExamTargetClassSelect').value;
-            const targetCustom = document.getElementById('modalExamTargetClassCustom').value.trim();
-            const targetClass = targetSelect === 'CUSTOM' ? (targetCustom || 'Semua Kelas') : targetSelect;
+            let selectedClasses = [];
+            const chkSemua = document.getElementById('chkTargetSemua');
+            
+            if (chkSemua && chkSemua.checked) {
+                selectedClasses.push('Semua Kelas');
+            } else {
+                document.querySelectorAll('.target-class-chk:checked').forEach(chk => {
+                    selectedClasses.push(chk.value);
+                });
+
+                const customVal = document.getElementById('modalExamTargetClassCustom').value.trim();
+                if (customVal) {
+                    customVal.split(',').forEach(c => {
+                        const trimmed = c.trim();
+                        if (trimmed && !selectedClasses.includes(trimmed)) {
+                            selectedClasses.push(trimmed);
+                        }
+                    });
+                }
+            }
+
+            const targetClass = selectedClasses.length > 0 ? selectedClasses.join(', ') : 'Semua Kelas';
 
             const session = document.getElementById('modalExamSession').value.trim();
             const startTime = document.getElementById('modalExamStartTime').value.trim();
@@ -2273,7 +2329,7 @@
             }
 
             closeExamModal();
-            showNoticeModal("Ujian Disimpan", `Mata pelajaran ${subject} (${session} - ${startTime}) untuk [${targetClass}] berhasil tersimpan.`);
+            showNoticeModal("Ujian Disimpan", `Mata pelajaran ${subject} (${session} - ${startTime}) untuk target [${targetClass}] berhasil tersimpan.`);
         }
 
         async function toggleExamActive(id) {
