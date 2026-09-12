@@ -630,18 +630,15 @@
                             <input type="checkbox" id="chkTargetSemua" onchange="handleSemuaClassesToggle(this)" class="rounded text-cyan-600 focus:ring-cyan-500 bg-slate-900 border-slate-700">
                             <span class="text-white font-semibold">Semua Kelas</span>
                         </label>
-                        <label class="inline-flex items-center gap-1.5 bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800 cursor-pointer hover:border-cyan-500/50 transition-colors">
-                            <input type="checkbox" value="Kelas X" class="target-class-chk rounded text-cyan-600 focus:ring-cyan-500 bg-slate-900 border-slate-700">
-                            <span class="text-slate-300">Tingkat X</span>
-                        </label>
-                        <label class="inline-flex items-center gap-1.5 bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800 cursor-pointer hover:border-cyan-500/50 transition-colors">
-                            <input type="checkbox" value="Kelas XI" class="target-class-chk rounded text-cyan-600 focus:ring-cyan-500 bg-slate-900 border-slate-700">
-                            <span class="text-slate-300">Tingkat XI</span>
-                        </label>
-                        <label class="inline-flex items-center gap-1.5 bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800 cursor-pointer hover:border-cyan-500/50 transition-colors">
-                            <input type="checkbox" value="Kelas XII" class="target-class-chk rounded text-cyan-600 focus:ring-cyan-500 bg-slate-900 border-slate-700">
-                            <span class="text-slate-300">Tingkat XII</span>
-                        </label>
+                        <button type="button" onclick="selectGradePreset('X')" class="px-2.5 py-1.5 bg-slate-950 hover:bg-slate-800 text-slate-300 hover:text-white rounded-lg border border-slate-800 transition-colors">
+                            + Tingkat X
+                        </button>
+                        <button type="button" onclick="selectGradePreset('XI')" class="px-2.5 py-1.5 bg-slate-950 hover:bg-slate-800 text-slate-300 hover:text-white rounded-lg border border-slate-800 transition-colors">
+                            + Tingkat XI
+                        </button>
+                        <button type="button" onclick="selectGradePreset('XII')" class="px-2.5 py-1.5 bg-slate-950 hover:bg-slate-800 text-slate-300 hover:text-white rounded-lg border border-slate-800 transition-colors">
+                            + Tingkat XII
+                        </button>
                     </div>
 
                     <!-- Dynamic Individual Classes Checkbox Grid -->
@@ -1162,7 +1159,7 @@
             uniqueClasses.forEach(cls => {
                 container.innerHTML += `
                     <label class="inline-flex items-center gap-1.5 text-xs text-slate-300 cursor-pointer hover:text-white transition-colors">
-                        <input type="checkbox" value="${cls}" class="target-class-chk rounded text-cyan-600 focus:ring-cyan-500 bg-slate-900 border-slate-700">
+                        <input type="checkbox" value="${cls}" onchange="handleIndividualClassToggle()" class="target-class-chk rounded text-cyan-600 focus:ring-cyan-500 bg-slate-900 border-slate-700">
                         <span class="truncate">${cls}</span>
                     </label>
                 `;
@@ -1173,6 +1170,31 @@
             if (chkSemua.checked) {
                 document.querySelectorAll('.target-class-chk').forEach(chk => chk.checked = false);
             }
+        }
+
+        function handleIndividualClassToggle() {
+            const chkSemua = document.getElementById('chkTargetSemua');
+            if (chkSemua && chkSemua.checked) {
+                chkSemua.checked = false;
+            }
+        }
+
+        function selectGradePreset(gradePrefix) {
+            const chkSemua = document.getElementById('chkTargetSemua');
+            if (chkSemua) chkSemua.checked = false;
+
+            document.querySelectorAll('.target-class-chk').forEach(chk => {
+                const valNorm = normalizeString(chk.value);
+                const prefixNorm = normalizeString(gradePrefix);
+                
+                if (gradePrefix === 'X' && (valNorm.startsWith('x') || valNorm.startsWith('10')) && !valNorm.startsWith('xi') && !valNorm.startsWith('xii')) {
+                    chk.checked = true;
+                } else if (gradePrefix === 'XI' && ((valNorm.startsWith('xi') && !valNorm.startsWith('xii')) || valNorm.startsWith('11'))) {
+                    chk.checked = true;
+                } else if (gradePrefix === 'XII' && (valNorm.startsWith('xii') || valNorm.startsWith('12'))) {
+                    chk.checked = true;
+                }
+            });
         }
 
         function selectAllTargetClasses(selectState) {
@@ -2231,10 +2253,6 @@
             }
         }
 
-        function closeExamModal() {
-            document.getElementById('examModal').classList.add('hidden');
-        }
-
         async function saveExamForm(e) {
             e.preventDefault();
             const editId = document.getElementById('editExamId').value;
@@ -2262,7 +2280,12 @@
                 }
             }
 
-            const targetClass = selectedClasses.length > 0 ? selectedClasses.join(', ') : 'Semua Kelas';
+            // Fallback default if nothing selected
+            if (selectedClasses.length === 0) {
+                selectedClasses.push('Semua Kelas');
+            }
+
+            const targetClass = selectedClasses.join(', ');
 
             const session = document.getElementById('modalExamSession').value.trim();
             const startTime = document.getElementById('modalExamStartTime').value.trim();
