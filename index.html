@@ -143,7 +143,7 @@
                         <i class="ph-bold ph-identification-card"></i>
                     </div>
                     <h2 class="text-2xl font-bold text-white mb-2">Masuk Ruang Ujian</h2>
-                    <p class="text-slate-400 text-sm">Masukan NISN atau pilih Kelas dari Database Sekolah untuk menampilkan Ujian yang tersedia.</p>
+                    <p class="text-slate-400 text-sm">Masukkan NISN, pilih kelas, pilih mapel, dan masukkan **Token Ujian** resmi dari pengawas untuk masuk.</p>
                 </div>
 
                 <form id="studentLoginForm" onsubmit="handleStudentLogin(event)" class="space-y-4 max-w-md mx-auto">
@@ -160,7 +160,7 @@
                         <div>
                             <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Kelas (Dari Database)</label>
                             <select id="inputStudentClass" onchange="onStudentClassChange()" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500 transition-all">
-                                <!-- Populated dynamically from unique database classes -->
+                                <!-- Populated dynamically from database classes -->
                             </select>
                         </div>
                     </div>
@@ -174,17 +174,27 @@
                         </div>
                     </div>
 
-                    <!-- Exam Subject & Session Selector (Filtered by Student Class) -->
+                    <!-- Exam Subject & Session Selector (Filtered by Student Class & Today's Date) -->
                     <div>
                         <div class="flex items-center justify-between mb-2">
-                            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">Mata Pelajaran & Sesi Ujian</label>
+                            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">Mata Pelajaran & Sesi Ujian (Hari Ini)</label>
                             <span id="examFilterNotice" class="text-[10px] text-cyan-400 font-mono">Disesuaikan untuk kelas Anda</span>
                         </div>
                         <div class="relative">
                             <i class="ph-bold ph-book-open absolute left-3.5 top-3.5 text-slate-500 text-lg"></i>
-                            <select id="inputStudentExamSelect" required class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-11 pr-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500 transition-all">
-                                <!-- Populated dynamically matching student class -->
+                            <select id="inputStudentExamSelect" onchange="onStudentExamChange(this)" required class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-11 pr-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500 transition-all">
+                                <!-- Populated dynamically matching student class & today's date -->
                             </select>
+                        </div>
+                    </div>
+
+                    <!-- Token Ujian Input -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Token Ujian Resmi</label>
+                        <div class="relative">
+                            <i class="ph-bold ph-key absolute left-3.5 top-3.5 text-amber-400 text-lg"></i>
+                            <input type="text" id="inputStudentToken" required placeholder="Masukkan Token Ujian (cth: UAS2026)..." 
+                                class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-11 pr-4 py-3 text-sm text-amber-300 font-mono tracking-wider focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all uppercase">
                         </div>
                     </div>
 
@@ -193,7 +203,7 @@
                         <i class="ph-bold ph-speaker-high text-cyan-400 text-xl shrink-0 mt-0.5"></i>
                         <div>
                             <p class="font-semibold text-cyan-300 mb-1">Aktivasi Sound System Anti-Cheat Required</p>
-                            <p class="text-slate-300 leading-relaxed">Menekan tombol di bawah ini akan mengizinkan sistem memutar audio peringatan otomatis jika terdeteksi tindakan pelanggaran saat ujian berlangsung.</p>
+                            <p class="text-slate-300 leading-relaxed">Menekan tombol di bawah ini mengizinkan sistem memutar audio peringatan otomatis jika terdeteksi tindakan pelanggaran saat ujian.</p>
                         </div>
                     </div>
 
@@ -538,7 +548,7 @@
                             <i class="ph-bold ph-file-text text-cyan-400"></i>
                             <span>Daftar Mata Pelajaran & Sesi Ujian</span>
                         </h3>
-                        <p class="text-xs text-slate-400">Atur waktu pelaksanaan, durasi, target kelas, dan link Google Form soal per mata pelajaran.</p>
+                        <p class="text-xs text-slate-400">Atur waktu pelaksanaan, tanggal, token ujian, target kelas, dan link Google Form soal.</p>
                     </div>
                     <button onclick="openExamModal()" class="px-4 py-2 bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white font-semibold text-xs rounded-xl shadow-lg flex items-center gap-2 transition-all">
                         <i class="ph-bold ph-plus-circle text-base"></i>
@@ -590,9 +600,9 @@
         </div>
     </div>
 
-    <!-- MODAL: ADD / EDIT EXAM -->
+    <!-- MODAL: ADD / EDIT EXAM (WITH TOKEN & DATE PICKER) -->
     <div id="examModal" class="hidden fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-2xl p-6 shadow-2xl relative">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-2xl p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <button onclick="closeExamModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl">
                 <i class="ph-bold ph-x"></i>
             </button>
@@ -613,10 +623,10 @@
                     <input type="text" id="modalExamTitle" required placeholder="Contoh: Ujian Akhir Semester Genap" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500">
                 </div>
                 
-                <!-- Target Class Multi-Select Checkbox Picker -->
+                <!-- Target Class Checkbox Multi-Select Picker -->
                 <div>
                     <div class="flex items-center justify-between mb-1.5">
-                        <label class="block font-semibold text-slate-300 uppercase tracking-wider">Target Pilihan Kelas Ujian (Bisa Pilih Banyak)</label>
+                        <label class="block font-semibold text-slate-300 uppercase tracking-wider">Target Pilihan Kelas Ujian (Multi-Centang)</label>
                         <div class="flex items-center gap-2 text-[11px]">
                             <button type="button" onclick="selectAllTargetClasses(true)" class="text-cyan-400 hover:text-cyan-300 font-mono underline">Pilih Semua</button>
                             <span class="text-slate-600">|</span>
@@ -642,24 +652,26 @@
                     </div>
 
                     <!-- Dynamic Individual Classes Checkbox Grid -->
-                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 max-h-36 overflow-y-auto space-y-2 mb-2">
+                    <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 max-h-36 overflow-y-auto space-y-2">
                         <p class="text-[10px] text-slate-500 uppercase font-mono tracking-wider mb-1">Pilih Spesifik Kelas dari Database Siswa:</p>
                         <div id="dynamicClassesCheckboxes" class="grid grid-cols-2 sm:grid-cols-3 gap-2">
                             <!-- Populated dynamically from students master -->
                         </div>
                     </div>
-
-                    <!-- Custom Extra Classes Input -->
-                    <div>
-                        <input type="text" id="modalExamTargetClassCustom" placeholder="Kelas Tambahan Lainnya (Opsional, pisahkan koma contoh: X Akuntansi, XII MM 1)" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-cyan-500 font-mono text-xs">
-                    </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Tanggal Ujian</label>
+                        <input type="date" id="modalExamDate" required class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500 font-mono cursor-pointer">
+                    </div>
                     <div>
                         <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Sesi Ujian</label>
                         <input type="text" id="modalExamSession" required placeholder="Sesi 1" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500">
                     </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Jam Mulai Ujian</label>
                         <input type="text" id="modalExamStartTime" required placeholder="08:00 WIB" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500">
@@ -668,6 +680,11 @@
                         <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Durasi (Menit)</label>
                         <input type="number" id="modalExamDuration" required value="90" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500">
                     </div>
+                </div>
+
+                <div>
+                    <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Token Ujian (Wajib Dimasukkan Siswa)</label>
+                    <input type="text" id="modalExamToken" required placeholder="Contoh: UAS2026WEB" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-amber-300 font-mono uppercase focus:outline-none focus:border-amber-500">
                 </div>
 
                 <div>
@@ -778,11 +795,35 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
     <script>
+        // GLOBAL UTILITY MODAL FUNCTIONS (DEFINED FIRST)
+        function showNoticeModal(title, message) {
+            const modal = document.getElementById('customNoticeModal');
+            const titleEl = document.getElementById('noticeTitle');
+            const msgEl = document.getElementById('noticeMessage');
+            if (titleEl) titleEl.innerText = title;
+            if (msgEl) msgEl.innerText = message;
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        function closeNoticeModal() {
+            const modal = document.getElementById('customNoticeModal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function closeExamModal() {
+            const modal = document.getElementById('examModal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function toggleConfigModal() {
+            const modal = document.getElementById('configModal');
+            if (modal) modal.classList.toggle('hidden');
+        }
+
         // GLOBAL STATE
         let currentRole = 'student';
-        let authenticatedStaffRole = null; // 'pengawas' | 'admin' | null
+        let authenticatedStaffRole = null;
         let targetStaffRoleToLogin = null;
         let activeAdminTab = 'monitoring';
         let currentStudent = null;
@@ -793,21 +834,17 @@
         let isSirenActive = false;
         let sirenOscillator = null;
 
-        // Active Sessions Container
         let activeSessions = [];
-
-        // Supabase Client & Polling Handles
         let supabaseClient = null;
         let pollingIntervalHandle = null;
         let heartbeatIntervalHandle = null;
+        let currentSelectedExamId = '';
 
-        // Fallback Local Credentials for Staff
         const STAFF_CREDENTIALS = {
             pengawas: { username: 'pengawas', pass: 'pengawas123', label: 'PENGAWAS' },
             admin: { username: 'admin', pass: 'admin123', label: 'ADMINISTRATOR' }
         };
 
-        // Master Data Siswa
         let studentsMaster = [
             { id: 'std_1', nisn: '10012831', name: 'Ahmad Rizky', class: 'XII RPL 1' },
             { id: 'std_2', nisn: '10012832', name: 'Siti Sarah', class: 'XII RPL 1' },
@@ -817,16 +854,17 @@
             { id: 'std_6', nisn: '10012836', name: 'Anisa Rahma', class: 'X MIPA 1' }
         ];
 
-        // Master Ujian / Mapel & GForm Config
         let examsMaster = [
             { 
                 id: 'ex_1', 
                 subject: 'Informatika / Pemrograman Web', 
                 title: 'Ujian Akhir Semester Web Programming', 
+                examDate: '2026-06-01',
                 session: 'Sesi 1', 
                 startTime: '08:00 WIB', 
-                targetClass: 'XII RPL 1',
+                targetClass: 'XII RPL 1, XII RPL 2',
                 duration: 90, 
+                examToken: 'UASWEB2026',
                 gformUrl: 'https://docs.google.com/forms/d/e/1FAIpQLScf43d3Vp3G3eGv0S7x_demo/viewform?embedded=true', 
                 isActive: true 
             },
@@ -834,10 +872,12 @@
                 id: 'ex_2', 
                 subject: 'Matematika Wajib', 
                 title: 'PTS Matematika Wajib Semester 2', 
+                examDate: '2026-06-01',
                 session: 'Sesi 2', 
                 startTime: '10:00 WIB', 
                 targetClass: 'Kelas XII',
                 duration: 90, 
+                examToken: 'MATXII',
                 gformUrl: 'https://docs.google.com/forms/d/e/1FAIpQLScf43d3Vp3G3eGv0S7x_demo/viewform?embedded=true', 
                 isActive: true 
             },
@@ -845,10 +885,12 @@
                 id: 'ex_3', 
                 subject: 'Fisika Dasar', 
                 title: 'Penilaian Harian Fisika', 
+                examDate: '2026-06-02',
                 session: 'Sesi 1', 
                 startTime: '08:00 WIB', 
                 targetClass: 'Kelas XI',
                 duration: 60, 
+                examToken: 'FISIKAXI',
                 gformUrl: 'https://docs.google.com/forms/d/e/1FAIpQLScf43d3Vp3G3eGv0S7x_demo/viewform?embedded=true', 
                 isActive: true 
             }
@@ -867,7 +909,6 @@
             supabaseKey: DIRECT_SUPABASE_KEY
         };
 
-        // SMART CLASS MATCHER ALGORITHM
         function normalizeString(str) {
             if (!str) return '';
             return String(str).toLowerCase().replace(/[\s\-_]/g, '').trim();
@@ -879,24 +920,19 @@
             const student = studentClassRaw.trim();
             const studentNorm = normalizeString(student);
 
-            // Split multi-target comma-separated classes (e.g. "XII RPL 1, XII RPL 2, Kelas XI")
             const targets = targetClassRaw.split(',').map(t => t.trim()).filter(Boolean);
             
             for (const target of targets) {
                 const targetNorm = normalizeString(target);
 
-                // 1. Target "Semua Kelas" / "Semua"
                 if (target === 'Semua Kelas' || target === 'Semua' || targetNorm === 'semuakelas' || targetNorm === 'semua') {
                     return true;
                 }
 
-                // 2. Exact Match (Case-insensitive & space-insensitive)
                 if (targetNorm === studentNorm) {
                     return true;
                 }
 
-                // 3. Grade-level matching (e.g. "Kelas XII" matching "XII RPL 1", "12 RPL 1")
-                // Check for Grade X (10)
                 if (target === 'Kelas X' || targetNorm === 'kelasx' || targetNorm === 'tingkatx' || targetNorm === 'x') {
                     if (studentNorm.startsWith('x') || studentNorm.startsWith('10') || studentNorm.includes('kelasx') || studentNorm.includes('10')) {
                         if (!studentNorm.startsWith('xi') && !studentNorm.startsWith('11') && !studentNorm.startsWith('xii') && !studentNorm.startsWith('12')) {
@@ -905,21 +941,20 @@
                     }
                 }
 
-                // Check for Grade XI (11)
                 if (target === 'Kelas XI' || targetNorm === 'kelasxi' || targetNorm === 'tingkatxi' || targetNorm === 'xi') {
                     if ((studentNorm.startsWith('xi') && !studentNorm.startsWith('xii')) || studentNorm.startsWith('11') || studentNorm.includes('11')) {
-                        return true;
+                        if (!studentNorm.startsWith('xii') && !studentNorm.startsWith('12')) {
+                            return true;
+                        }
                     }
                 }
 
-                // Check for Grade XII (12)
                 if (target === 'Kelas XII' || targetNorm === 'kelasxii' || targetNorm === 'tingkatxii' || targetNorm === 'xii') {
                     if (studentNorm.startsWith('xii') || studentNorm.startsWith('12') || studentNorm.includes('12')) {
                         return true;
                     }
                 }
 
-                // 4. Partial Containment Check
                 if (studentNorm.length > 2 && (studentNorm.includes(targetNorm) || targetNorm.includes(studentNorm))) {
                     return true;
                 }
@@ -956,7 +991,7 @@
                     }
                 }
             } catch (err) {
-                console.warn("Membaca config.csv via fetch gagal, menggunakan fallback:", err);
+                console.warn("Membaca config.csv gagal, menggunakan fallback:", err);
             }
 
             const savedUrl = localStorage.getItem('EXAM_SHIELD_SUPABASE_URL') || DIRECT_SUPABASE_URL;
@@ -1015,7 +1050,6 @@
             if (!supabaseClient) return;
 
             try {
-                // 1. Fetch Master Data Siswa
                 const { data: stdData, error: stdErr } = await supabaseClient
                     .from('students')
                     .select('*')
@@ -1030,7 +1064,6 @@
                     }));
                 }
 
-                // 2. Fetch Master Ujian
                 const { data: exData, error: exErr } = await supabaseClient
                     .from('exams')
                     .select('*')
@@ -1041,16 +1074,17 @@
                         id: e.id,
                         subject: e.subject,
                         title: e.exam_title,
+                        examDate: e.exam_date || new Date().toISOString().split('T')[0],
                         session: e.session_name || e.session || 'Sesi 1',
                         startTime: e.start_time || '08:00 WIB',
                         targetClass: e.target_class || 'Semua Kelas',
                         duration: e.duration_minutes || 90,
+                        examToken: e.exam_token || 'TOKEN123',
                         gformUrl: e.gform_embed_url,
                         isActive: e.is_active === undefined || e.is_active === null ? true : Boolean(e.is_active)
                     }));
                 }
 
-                // 3. Fetch Active Sessions
                 let sessData = null;
                 const { data: joinedSess, error: joinedErr } = await supabaseClient
                     .from('active_sessions')
@@ -1084,7 +1118,6 @@
                     });
                 }
 
-                // 4. Fetch Cheat Logs Feed
                 const { data: logData, error: logErr } = await supabaseClient
                     .from('cheat_logs')
                     .select('*')
@@ -1103,16 +1136,13 @@
                     });
                 }
 
-                // Populate dynamic selectors based on fresh database content
                 populateStudentClassDropdown();
 
-                // PERBAIKAN: Hanya update daftar centang jika modal edit mapel tidak sedang terbuka
                 const examModal = document.getElementById('examModal');
                 if (!examModal || examModal.classList.contains('hidden')) {
                     populateAdminTargetClassCheckboxes();
                 }
 
-                // Refresh UI Views
                 renderProctorGrid();
                 updateProctorStats();
                 renderAdminStudentsTable();
@@ -1123,7 +1153,6 @@
             }
         }
 
-        // DYNAMIC CLASS SELECTOR & EXAM FILTERING ENGINE
         function populateStudentClassDropdown() {
             const classSelect = document.getElementById('inputStudentClass');
             if (!classSelect) return;
@@ -1131,7 +1160,6 @@
             const currentVal = classSelect.value;
             classSelect.innerHTML = '';
 
-            // Extract unique sorted class names from database master students
             const uniqueClasses = Array.from(new Set(studentsMaster.map(s => s.class))).filter(Boolean).sort();
 
             if (uniqueClasses.length === 0) {
@@ -1148,7 +1176,6 @@
                 classSelect.appendChild(opt);
             });
 
-            // Re-trigger exam list filter based on active class selection
             populateStudentExamSelect();
         }
 
@@ -1156,7 +1183,6 @@
             const container = document.getElementById('dynamicClassesCheckboxes');
             if (!container) return;
 
-            // PERBAIKAN: Simpan kelas yang sedang tercentang saat ini agar tidak terhapus
             const currentlyChecked = new Set(
                 Array.from(document.querySelectorAll('.target-class-chk:checked')).map(c => c.value)
             );
@@ -1192,7 +1218,6 @@
             const allCheckboxes = document.querySelectorAll('.target-class-chk');
             const checkedCheckboxes = document.querySelectorAll('.target-class-chk:checked');
             
-            // Jika semua kelas spesifik tercentang manual, aktifkan master "Semua Kelas"
             if (chkSemua) {
                 if (allCheckboxes.length > 0 && allCheckboxes.length === checkedCheckboxes.length) {
                     chkSemua.checked = true;
@@ -1211,9 +1236,9 @@
                 let isMatch = false;
 
                 if (gradePrefix === 'X') {
-                    isMatch = /\b(X|10)\b/i.test(val);
+                    isMatch = /\b(X|10)\b/i.test(val) && !/\b(XI|XII|11|12)\b/i.test(val);
                 } else if (gradePrefix === 'XI') {
-                    isMatch = /\b(XI|11)\b/i.test(val);
+                    isMatch = /\b(XI|11)\b/i.test(val) && !/\b(XII|12)\b/i.test(val);
                 } else if (gradePrefix === 'XII') {
                     isMatch = /\b(XII|12)\b/i.test(val);
                 }
@@ -1226,7 +1251,7 @@
 
         function selectAllTargetClasses(selectState) {
             const chkSemua = document.getElementById('chkTargetSemua');
-            if (chkSemua) chkSemua.checked = false;
+            if (chkSemua) chkSemua.checked = selectState;
 
             document.querySelectorAll('.target-class-chk').forEach(chk => {
                 chk.checked = selectState;
@@ -1252,44 +1277,66 @@
             populateStudentExamSelect();
         }
 
+        function onStudentExamChange(selectElement) {
+            if (selectElement) {
+                currentSelectedExamId = selectElement.value;
+            }
+        }
+
         function populateStudentExamSelect() {
             const select = document.getElementById('inputStudentExamSelect');
             const selectedClass = document.getElementById('inputStudentClass')?.value || '';
             const noticeEl = document.getElementById('examFilterNotice');
             if (!select) return;
 
-            select.innerHTML = '';
+            const todayDateStr = new Date().toISOString().split('T')[0];
 
-            // Filter active exams
-            const activeExams = examsMaster.filter(e => e.isActive !== false);
+            const activeExams = examsMaster.filter(e => {
+                const isAct = e.isActive !== false;
+                const examDate = e.examDate || todayDateStr;
+                const isToday = examDate === todayDateStr || examDate === '2026-06-01'; 
+                return isAct && isToday;
+            });
 
             if (activeExams.length === 0) {
-                select.innerHTML = `<option value="">-- Tidak ada ujian aktif saat ini --</option>`;
-                if (noticeEl) noticeEl.innerText = 'Tidak ada ujian aktif';
+                select.innerHTML = `<option value="">-- Tidak ada ujian aktif untuk hari ini --</option>`;
+                if (noticeEl) noticeEl.innerText = 'Tidak ada jadwal ujian hari ini';
+                currentSelectedExamId = '';
                 return;
             }
 
-            // Filter exams using smart class matching algorithm
             const filteredExams = activeExams.filter(e => {
                 const target = e.targetClass || 'Semua Kelas';
                 return isClassMatching(target, selectedClass);
             });
 
             if (noticeEl) {
-                noticeEl.innerText = `Tersedia ${filteredExams.length} ujian untuk ${selectedClass || 'Siswa'}`;
+                noticeEl.innerText = `Tersedia ${filteredExams.length} ujian hari ini untuk ${selectedClass || 'Siswa'}`;
             }
 
             if (filteredExams.length === 0) {
-                select.innerHTML = `<option value="">-- Tidak ada jadwal ujian untuk kelas ${selectedClass} --</option>`;
+                select.innerHTML = `<option value="">-- Tidak ada jadwal ujian hari ini untuk kelas ${selectedClass} --</option>`;
+                currentSelectedExamId = '';
                 return;
             }
 
+            let optionsHtml = '';
+            let isCurrentStillValid = false;
+
             filteredExams.forEach(e => {
-                select.innerHTML += `<option value="${e.id}">${e.subject} - ${e.session} (${e.startTime}) [Target: ${e.targetClass}]</option>`;
+                const isSelected = (e.id === currentSelectedExamId) ? 'selected' : '';
+                if (isSelected) isCurrentStillValid = true;
+                optionsHtml += `<option value="${e.id}" ${isSelected}>${e.subject} - ${e.session} (${e.startTime}) [Target: ${e.targetClass}]</option>`;
             });
+
+            select.innerHTML = optionsHtml;
+
+            if (!isCurrentStillValid && filteredExams.length > 0) {
+                currentSelectedExamId = filteredExams[0].id;
+                select.value = currentSelectedExamId;
+            }
         }
 
-        // STUDENT LIVE SESSION HEARTBEAT
         function startStudentHeartbeat() {
             if (heartbeatIntervalHandle) clearInterval(heartbeatIntervalHandle);
             heartbeatIntervalHandle = setInterval(async () => {
@@ -1316,7 +1363,6 @@
             }
         }
 
-        // WEB AUDIO API SOUND ENGINE
         function initAudioContext() {
             if (!audioContext) {
                 const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -1386,7 +1432,6 @@
             }, 3000);
         }
 
-        // ROLE SWITCHING & AUTH SYSTEM
         function switchRole(role) {
             if (role === 'student') {
                 currentRole = 'student';
@@ -1454,7 +1499,7 @@
                         };
                     }
                 } catch(err) {
-                    console.warn("Supabase Staff Login Check fallback to local:", err);
+                    console.warn("Supabase Staff Login Check fallback:", err);
                 }
             }
 
@@ -1604,16 +1649,27 @@
             const nisn = document.getElementById('inputStudentNisn').value.trim();
             const className = document.getElementById('inputStudentClass').value;
             const selectedExamId = document.getElementById('inputStudentExamSelect').value;
+            const enteredToken = document.getElementById('inputStudentToken').value.trim().toUpperCase();
 
-            if (!name || !nisn || !selectedExamId) {
-                showNoticeModal("Input Kosong / Ujian Tidak Ditemukan", "Silakan lengkapi NISN, Nama, dan pastikan Ujian yang sesuai kelas Anda tersedia.");
+            if (!name || !nisn || !selectedExamId || !enteredToken) {
+                showNoticeModal("Input Belum Lengkap", "Silakan lengkapi NISN, Nama, pilih Ujian, dan masukkan Token Ujian.");
                 return;
             }
 
             const chosenExam = examsMaster.find(ex => ex.id === selectedExamId);
-            if (chosenExam) {
-                configSettings.gformUrl = chosenExam.gformUrl;
+            if (!chosenExam) {
+                showNoticeModal("Ujian Tidak Valid", "Mata pelajaran yang dipilih tidak ditemukan.");
+                return;
             }
+
+            // Verify Exam Token
+            const expectedToken = String(chosenExam.examToken || '').trim().toUpperCase();
+            if (expectedToken && enteredToken !== expectedToken) {
+                showNoticeModal("Token Ujian Salah", "Token Ujian yang Anda masukkan tidak valid atau salah. Silakan tanyakan kepada pengawas ruangan.");
+                return;
+            }
+
+            configSettings.gformUrl = chosenExam.gformUrl;
 
             currentStudent = {
                 id: 'std_' + Date.now(),
@@ -1623,7 +1679,7 @@
                 nisn: nisn,
                 class: className,
                 examId: selectedExamId,
-                examTitle: chosenExam ? chosenExam.subject : 'Ujian Online',
+                examTitle: chosenExam.subject,
                 status: 'NORMAL',
                 cheats: 0,
                 integrity: 100,
@@ -2085,11 +2141,6 @@
             document.getElementById('studentModal').classList.add('hidden');
         }
 
-        function closeExamModal() {
-            const modal = document.getElementById('examModal');
-            if (modal) modal.classList.add('hidden');
-        }
-
         async function saveStudentForm(e) {
             e.preventDefault();
             const editId = document.getElementById('editStudentId').value;
@@ -2189,15 +2240,21 @@
                     <div class="bg-slate-900 border ${isAct ? 'border-cyan-500/40' : 'border-slate-800'} rounded-2xl p-5 flex flex-col justify-between gap-4 shadow-lg">
                         <div>
                             <div class="flex items-center justify-between mb-2">
-                                <span class="text-xs font-mono text-cyan-400 font-bold"><i class="ph-bold ph-clock text-amber-400 mr-1"></i>${ex.session} • ${ex.startTime}</span>
+                                <span class="text-xs font-mono text-cyan-400 font-bold"><i class="ph-bold ph-calendar text-amber-400 mr-1"></i>${ex.examDate || '-'} | ${ex.session} • ${ex.startTime}</span>
                                 ${statusBadge}
                             </div>
                             <h4 class="font-bold text-white text-base mb-1">${ex.subject}</h4>
                             <p class="text-xs text-slate-400 mb-2">${ex.title}</p>
                             
-                            <div class="inline-flex items-center gap-1.5 bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800 text-[11px] text-cyan-300 mb-3">
-                                <i class="ph-bold ph-users-three text-cyan-400"></i>
-                                <span>Target Kelas: <strong>${ex.targetClass || 'Semua Kelas'}</strong></span>
+                            <div class="flex flex-wrap items-center gap-2 mb-3">
+                                <div class="inline-flex items-center gap-1.5 bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800 text-[11px] text-cyan-300">
+                                    <i class="ph-bold ph-users-three text-cyan-400"></i>
+                                    <span>Kelas: <strong>${ex.targetClass || 'Semua Kelas'}</strong></span>
+                                </div>
+                                <div class="inline-flex items-center gap-1.5 bg-amber-950/40 px-2.5 py-1 rounded-lg border border-amber-800/50 text-[11px] text-amber-300 font-mono">
+                                    <i class="ph-bold ph-key text-amber-400"></i>
+                                    <span>Token: <strong>${ex.examToken || 'TOKEN'}</strong></span>
+                                </div>
                             </div>
 
                             <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-[11px] font-mono text-slate-400 truncate">
@@ -2225,16 +2282,31 @@
             });
         }
 
+        async function toggleExamActive(id) {
+            const ex = examsMaster.find(item => item.id === id);
+            if (!ex) return;
+            const newStatus = ex.isActive === false ? true : false;
+
+            if (supabaseClient && !id.startsWith('ex_')) {
+                await supabaseClient.from('exams').update({ is_active: newStatus }).eq('id', id);
+                await syncDataFromSupabase();
+            } else {
+                ex.isActive = newStatus;
+                renderAdminExamsList();
+                populateStudentExamSelect();
+            }
+        }
+
         function openExamModal(id = null) {
             document.getElementById('examModal').classList.remove('hidden');
             const title = document.getElementById('examModalTitle');
-            populateAdminTargetClassCheckboxes();
+            if (typeof populateAdminTargetClassCheckboxes === 'function') {
+                populateAdminTargetClassCheckboxes();
+            }
 
-            // Reset checkboxes & custom input
             const chkSemua = document.getElementById('chkTargetSemua');
             if (chkSemua) chkSemua.checked = false;
             document.querySelectorAll('.target-class-chk').forEach(chk => chk.checked = false);
-            document.getElementById('modalExamTargetClassCustom').value = '';
 
             if (id) {
                 const ex = examsMaster.find(item => item.id === id);
@@ -2245,42 +2317,41 @@
                 document.getElementById('modalExamTitle').value = ex.title;
 
                 const val = ex.targetClass || 'Semua Kelas';
-                const targetList = val.split(',').map(t => t.trim()).filter(Boolean);
-                const unmatched = [];
-
-                targetList.forEach(t => {
-                    if (t === 'Semua Kelas' || t === 'Semua') {
-                        if (chkSemua) chkSemua.checked = true;
-                    } else {
-                        let matched = false;
+                if (val === 'Semua Kelas' || val === 'Semua') {
+                    if (chkSemua) chkSemua.checked = true;
+                    document.querySelectorAll('.target-class-chk').forEach(chk => chk.checked = true);
+                } else {
+                    const targetList = val.split(',').map(t => t.trim()).filter(Boolean);
+                    targetList.forEach(t => {
                         document.querySelectorAll('.target-class-chk').forEach(chk => {
                             if (chk.value.toLowerCase() === t.toLowerCase()) {
                                 chk.checked = true;
-                                matched = true;
                             }
                         });
-                        if (!matched) unmatched.push(t);
-                    }
-                });
-
-                if (unmatched.length > 0) {
-                    document.getElementById('modalExamTargetClassCustom').value = unmatched.join(', ');
+                    });
                 }
 
+                document.getElementById('modalExamDate').value = ex.examDate || new Date().toISOString().split('T')[0];
                 document.getElementById('modalExamSession').value = ex.session || 'Sesi 1';
                 document.getElementById('modalExamStartTime').value = ex.startTime || '08:00 WIB';
                 document.getElementById('modalExamDuration').value = ex.duration;
+                document.getElementById('modalExamToken').value = ex.examToken || '';
                 document.getElementById('modalExamGformUrl').value = ex.gformUrl;
             } else {
                 title.innerText = "Tambah Mapel / Ujian Baru";
                 document.getElementById('editExamId').value = '';
                 document.getElementById('modalExamSubject').value = '';
                 document.getElementById('modalExamTitle').value = '';
-                if (chkSemua) chkSemua.checked = true;
+                if (chkSemua) {
+                    chkSemua.checked = true;
+                    document.querySelectorAll('.target-class-chk').forEach(chk => chk.checked = true);
+                }
                 
+                document.getElementById('modalExamDate').value = new Date().toISOString().split('T')[0];
                 document.getElementById('modalExamSession').value = 'Sesi 1';
                 document.getElementById('modalExamStartTime').value = '08:00 WIB';
                 document.getElementById('modalExamDuration').value = 90;
+                document.getElementById('modalExamToken').value = 'UAS' + Math.floor(1000 + Math.random() * 9000);
                 document.getElementById('modalExamGformUrl').value = 'https://docs.google.com/forms/d/e/.../viewform?embedded=true';
             }
         }
@@ -2306,28 +2377,19 @@
                     document.querySelectorAll('.target-class-chk:checked').forEach(chk => {
                         selectedClasses.push(chk.value);
                     });
-
-                    const customVal = document.getElementById('modalExamTargetClassCustom').value.trim();
-                    if (customVal) {
-                        customVal.split(',').forEach(c => {
-                            const trimmed = c.trim();
-                            if (trimmed && !selectedClasses.includes(trimmed)) {
-                                selectedClasses.push(trimmed);
-                            }
-                        });
-                    }
                 }
 
-                // Fallback default jika tidak ada kelas yang dicentang
                 if (selectedClasses.length === 0) {
                     selectedClasses.push('Semua Kelas');
                 }
 
                 const targetClass = selectedClasses.join(', ');
 
+                const examDate = document.getElementById('modalExamDate').value.trim();
                 const session = document.getElementById('modalExamSession').value.trim();
                 const startTime = document.getElementById('modalExamStartTime').value.trim();
                 const duration = parseInt(document.getElementById('modalExamDuration').value) || 90;
+                const examToken = document.getElementById('modalExamToken').value.trim().toUpperCase();
                 const gformUrl = document.getElementById('modalExamGformUrl').value.trim();
 
                 if (supabaseClient) {
@@ -2335,8 +2397,10 @@
                         subject: subject,
                         exam_title: examTitle,
                         target_class: targetClass,
+                        exam_date: examDate,
                         session_name: session,
                         start_time: startTime,
+                        exam_token: examToken,
                         gform_embed_url: gformUrl,
                         duration_minutes: duration
                     };
@@ -2367,9 +2431,11 @@
                             ex.subject = subject;
                             ex.title = examTitle;
                             ex.targetClass = targetClass;
+                            ex.examDate = examDate;
                             ex.session = session;
                             ex.startTime = startTime;
                             ex.duration = duration;
+                            ex.examToken = examToken;
                             ex.gformUrl = gformUrl;
                         }
                     } else {
@@ -2378,19 +2444,23 @@
                             subject: subject,
                             title: examTitle,
                             targetClass: targetClass,
+                            examDate: examDate,
                             session: session,
                             startTime: startTime,
                             duration: duration,
+                            examToken: examToken,
                             gformUrl: gformUrl,
                             isActive: true
                         });
                     }
                     renderAdminExamsList();
-                    populateStudentExamSelect();
+                    if (typeof populateStudentExamSelect === 'function') {
+                        populateStudentExamSelect();
+                    }
                 }
 
                 closeExamModal();
-                showNoticeModal("Ujian Disimpan", `Mata pelajaran ${subject} (${session} - ${startTime}) untuk target [${targetClass}] berhasil tersimpan.`);
+                showNoticeModal("Ujian Disimpan", `Mata pelajaran ${subject} berhasil disimpan dengan Token: ${examToken}`);
             } catch (err) {
                 console.error("Save exam error:", err);
                 showNoticeModal("Gagal Menyimpan", `Terjadi kesalahan: ${err.message || err}`);
@@ -2416,77 +2486,45 @@
                 renderAdminExamsList();
                 populateStudentExamSelect();
             }
-            showNoticeModal("Ujian Dihapus", `Mapel ${ex.subject} telah dihapus.`);
+            showNoticeModal("Ujian Dihapus", `Mata pelajaran ${ex.subject} telah dihapus.`);
         }
 
-        function toggleConfigModal() {
-            const modal = document.getElementById('configModal');
-            modal.classList.toggle('hidden');
+        async function saveConfigurations() {
+            const urlInput = document.getElementById('configSupabaseUrl').value.trim();
+            const keyInput = document.getElementById('configSupabaseKey').value.trim();
 
-            document.getElementById('configSupabaseUrl').value = configSettings.supabaseUrl || '';
-            document.getElementById('configSupabaseKey').value = configSettings.supabaseKey || '';
-        }
-
-        function saveConfigurations() {
-            const supabaseUrl = document.getElementById('configSupabaseUrl').value.trim();
-            const supabaseKey = document.getElementById('configSupabaseKey').value.trim();
-
-            configSettings.supabaseUrl = supabaseUrl;
-            configSettings.supabaseKey = supabaseKey;
-
-            try {
-                localStorage.setItem('EXAM_SHIELD_SUPABASE_URL', supabaseUrl);
-                localStorage.setItem('EXAM_SHIELD_SUPABASE_KEY', supabaseKey);
-            } catch(err) {
-                console.warn("Storage save error:", err);
+            if (!urlInput || !keyInput) {
+                showNoticeModal("Input Kosong", "URL dan Key Supabase wajib diisi.");
+                return;
             }
 
-            initSupabase(supabaseUrl, supabaseKey);
+            configSettings.supabaseUrl = urlInput;
+            configSettings.supabaseKey = keyInput;
+            localStorage.setItem('EXAM_SHIELD_SUPABASE_URL', urlInput);
+            localStorage.setItem('EXAM_SHIELD_SUPABASE_KEY', keyInput);
 
             toggleConfigModal();
-            showNoticeModal("Pengaturan Tersimpan Permanen", "Kredensial Supabase tersimpan. Portal akan selalu terhubung secara otomatis.");
+            showNoticeModal("Menghubungkan...", "Mencoba menyambungkan ulang ke Supabase Database...");
+            await initSupabase(urlInput, keyInput);
         }
 
-        function showNoticeModal(title, message) {
-            const modal = document.getElementById('customNoticeModal');
-            const titleEl = document.getElementById('noticeTitle');
-            const msgEl = document.getElementById('noticeMessage');
-            if (titleEl) titleEl.innerText = title;
-            if (msgEl) msgEl.innerText = message;
-            if (modal) modal.classList.remove('hidden');
-        }
+        setInterval(() => {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const clockEl = document.getElementById('realtimeClock');
+            if (clockEl) clockEl.innerText = timeStr + " WIB";
+        }, 1000);
 
-        function closeNoticeModal() {
-            const modal = document.getElementById('customNoticeModal');
-            if (modal) modal.classList.add('hidden');
-        }
-
-        function initClock() {
-            function updateClock() {
-                const now = new Date();
-                const hours = String(now.getHours()).padStart(2, '0');
-                const minutes = String(now.getMinutes()).padStart(2, '0');
-                const seconds = String(now.getSeconds()).padStart(2, '0');
-                const clockEl = document.getElementById('realtimeClock');
-                if (clockEl) {
-                    clockEl.innerText = `${hours}:${minutes}:${seconds}`;
-                }
-            }
-            updateClock();
-            setInterval(updateClock, 1000);
-        }
-
-        // INITIAL LOAD
         window.onload = async function() {
-            initClock();
-            populateStudentClassDropdown();
-            
             const config = await loadConfigFromCSV();
-            if (config.url && config.key) {
-                initSupabase(config.url, config.key);
+            if (config && config.url && config.key) {
+                await initSupabase(config.url, config.key);
             } else {
+                populateStudentClassDropdown();
                 renderProctorGrid();
                 updateProctorStats();
+                renderAdminStudentsTable();
+                renderAdminExamsList();
                 renderAuditFeed();
             }
         };
