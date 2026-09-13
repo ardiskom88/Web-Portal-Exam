@@ -79,7 +79,7 @@
             flex: 1 1 auto;
             width: 100%;
             height: 100%;
-            min-height: 70vh;
+            min-height: 75vh;
         }
         .gform-container iframe {
             width: 100%;
@@ -292,7 +292,7 @@
             </div>
 
             <!-- STEP 3: SECURED EXAM WORKSPACE (GFORM CONTAINER - FULL HEIGHT) -->
-            <div id="studentWorkspace" class="hidden flex-1 flex flex-col w-full bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl relative h-[88vh]">
+            <div id="studentWorkspace" class="hidden flex-1 flex flex-col w-full bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl relative h-[90vh]">
                 
                 <!-- Exam Floating Header Bar -->
                 <div class="bg-slate-950 px-4 py-3 border-b border-slate-800 flex items-center justify-between gap-4 shrink-0">
@@ -1781,6 +1781,9 @@
 
             configSettings.gformUrl = chosenExam.gformUrl;
 
+            cheatCount = 0;
+            integrityScore = 100;
+
             currentStudent = {
                 id: 'std_' + Date.now(),
                 dbUuid: null,
@@ -2296,7 +2299,7 @@
 
                 const lockActionBtn = s.isLocked
                     ? `<button onclick="adminUnlockStudent('${s.id}')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs flex items-center gap-1 shadow transition-all">
-                            <i class="ph-bold ph-lock-open"></i> Buka Kunci (Unlock)
+                            <i class="ph-bold ph-lock-open"></i> Buka Kunci & Reset (0/3)
                        </button>`
                     : `<span class="text-slate-500 text-[11px] italic">Normal</span>`;
 
@@ -2334,13 +2337,16 @@
                     showNoticeModal("Gagal Unlock", `Error: ${error.message}`);
                     return;
                 }
+                
+                await supabaseClient.from('active_sessions').delete().eq('student_id', studentId);
                 await syncDataFromSupabase();
             } else {
                 const s = studentsMaster.find(item => item.id === studentId);
                 if (s) s.isLocked = false;
+                activeSessions = activeSessions.filter(item => item.studentDbId !== studentId);
                 renderAdminStudentsTable();
             }
-            showNoticeModal("Akun Berhasil Dibuka", "Akun siswa telah di-unlock (enabled) kembali. Siswa dapat login ke portal ujian.");
+            showNoticeModal("Akun Berhasil Dibuka & Direset", "Akun siswa telah di-unlock (enabled) kembali dan riwayat pelanggaran direset menjadi 0/3.");
         }
 
         function openStudentModal(id = null) {
