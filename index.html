@@ -78,13 +78,14 @@
             flex-direction: column;
             flex: 1 1 auto;
             width: 100%;
-            height: calc(100vh - 125px);
-            min-height: 600px;
+            height: 100%;
+            min-height: 70vh;
         }
         .gform-container iframe {
             width: 100%;
             height: 100%;
             border: none;
+            flex: 1;
         }
     </style>
 </head>
@@ -291,7 +292,7 @@
             </div>
 
             <!-- STEP 3: SECURED EXAM WORKSPACE (GFORM CONTAINER - FULL HEIGHT) -->
-            <div id="studentWorkspace" class="hidden flex-1 flex flex-col w-full bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl relative">
+            <div id="studentWorkspace" class="hidden flex-1 flex flex-col w-full bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl relative h-[88vh]">
                 
                 <!-- Exam Floating Header Bar -->
                 <div class="bg-slate-950 px-4 py-3 border-b border-slate-800 flex items-center justify-between gap-4 shrink-0">
@@ -437,7 +438,7 @@
             </div>
 
             <!-- ADMIN TABS NAVIGATION -->
-            <div id="adminTabNav" class="hidden bg-slate-900 border border-slate-800 p-1.5 rounded-2xl flex items-center gap-2 text-xs font-medium">
+            <div id="adminTabNav" class="hidden bg-slate-900 border border-slate-800 p-1.5 rounded-2xl flex flex-wrap items-center gap-2 text-xs font-medium">
                 <button id="btnAdminTabMonitoring" onclick="switchAdminTab('monitoring')" class="px-4 py-2 rounded-xl text-white bg-cyan-600 font-semibold shadow transition-all flex items-center gap-2">
                     <i class="ph-bold ph-desktop text-base"></i>
                     <span>Monitoring Realtime</span>
@@ -448,7 +449,11 @@
                 </button>
                 <button id="btnAdminTabExams" onclick="switchAdminTab('exams')" class="px-4 py-2 rounded-xl text-slate-400 hover:text-white transition-all flex items-center gap-2">
                     <i class="ph-bold ph-folders text-base"></i>
-                    <span>Kelola Mapel, Sesi & GForm</span>
+                    <span>Kelola Mapel & GForm</span>
+                </button>
+                <button id="btnAdminTabStaff" onclick="switchAdminTab('staff')" class="px-4 py-2 rounded-xl text-slate-400 hover:text-white transition-all flex items-center gap-2">
+                    <i class="ph-bold ph-users-three text-base"></i>
+                    <span>Kelola Akun Guru & Pengawas</span>
                 </button>
             </div>
 
@@ -573,6 +578,42 @@
                 </div>
             </div>
 
+            <!-- TAB 4: KELOLA AKUN GURU & PENGAWAS -->
+            <div id="adminSectionStaff" class="hidden flex-1 flex-col gap-4">
+                <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                        <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                            <i class="ph-bold ph-users-three text-cyan-400"></i>
+                            <span>Manajemen Akun Staf, Guru & Pengawas</span>
+                        </h3>
+                        <p class="text-xs text-slate-400">Tambah akun pengawas baru atau perbarui password akses login dashboard pengawas/admin.</p>
+                    </div>
+                    <button onclick="openStaffModal()" class="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-semibold text-xs rounded-xl shadow-lg flex items-center gap-2 transition-all">
+                        <i class="ph-bold ph-user-plus text-base"></i>
+                        <span>+ Tambah Akun Staf Baru</span>
+                    </button>
+                </div>
+
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs text-slate-300">
+                            <thead class="bg-slate-950 border-b border-slate-800 text-slate-400 uppercase font-mono text-[10px]">
+                                <tr>
+                                    <th class="p-4">Username</th>
+                                    <th class="p-4">Nama Lengkap Staf</th>
+                                    <th class="p-4">Role Akses</th>
+                                    <th class="p-4">Dibuat / Diperbarui</th>
+                                    <th class="p-4 text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminStaffTableBody" class="divide-y divide-slate-800/60">
+                                <!-- Staff rows populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
         </section>
 
     </main>
@@ -612,7 +653,7 @@
         </div>
     </div>
 
-    <!-- MODAL: ADD / EDIT EXAM (WITH TOKEN & DATE PICKER) -->
+    <!-- MODAL: ADD / EDIT EXAM -->
     <div id="examModal" class="hidden fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-2xl p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <button onclick="closeExamModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl">
@@ -715,6 +756,49 @@
         </div>
     </div>
 
+    <!-- MODAL: ADD / EDIT STAFF ACCOUNT -->
+    <div id="staffModal" class="hidden fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl p-6 shadow-2xl relative">
+            <button onclick="closeStaffModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl">
+                <i class="ph-bold ph-x"></i>
+            </button>
+
+            <h3 id="staffModalTitle" class="font-bold text-white text-lg mb-4 flex items-center gap-2">
+                <i class="ph-bold ph-user-plus text-cyan-400"></i>
+                <span>Tambah Akun Staf / Pengawas</span>
+            </h3>
+
+            <form onsubmit="saveStaffForm(event)" class="space-y-4 text-xs">
+                <input type="hidden" id="editStaffId">
+                <div>
+                    <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Username Login</label>
+                    <input type="text" id="modalStaffUsername" required placeholder="Contoh: pengawas_ruang2" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Nama Lengkap Staf</label>
+                    <input type="text" id="modalStaffFullName" required placeholder="Contoh: Drs. H. Ahmad, M.Pd" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Password / PIN Baru</label>
+                    <input type="password" id="modalStaffPassword" placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500">
+                    <p class="text-[10px] text-slate-500 mt-1">Kosongkan jika tidak ingin mengubah password saat edit.</p>
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Role Akses</label>
+                    <select id="modalStaffRole" required class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500">
+                        <option value="pengawas">Pengawas (Monitoring Ujian Saja)</option>
+                        <option value="admin">Administrator (Akses Penuh & DB Engine)</option>
+                    </select>
+                </div>
+
+                <div class="mt-6 flex justify-end gap-2 pt-2 border-t border-slate-800">
+                    <button type="button" onclick="closeStaffModal()" class="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl">Batal</button>
+                    <button type="submit" class="px-5 py-2 bg-purple-600 hover:bg-purple-500 text-white font-semibold rounded-xl">Simpan Akun Staf</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- STAFF LOGIN MODAL -->
     <div id="staffLoginModal" class="hidden fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
@@ -752,7 +836,7 @@
                 <div class="bg-slate-950 p-3 rounded-xl border border-slate-800/80 text-[11px] text-slate-400 flex items-start gap-2">
                     <i class="ph-bold ph-info text-cyan-400 text-base shrink-0 mt-0.5"></i>
                     <div>
-                        <p class="font-semibold text-slate-300">Default Kredensial (Supabase / In-Memory):</p>
+                        <p class="font-semibold text-slate-300">Default Kredensial:</p>
                         <p>Pengawas: <code class="text-cyan-300">pengawas</code> / <code class="text-cyan-300">pengawas123</code></p>
                         <p>Admin: <code class="text-amber-300">admin</code> / <code class="text-amber-300">admin123</code></p>
                     </div>
@@ -838,6 +922,11 @@
             if (modal) modal.classList.add('hidden');
         }
 
+        function closeStaffModal() {
+            const modal = document.getElementById('staffModal');
+            if (modal) modal.classList.add('hidden');
+        }
+
         // GLOBAL STATE
         let currentRole = 'student';
         let authenticatedStaffRole = null;
@@ -857,10 +946,10 @@
         let heartbeatIntervalHandle = null;
         let currentSelectedExamId = '';
 
-        const STAFF_CREDENTIALS = {
-            pengawas: { username: 'pengawas', pass: 'pengawas123', label: 'PENGAWAS' },
-            admin: { username: 'admin', pass: 'admin123', label: 'ADMINISTRATOR' }
-        };
+        let staffUsersMaster = [
+            { id: 'stf_1', username: 'admin', fullName: 'Administrator Utama', role: 'admin', updatedAt: 'Baru saja' },
+            { id: 'stf_2', username: 'pengawas', fullName: 'Pengawas Ruang Ujian', role: 'pengawas', updatedAt: 'Baru saja' }
+        ];
 
         let studentsMaster = [
             { id: 'std_1', nisn: '10012831', name: 'Ahmad Rizky', class: 'XII RPL 1', isLocked: false },
@@ -1020,6 +1109,18 @@
             if (!supabaseClient) return;
 
             try {
+                const { data: staffData } = await supabaseClient.from('staff_users').select('*');
+                if (staffData && staffData.length > 0) {
+                    staffUsersMaster = staffData.map(st => ({
+                        id: st.id,
+                        username: st.username,
+                        fullName: st.full_name,
+                        role: st.role,
+                        passwordHash: st.password_hash,
+                        updatedAt: st.updated_at ? new Date(st.updated_at).toLocaleTimeString('id-ID') : 'Baru saja'
+                    }));
+                }
+
                 const { data: stdData, error: stdErr } = await supabaseClient
                     .from('students')
                     .select('*')
@@ -1119,6 +1220,7 @@
                 updateProctorStats();
                 renderAdminStudentsTable();
                 renderAdminExamsList();
+                renderAdminStaffTable();
                 renderAuditFeed();
 
                 if (currentStudent && currentStudent.dbUuid) {
@@ -1342,7 +1444,7 @@
                         console.warn("Heartbeat update failed:", err);
                     }
                 }
-            }, 4000);
+            }, 3000);
         }
 
         function stopStudentHeartbeat() {
@@ -1493,9 +1595,12 @@
             }
 
             if (!authenticatedUser) {
-                if (user === STAFF_CREDENTIALS.admin.username && pass === STAFF_CREDENTIALS.admin.pass) {
-                    authenticatedUser = { role: 'admin', fullName: 'Administrator' };
-                } else if (user === STAFF_CREDENTIALS.pengawas.username && pass === STAFF_CREDENTIALS.pengawas.pass) {
+                const matchedStf = staffUsersMaster.find(st => st.username === user);
+                if (matchedStf && ((matchedStf.passwordHash && matchedStf.passwordHash === pass) || (!matchedStf.passwordHash && pass === 'admin123'))) {
+                    authenticatedUser = { role: matchedStf.role, fullName: matchedStf.fullName };
+                } else if (user === 'admin' && pass === 'admin123') {
+                    authenticatedUser = { role: 'admin', fullName: 'Administrator Utama' };
+                } else if (user === 'pengawas' && pass === 'pengawas123') {
                     authenticatedUser = { role: 'pengawas', fullName: 'Pengawas Ujian' };
                 }
             }
@@ -1600,18 +1705,22 @@
             const tabMonitoring = document.getElementById('btnAdminTabMonitoring');
             const tabStudents = document.getElementById('btnAdminTabStudents');
             const tabExams = document.getElementById('btnAdminTabExams');
+            const tabStaff = document.getElementById('btnAdminTabStaff');
 
             const secMonitoring = document.getElementById('adminSectionMonitoring');
             const secStudents = document.getElementById('adminSectionStudents');
             const secExams = document.getElementById('adminSectionExams');
+            const secStaff = document.getElementById('adminSectionStaff');
 
             tabMonitoring.className = "px-4 py-2 rounded-xl text-slate-400 hover:text-white transition-all flex items-center gap-2";
             tabStudents.className = "px-4 py-2 rounded-xl text-slate-400 hover:text-white transition-all flex items-center gap-2";
             tabExams.className = "px-4 py-2 rounded-xl text-slate-400 hover:text-white transition-all flex items-center gap-2";
+            if (tabStaff) tabStaff.className = "px-4 py-2 rounded-xl text-slate-400 hover:text-white transition-all flex items-center gap-2";
 
             secMonitoring.classList.add('hidden');
             secStudents.classList.add('hidden');
             secExams.classList.add('hidden');
+            if (secStaff) secStaff.classList.add('hidden');
 
             if (tabName === 'monitoring') {
                 tabMonitoring.className = "px-4 py-2 rounded-xl text-white bg-cyan-600 font-semibold shadow transition-all flex items-center gap-2";
@@ -1627,6 +1736,13 @@
                 secExams.classList.remove('hidden');
                 secExams.classList.add('flex');
                 renderAdminExamsList();
+            } else if (tabName === 'staff') {
+                if (tabStaff) tabStaff.className = "px-4 py-2 rounded-xl text-white bg-cyan-600 font-semibold shadow transition-all flex items-center gap-2";
+                if (secStaff) {
+                    secStaff.classList.remove('hidden');
+                    secStaff.classList.add('flex');
+                }
+                renderAdminStaffTable();
             }
         }
 
@@ -1783,13 +1899,14 @@
             document.addEventListener('mozfullscreenchange', handleFullscreenChange);
             document.addEventListener('MSFullscreenChange', handleFullscreenChange);
 
+            // Robust Visibility & Window Blur Detection
             document.addEventListener('visibilitychange', () => {
                 if (document.hidden && examStarted) {
                     const activeEl = document.activeElement;
                     if (activeEl && activeEl.tagName === 'IFRAME') {
                         return;
                     }
-                    triggerCheatViolation("Terdeteksi Berpindah Tab / Jendela Lain!");
+                    triggerCheatViolation("Siswa Meninggalkan Tampilan / Berpindah Tab Portal Ujian!");
                 }
             });
 
@@ -1800,10 +1917,13 @@
                         return;
                     }
                     setTimeout(() => {
-                        if (document.hidden && examStarted) {
-                            triggerCheatViolation("Fokus Jendela Ujian Terlepas!");
+                        if ((document.hidden || !document.hasFocus()) && examStarted) {
+                            const currentActive = document.activeElement;
+                            if (!currentActive || currentActive.tagName !== 'IFRAME') {
+                                triggerCheatViolation("Fokus Jendela Ujian Terlepas / Membuka Aplikasi Lain!");
+                            }
                         }
-                    }, 500);
+                    }, 400);
                 }
             });
 
@@ -2321,6 +2441,159 @@
             showNoticeModal("Siswa Dihapus", `Siswa ${s.name} telah dihapus.`);
         }
 
+        // STAFF MANAGEMENT FUNCTIONS
+        function renderAdminStaffTable() {
+            const tbody = document.getElementById('adminStaffTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            if (staffUsersMaster.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="p-8 text-center text-slate-500">
+                            Belum ada data akun staf ditemukan.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            staffUsersMaster.forEach(st => {
+                const roleBadge = st.role === 'admin'
+                    ? '<span class="bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px] px-2.5 py-1 rounded-full font-bold">ADMINISTRATOR</span>'
+                    : '<span class="bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-[10px] px-2.5 py-1 rounded-full font-semibold">PENGAWAS</span>';
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-950/40 transition-colors">
+                        <td class="p-4 font-mono font-semibold text-cyan-400">${st.username}</td>
+                        <td class="p-4 font-bold text-white">${st.fullName}</td>
+                        <td class="p-4">${roleBadge}</td>
+                        <td class="p-4 text-slate-400 font-mono text-[11px]">${st.updatedAt || 'Baru saja'}</td>
+                        <td class="p-4 text-center">
+                            <div class="flex items-center justify-center gap-2">
+                                <button onclick="openStaffModal('${st.id}')" class="p-1.5 bg-slate-800 hover:bg-slate-700 text-cyan-300 rounded-lg transition-colors" title="Edit Staf / Ubah Password">
+                                    <i class="ph-bold ph-pencil text-sm"></i>
+                                </button>
+                                <button onclick="deleteStaff('${st.id}')" class="p-1.5 bg-rose-950/60 hover:bg-rose-600 text-rose-300 hover:text-white rounded-lg transition-colors" title="Hapus Akun Staf">
+                                    <i class="ph-bold ph-trash text-sm"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function openStaffModal(id = null) {
+            document.getElementById('staffModal').classList.remove('hidden');
+            const title = document.getElementById('staffModalTitle');
+
+            if (id) {
+                const st = staffUsersMaster.find(item => item.id === id);
+                if (!st) return;
+                title.innerText = "Edit Akun Staf / Ubah Password";
+                document.getElementById('editStaffId').value = st.id;
+                document.getElementById('modalStaffUsername').value = st.username;
+                document.getElementById('modalStaffFullName').value = st.fullName;
+                document.getElementById('modalStaffPassword').value = '';
+                document.getElementById('modalStaffRole').value = st.role;
+            } else {
+                title.innerText = "Tambah Akun Staf Baru";
+                document.getElementById('editStaffId').value = '';
+                document.getElementById('modalStaffUsername').value = '';
+                document.getElementById('modalStaffFullName').value = '';
+                document.getElementById('modalStaffPassword').value = '';
+                document.getElementById('modalStaffRole').value = 'pengawas';
+            }
+        }
+
+        async function saveStaffForm(e) {
+            e.preventDefault();
+            const editId = document.getElementById('editStaffId').value;
+            const username = document.getElementById('modalStaffUsername').value.trim();
+            const fullName = document.getElementById('modalStaffFullName').value.trim();
+            const password = document.getElementById('modalStaffPassword').value.trim();
+            const role = document.getElementById('modalStaffRole').value;
+
+            if (supabaseClient) {
+                const staffPayload = {
+                    username: username,
+                    full_name: fullName,
+                    role: role
+                };
+                if (password) {
+                    staffPayload.password_hash = password;
+                }
+
+                if (editId && !editId.startsWith('stf_')) {
+                    const { error } = await supabaseClient.from('staff_users').update(staffPayload).eq('id', editId);
+                    if (error) {
+                        showNoticeModal("Gagal Menyimpan", `Error: ${error.message}`);
+                        return;
+                    }
+                } else {
+                    if (!password) {
+                        showNoticeModal("Password Wajib", "Masukkan password untuk akun staf baru.");
+                        return;
+                    }
+                    staffPayload.password_hash = password;
+                    const { error } = await supabaseClient.from('staff_users').insert([staffPayload]);
+                    if (error) {
+                        showNoticeModal("Gagal Menyimpan", `Error: ${error.message}`);
+                        return;
+                    }
+                }
+                await syncDataFromSupabase();
+            } else {
+                if (editId) {
+                    const st = staffUsersMaster.find(item => item.id === editId);
+                    if (st) {
+                        st.username = username;
+                        st.fullName = fullName;
+                        st.role = role;
+                        if (password) st.passwordHash = password;
+                        st.updatedAt = new Date().toLocaleTimeString('id-ID');
+                    }
+                } else {
+                    staffUsersMaster.unshift({
+                        id: 'stf_' + Date.now(),
+                        username: username,
+                        fullName: fullName,
+                        role: role,
+                        passwordHash: password || 'pengawas123',
+                        updatedAt: new Date().toLocaleTimeString('id-ID')
+                    });
+                }
+                renderAdminStaffTable();
+            }
+
+            closeStaffModal();
+            showNoticeModal("Akun Staf Disimpan", `Akun ${username} berhasil diperbarui.`);
+        }
+
+        async function deleteStaff(id) {
+            const st = staffUsersMaster.find(item => item.id === id);
+            if (!st) return;
+
+            if (st.username === 'admin') {
+                showNoticeModal("Tidak Dapat Dihapus", "Akun Administrator utama tidak dapat dihapus.");
+                return;
+            }
+
+            if (supabaseClient && !id.startsWith('stf_')) {
+                const { error } = await supabaseClient.from('staff_users').delete().eq('id', id);
+                if (error) {
+                    showNoticeModal("Gagal Menghapus", `Error: ${error.message}`);
+                    return;
+                }
+                await syncDataFromSupabase();
+            } else {
+                staffUsersMaster = staffUsersMaster.filter(item => item.id !== id);
+                renderAdminStaffTable();
+            }
+            showNoticeModal("Akun Dihapus", `Akun staf ${st.username} telah dihapus.`);
+        }
+
         function renderAdminExamsList() {
             const container = document.getElementById('adminExamsGridContainer');
             if (!container) return;
@@ -2630,6 +2903,7 @@
                 updateProctorStats();
                 renderAdminStudentsTable();
                 renderAdminExamsList();
+                renderAdminStaffTable();
                 renderAuditFeed();
             }
         };
