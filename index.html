@@ -71,17 +71,19 @@
         html, body {
             height: 100%;
             margin: 0;
+            overflow-x: hidden;
         }
         .gform-container {
+            display: flex;
+            flex-direction: column;
             flex: 1 1 auto;
             width: 100%;
-            height: 100%;
-            min-height: calc(100vh - 65px);
+            height: calc(100vh - 125px);
+            min-height: 600px;
         }
         .gform-container iframe {
             width: 100%;
             height: 100%;
-            min-height: 75vh;
             border: none;
         }
     </style>
@@ -289,10 +291,10 @@
             </div>
 
             <!-- STEP 3: SECURED EXAM WORKSPACE (GFORM CONTAINER - FULL HEIGHT) -->
-            <div id="studentWorkspace" class="hidden flex-1 flex flex-col w-full h-[90vh] bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl relative">
+            <div id="studentWorkspace" class="hidden flex-1 flex flex-col w-full bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl relative">
                 
                 <!-- Exam Floating Header Bar -->
-                <div class="bg-slate-950 px-4 py-2.5 border-b border-slate-800 flex items-center justify-between gap-4 shrink-0">
+                <div class="bg-slate-950 px-4 py-3 border-b border-slate-800 flex items-center justify-between gap-4 shrink-0">
                     <div class="flex items-center gap-3">
                         <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
                         <div>
@@ -318,8 +320,8 @@
                 </div>
 
                 <!-- Google Form Secure Frame Container - Expanded Full Height -->
-                <div class="flex-1 w-full bg-slate-950 relative gform-container">
-                    <iframe id="gformIframe" src="about:blank" class="w-full h-full" allow="autoplay" allowfullscreen></iframe>
+                <div class="w-full bg-slate-950 relative gform-container">
+                    <iframe id="gformIframe" src="about:blank" allow="autoplay" allowfullscreen></iframe>
 
                     <!-- STRICT FULLSCREEN LOCK BARRIER OVERLAY -->
                     <div id="fullscreenLockOverlay" class="hidden absolute inset-0 bg-slate-950/95 backdrop-blur-xl z-50 flex flex-col items-center justify-center p-6 text-center">
@@ -515,7 +517,7 @@
                 </div>
             </div>
 
-            <!-- TAB 2: KELOLA DATA SISWA -->
+            <!-- TAB 2: KELOLA DATA SISWA & STATUS LOCK -->
             <div id="adminSectionStudents" class="hidden flex-1 flex-col gap-4">
                 <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex flex-wrap items-center justify-between gap-4">
                     <div class="flex items-center gap-3">
@@ -538,7 +540,8 @@
                                     <th class="p-4">NISN / ID</th>
                                     <th class="p-4">Nama Lengkap Siswa</th>
                                     <th class="p-4">Kelas</th>
-                                    <th class="p-4 text-center">Aksi</th>
+                                    <th class="p-4">Status Akun</th>
+                                    <th class="p-4 text-center">Aksi (Admin Unlock)</th>
                                 </tr>
                             </thead>
                             <tbody id="adminStudentsTableBody" class="divide-y divide-slate-800/60">
@@ -830,6 +833,11 @@
             if (modal) modal.classList.toggle('hidden');
         }
 
+        function closeStudentModal() {
+            const modal = document.getElementById('studentModal');
+            if (modal) modal.classList.add('hidden');
+        }
+
         // GLOBAL STATE
         let currentRole = 'student';
         let authenticatedStaffRole = null;
@@ -855,12 +863,12 @@
         };
 
         let studentsMaster = [
-            { id: 'std_1', nisn: '10012831', name: 'Ahmad Rizky', class: 'XII RPL 1' },
-            { id: 'std_2', nisn: '10012832', name: 'Siti Sarah', class: 'XII-2' },
-            { id: 'std_3', nisn: '10012833', name: 'Budi Santoso', class: 'XII RPL 2' },
-            { id: 'std_4', nisn: '10012834', name: 'Dewi Lestari', class: 'XII TKJ 1' },
-            { id: 'std_5', nisn: '10012835', name: 'Rian Perdana', class: 'XI IPA 1' },
-            { id: 'std_6', nisn: '10012836', name: 'Anisa Rahma', class: 'X MIPA 1' }
+            { id: 'std_1', nisn: '10012831', name: 'Ahmad Rizky', class: 'XII RPL 1', isLocked: false },
+            { id: 'std_2', nisn: '10012832', name: 'Siti Sarah', class: 'XII-2', isLocked: false },
+            { id: 'std_3', nisn: '10012833', name: 'Budi Santoso', class: 'XII RPL 2', isLocked: false },
+            { id: 'std_4', nisn: '10012834', name: 'Dewi Lestari', class: 'XII TKJ 1', isLocked: false },
+            { id: 'std_5', nisn: '10012835', name: 'Rian Perdana', class: 'XI IPA 1', isLocked: false },
+            { id: 'std_6', nisn: '10012836', name: 'Anisa Rahma', class: 'X MIPA 1', isLocked: false }
         ];
 
         let examsMaster = [
@@ -1022,7 +1030,8 @@
                         id: s.id,
                         nisn: s.nisn,
                         name: s.full_name,
-                        class: s.class_name
+                        class: s.class_name,
+                        isLocked: Boolean(s.is_locked)
                     }));
                 }
 
@@ -1050,7 +1059,7 @@
                 let sessData = null;
                 const { data: joinedSess, error: joinedErr } = await supabaseClient
                     .from('active_sessions')
-                    .select('*, students(full_name, nisn, class_name)')
+                    .select('*, students(full_name, nisn, class_name, is_locked)')
                     .order('last_seen', { ascending: false });
 
                 if (!joinedErr && joinedSess) {
@@ -1068,6 +1077,7 @@
                         const matchedStudent = studentsMaster.find(st => st.id === s.student_id);
                         return {
                             id: s.id,
+                            studentDbId: s.student_id,
                             name: s.students?.full_name || matchedStudent?.name || 'Siswa',
                             nisn: s.students?.nisn || matchedStudent?.nisn || '-',
                             class: s.students?.class_name || matchedStudent?.class || '-',
@@ -1110,6 +1120,13 @@
                 renderAdminStudentsTable();
                 renderAdminExamsList();
                 renderAuditFeed();
+
+                if (currentStudent && currentStudent.dbUuid) {
+                    const freshStudentData = studentsMaster.find(st => st.id === currentStudent.dbUuid);
+                    if (freshStudentData && freshStudentData.isLocked && examStarted) {
+                        forceKickStudentByLock("Akun Anda telah dikunci (Locked) oleh Administrator karena terdeteksi kecurangan.");
+                    }
+                }
             } catch (err) {
                 console.warn("Sync Supabase Exception:", err);
             }
@@ -1226,6 +1243,10 @@
 
             const matchedStudent = studentsMaster.find(s => s.nisn === nisnInput);
             if (matchedStudent) {
+                if (matchedStudent.isLocked) {
+                    showNoticeModal("Akun Terkunci", "Akun siswa ini terkunci (Locked) akibat pelanggaran ujian. Hubungi Administrator untuk membuka akses.");
+                    return;
+                }
                 document.getElementById('inputStudentName').value = matchedStudent.name;
                 const classSelect = document.getElementById('inputStudentClass');
                 if (classSelect) {
@@ -1308,6 +1329,12 @@
                 
                 if (supabaseClient && currentStudent.sessionUuid) {
                     try {
+                        const { data: checkStd } = await supabaseClient.from('students').select('is_locked').eq('id', currentStudent.dbUuid).single();
+                        if (checkStd && checkStd.is_locked) {
+                            forceKickStudentByLock("Akun Anda telah dikunci oleh Administrator.");
+                            return;
+                        }
+
                         await supabaseClient.from('active_sessions').update({
                             last_seen: new Date().toISOString()
                         }).eq('id', currentStudent.sessionUuid);
@@ -1546,7 +1573,7 @@
                     headerTitle.innerText = "Dashboard Administrator Portal Ujian";
                     headerTag.innerText = "FULL ACCESS ADMIN";
                     headerTag.className = "text-[10px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded font-mono font-semibold";
-                    headerDesc.innerText = "Akses penuh manajemen data siswa, jadwal/sesi mapel, DB engine, & proctoring.";
+                    headerDesc.innerText = "Akses penuh manajemen data siswa, jadwal/sesi mapel, un-lock akun siswa, & proctoring.";
                 } else {
                     btnProctor.className = "px-3 py-1.5 rounded-lg text-white bg-cyan-600 font-semibold shadow transition-all flex items-center gap-1.5";
                     adminTabNav.classList.add('hidden');
@@ -1618,6 +1645,12 @@
                 return;
             }
 
+            const matchedMasterStd = studentsMaster.find(s => s.nisn === nisn);
+            if (matchedMasterStd && matchedMasterStd.isLocked) {
+                showNoticeModal("Akun Terkunci (Locked)", "Akun Anda telah dikunci karena terdeteksi kecurangan melebihi batas. Silakan hubungi Administrator untuk membuka kembali akses.");
+                return;
+            }
+
             const chosenExam = examsMaster.find(ex => ex.id === selectedExamId);
             if (!chosenExam) {
                 showNoticeModal("Ujian Tidak Valid", "Mata pelajaran yang dipilih tidak ditemukan.");
@@ -1657,6 +1690,10 @@
                         .single();
 
                     if (stdRes) {
+                        if (stdRes.is_locked) {
+                            showNoticeModal("Akun Terkunci", "Akun siswa ini terkunci di database. Hubungi Admin.");
+                            return;
+                        }
                         currentStudent.dbUuid = stdRes.id;
                     }
 
@@ -1788,6 +1825,13 @@
         async function triggerCheatViolation(reason) {
             cheatCount++;
             integrityScore = Math.max(0, integrityScore - 15);
+            
+            // JIKA MELANGGAR > 3 KALI, LANGSUNG KICK & LOCK AKUN SISWA
+            if (cheatCount > 3) {
+                await lockStudentAccountAndKick(currentStudent ? currentStudent.dbUuid : null, "Melebihi batas toleransi kecurangan (Lebih dari 3 kali)");
+                return;
+            }
+
             const newStatus = cheatCount >= 3 ? 'CHEATING' : 'WARNING';
 
             document.getElementById('studentCheatCounter').innerText = `${cheatCount} / 3`;
@@ -1842,6 +1886,44 @@
             }
         }
 
+        async function lockStudentAccountAndKick(studentDbId, reasonText) {
+            stopSirenSound();
+            stopStudentHeartbeat();
+
+            if (supabaseClient && studentDbId) {
+                try {
+                    await supabaseClient.from('students').update({ is_locked: true }).eq('id', studentDbId);
+                    if (currentStudent && currentStudent.sessionUuid) {
+                        await supabaseClient.from('active_sessions').delete().eq('id', currentStudent.sessionUuid);
+                    }
+                    await syncDataFromSupabase();
+                } catch(err) {
+                    console.error("Error locking student account:", err);
+                }
+            }
+
+            examStarted = false;
+            document.getElementById('cheatAlarmOverlay').classList.add('hidden');
+            document.getElementById('fullscreenLockOverlay').classList.add('hidden');
+            document.getElementById('studentWorkspace').classList.add('hidden');
+            document.getElementById('studentLoginCard').classList.remove('hidden');
+
+            showNoticeModal("AKUN DIKUNCI & DIKELUARKAN!", `Anda terdeteksi melakukan kecurangan: ${reasonText}. Sesi ujian Anda dihentikan dan Akun Anda kini TERKUNCI (Locked). Hanya Administrator yang dapat membuka kembali akses Anda.`);
+        }
+
+        function forceKickStudentByLock(message) {
+            stopSirenSound();
+            stopStudentHeartbeat();
+            examStarted = false;
+
+            document.getElementById('cheatAlarmOverlay').classList.add('hidden');
+            document.getElementById('fullscreenLockOverlay').classList.add('hidden');
+            document.getElementById('studentWorkspace').classList.add('hidden');
+            document.getElementById('studentLoginCard').classList.remove('hidden');
+
+            showNoticeModal("Sesi Dihentikan", message);
+        }
+
         function dismissCheatAlarm() {
             stopSirenSound();
             document.getElementById('cheatAlarmOverlay').classList.add('hidden');
@@ -1883,7 +1965,7 @@
             if (filtered.length === 0) {
                 container.innerHTML = `
                     <div class="col-span-full bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center text-slate-500 text-xs">
-                        Tidak ada data siswa ditemukan.
+                        Tidak ada data siswa aktif ujian ditemukan.
                     </div>
                 `;
                 return;
@@ -1928,8 +2010,9 @@
                                 <button onclick="triggerRemoteSirenForStudent('${s.id}')" class="p-1.5 bg-rose-950/60 hover:bg-rose-600 text-rose-300 hover:text-white rounded-lg transition-colors" title="Bunyikan Sirene Remote">
                                     <i class="ph-bold ph-bell-ringing"></i>
                                 </button>
-                                <button onclick="kickStudentSession('${s.id}')" class="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-rose-400 rounded-lg transition-colors" title="Keluarkan Sesi">
-                                    <i class="ph-bold ph-sign-out"></i>
+                                <button onclick="kickAndLockStudentSession('${s.id}', '${s.studentDbId}')" class="px-2.5 py-1 bg-rose-600 hover:bg-rose-500 text-white font-semibold rounded-lg transition-colors flex items-center gap-1" title="Keluarkan & Lock Akun Siswa">
+                                    <i class="ph-bold ph-lock-key"></i>
+                                    <span>Kick & Lock</span>
                                 </button>
                             </div>
                         </div>
@@ -1981,8 +2064,8 @@
             });
         }
 
-        async function triggerRemoteSirenForStudent(studentId) {
-            const student = activeSessions.find(s => s.id === studentId);
+        async function triggerRemoteSirenForStudent(sessionId) {
+            const student = activeSessions.find(s => s.id === sessionId);
             if (student) {
                 student.status = 'CHEATING';
                 student.cheats++;
@@ -1992,7 +2075,7 @@
                         status: 'CHEATING',
                         cheat_count: student.cheats,
                         last_seen: new Date().toISOString()
-                    }).eq('id', studentId);
+                    }).eq('id', sessionId);
                     await syncDataFromSupabase();
                 } else {
                     cheatLogs.unshift({
@@ -2009,19 +2092,24 @@
             }
         }
 
-        async function kickStudentSession(studentId) {
+        async function kickAndLockStudentSession(sessionId, studentDbId) {
             if (supabaseClient) {
-                const { error } = await supabaseClient.from('active_sessions').delete().eq('id', studentId);
-                if (error) {
-                    console.error("Gagal menghapus sesi aktif di Supabase:", error);
+                if (studentDbId) {
+                    await supabaseClient.from('students').update({ is_locked: true }).eq('id', studentDbId);
                 }
+                await supabaseClient.from('active_sessions').delete().eq('id', sessionId);
                 await syncDataFromSupabase();
+            } else {
+                const s = activeSessions.find(item => item.id === sessionId);
+                if (s && s.studentDbId) {
+                    const master = studentsMaster.find(m => m.id === s.studentDbId);
+                    if (master) master.isLocked = true;
+                }
+                activeSessions = activeSessions.filter(item => item.id !== sessionId);
+                renderProctorGrid();
+                updateProctorStats();
             }
-            
-            activeSessions = activeSessions.filter(s => s.id !== studentId);
-            renderProctorGrid();
-            updateProctorStats();
-            showNoticeModal("Sesi Dikeluarkan", "Sesi siswa telah dikeluarkan dari ruang ujian dan dihapus dari monitoring.");
+            showNoticeModal("Siswa Dikeluarkan & Akun Dikunci", "Sesi siswa telah dihentikan paksa dan Akun siswa tersebut kini TERKUNCI (Locked).");
         }
 
         function simulateAddStudent() {
@@ -2031,6 +2119,7 @@
 
             activeSessions.unshift({
                 id: randId,
+                studentDbId: 'std_sim_' + Date.now(),
                 name: randomName,
                 nisn: '100' + Math.floor(10000 + Math.random() * 90000),
                 class: 'XII RPL 1',
@@ -2072,7 +2161,7 @@
             if (filtered.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="4" class="p-8 text-center text-slate-500">
+                        <td colspan="5" class="p-8 text-center text-slate-500">
                             Belum ada data siswa ditemukan.
                         </td>
                     </tr>
@@ -2081,13 +2170,25 @@
             }
 
             filtered.forEach(s => {
+                const lockBadge = s.isLocked 
+                    ? '<span class="bg-rose-500/10 text-rose-400 border border-rose-500/20 text-[10px] px-2.5 py-1 rounded-full font-bold flex items-center gap-1 w-max"><i class="ph-bold ph-lock-key"></i> TERKUNCI (LOCKED)</span>'
+                    : '<span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] px-2.5 py-1 rounded-full font-semibold flex items-center gap-1 w-max"><i class="ph-bold ph-check-circle"></i> AKTIF (ENABLED)</span>';
+
+                const lockActionBtn = s.isLocked
+                    ? `<button onclick="adminUnlockStudent('${s.id}')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs flex items-center gap-1 shadow transition-all">
+                            <i class="ph-bold ph-lock-open"></i> Buka Kunci (Unlock)
+                       </button>`
+                    : `<span class="text-slate-500 text-[11px] italic">Normal</span>`;
+
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-950/40 transition-colors">
                         <td class="p-4 font-mono font-semibold text-cyan-400">${s.nisn}</td>
                         <td class="p-4 font-bold text-white">${s.name}</td>
                         <td class="p-4 text-slate-400">${s.class}</td>
+                        <td class="p-4">${lockBadge}</td>
                         <td class="p-4 text-center">
                             <div class="flex items-center justify-center gap-2">
+                                ${lockActionBtn}
                                 <button onclick="openStudentModal('${s.id}')" class="p-1.5 bg-slate-800 hover:bg-slate-700 text-cyan-300 rounded-lg transition-colors" title="Edit Siswa">
                                     <i class="ph-bold ph-pencil text-sm"></i>
                                 </button>
@@ -2099,6 +2200,27 @@
                     </tr>
                 `;
             });
+        }
+
+        async function adminUnlockStudent(studentId) {
+            if (authenticatedStaffRole !== 'admin') {
+                showNoticeModal("Akses Ditolak", "Hanya Administrator utama yang berhak membuka kunci (unlock) akun siswa.");
+                return;
+            }
+
+            if (supabaseClient) {
+                const { error } = await supabaseClient.from('students').update({ is_locked: false }).eq('id', studentId);
+                if (error) {
+                    showNoticeModal("Gagal Unlock", `Error: ${error.message}`);
+                    return;
+                }
+                await syncDataFromSupabase();
+            } else {
+                const s = studentsMaster.find(item => item.id === studentId);
+                if (s) s.isLocked = false;
+                renderAdminStudentsTable();
+            }
+            showNoticeModal("Akun Berhasil Dibuka", "Akun siswa telah di-unlock (enabled) kembali. Siswa dapat login ke portal ujian.");
         }
 
         function openStudentModal(id = null) {
@@ -2120,10 +2242,6 @@
                 document.getElementById('modalStudentName').value = '';
                 document.getElementById('modalStudentClass').value = '';
             }
-        }
-
-        function closeStudentModal() {
-            document.getElementById('studentModal').classList.add('hidden');
         }
 
         async function saveStudentForm(e) {
@@ -2149,7 +2267,8 @@
                     const { error } = await supabaseClient.from('students').insert([{
                         nisn: nisn,
                         full_name: name,
-                        class_name: className
+                        class_name: className,
+                        is_locked: false
                     }]);
 
                     if (error) {
@@ -2171,7 +2290,8 @@
                         id: 'std_' + Date.now(),
                         nisn: nisn,
                         name: name,
-                        class: className
+                        class: className,
+                        isLocked: false
                     });
                 }
                 populateStudentClassDropdown();
