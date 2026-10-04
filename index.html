@@ -111,7 +111,7 @@
                 <!-- Clock Badge -->
                 <div class="hidden sm:flex items-center gap-2 bg-slate-800/80 border border-slate-700/60 px-3 py-1.5 rounded-lg text-xs font-mono text-slate-300">
                     <i class="ph-bold ph-clock text-cyan-400"></i>
-                    <span id="realtimeClock">00:00:00</span>
+                    <span id="realtimeClock">00:00:00 WIB</span>
                 </div>
 
                 <!-- Role Switch Buttons -->
@@ -143,6 +143,7 @@
 
     <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 flex flex-col">
 
+        <!-- STUDENT VIEW -->
         <section id="studentView" class="flex-1 flex flex-col justify-center max-w-4xl w-full mx-auto">
             
             <!-- STEP 1: LOGIN & AUDIO HANDSHAKE CARD -->
@@ -360,6 +361,7 @@
 
         </section>
 
+        <!-- PROCTOR & ADMIN VIEW -->
         <section id="proctorView" class="hidden flex-1 flex flex-col gap-6">
             
             <!-- STAFF ROLE BANNER -->
@@ -1747,9 +1749,12 @@
                 return;
             }
 
-            // --- STRICT SCHEDULE & TIME EXPIRATION VALIDATION ---
+            // --- STRICT DEVICE-BASED TIME & SCHEDULE EXPIRATION CHECK ---
             const now = new Date();
-            const todayDateStr = now.toISOString().split('T')[0];
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const todayDateStr = `${year}-${month}-${day}`;
             const examDateStr = chosenExam.examDate || todayDateStr;
 
             if (todayDateStr > examDateStr) {
@@ -2895,20 +2900,25 @@
             await initSupabase(urlInput, keyInput);
         }
 
-        // Realtime Clock Sync matching system time & timezone
+        // Realtime Clock Sync matching device gadget time & local timezone
         setInterval(() => {
             const now = new Date();
             const hours = String(now.getHours()).padStart(2, '0');
             const minutes = String(now.getMinutes()).padStart(2, '0');
             const seconds = String(now.getSeconds()).padStart(2, '0');
             
-            // Detect local timezone abbreviation (e.g. WITA, WIB, WIT)
+            // Automatically detect gadget local timezone abbreviation or offset
             const timeZoneString = Intl.DateTimeFormat().resolvedOptions().timeZone;
             let tzLabel = "WIB";
-            if (timeZoneString.includes("Makassar") || timeZoneString.includes("Ujung_Pandang") || timeZoneString.includes("Asia/Makassar")) {
+            if (timeZoneString.includes("Makassar") || timeZoneString.includes("Ujung_Pandang") || timeZoneString.includes("Asia/Makassar") || timeZoneString.includes("Central")) {
                 tzLabel = "WITA";
-            } else if (timeZoneString.includes("Jayapura") || timeZoneString.includes("Asia/Jayapura")) {
+            } else if (timeZoneString.includes("Jayapura") || timeZoneString.includes("Asia/Jayapura") || timeZoneString.includes("East")) {
                 tzLabel = "WIT";
+            } else {
+                const offsetMinutes = -now.getTimezoneOffset();
+                if (offsetMinutes === 420) tzLabel = "WIB";
+                else if (offsetMinutes === 480) tzLabel = "WITA";
+                else if (offsetMinutes === 540) tzLabel = "WIT";
             }
 
             const timeStr = `${hours}:${minutes}:${seconds} ${tzLabel}`;
