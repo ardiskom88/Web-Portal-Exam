@@ -143,7 +143,6 @@
 
     <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 flex flex-col">
 
-        <!-- STUDENT VIEW SECTION -->
         <section id="studentView" class="flex-1 flex flex-col justify-center max-w-4xl w-full mx-auto">
             
             <!-- STEP 1: LOGIN & AUDIO HANDSHAKE CARD -->
@@ -292,7 +291,7 @@
             </div>
 
             <!-- STEP 3: SECURED EXAM WORKSPACE (GFORM CONTAINER - FULL HEIGHT) -->
-            <div id="studentWorkspace" class="hidden flex-1 flex flex-col w-full bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl relative h-[90vh]">
+            <div id="studentWorkspace" class="hidden flex-1 flex flex-col w-full bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl relative h-[88vh]">
                 
                 <!-- Exam Floating Header Bar -->
                 <div class="bg-slate-950 px-4 py-3 border-b border-slate-800 flex items-center justify-between gap-4 shrink-0">
@@ -321,7 +320,7 @@
                 </div>
 
                 <!-- Google Form Secure Frame Container - Expanded Full Height -->
-                <div class="w-full bg-slate-950 relative gform-container">
+                <div class="w-full bg-slate-950 relative gform-container flex-1">
                     <iframe id="gformIframe" src="about:blank" allow="autoplay" allowfullscreen></iframe>
 
                     <!-- STRICT FULLSCREEN LOCK BARRIER OVERLAY -->
@@ -361,7 +360,6 @@
 
         </section>
 
-        <!-- PROCTOR / TEACHER MONITORING DASHBOARD -->
         <section id="proctorView" class="hidden flex-1 flex flex-col gap-6">
             
             <!-- STAFF ROLE BANNER -->
@@ -883,7 +881,6 @@
     </div>
 
     <script>
-        // GLOBAL UTILITY MODAL FUNCTIONS
         function showNoticeModal(title, message) {
             const modal = document.getElementById('customNoticeModal');
             const titleEl = document.getElementById('noticeTitle');
@@ -918,7 +915,6 @@
             if (modal) modal.classList.add('hidden');
         }
 
-        // GLOBAL STATE
         let currentRole = 'student';
         let authenticatedStaffRole = null;
         let targetStaffRoleToLogin = null;
@@ -962,19 +958,6 @@
                 targetClass: 'XII RPL 1, XII RPL 2, XII-2',
                 duration: 90, 
                 examToken: 'UASWEB2026',
-                gformUrl: 'https://docs.google.com/forms/d/e/1FAIpQLScf43d3Vp3G3eGv0S7x_demo/viewform?embedded=true', 
-                isActive: true 
-            },
-            { 
-                id: 'ex_2', 
-                subject: 'Matematika Wajib', 
-                title: 'PTS Matematika Wajib Semester 2', 
-                examDate: new Date().toISOString().split('T')[0],
-                session: 'Sesi 2', 
-                startTime: '10:00', 
-                targetClass: 'Kelas XII',
-                duration: 90, 
-                examToken: 'MATXII',
                 gformUrl: 'https://docs.google.com/forms/d/e/1FAIpQLScf43d3Vp3G3eGv0S7x_demo/viewform?embedded=true', 
                 isActive: true 
             }
@@ -1764,7 +1747,7 @@
                 return;
             }
 
-            // VALIDASI JADWAL HARI DAN JAM UJIAN
+            // VALIDASI WAKTU / JADWAL EXAM KETAT
             const now = new Date();
             const todayDateStr = now.toISOString().split('T')[0];
             const examDateStr = chosenExam.examDate || todayDateStr;
@@ -1775,16 +1758,22 @@
             }
 
             if (todayDateStr === examDateStr && chosenExam.startTime) {
-                const [startHour, startMin] = chosenExam.startTime.split(':').map(Number);
-                const durationMins = parseInt(chosenExam.duration) || 90;
+                const rawStartTime = String(chosenExam.startTime).trim();
+                const timeMatch = rawStartTime.match(/(\d{1,2}):(\d{2})/);
+                
+                if (timeMatch) {
+                    const startHour = parseInt(timeMatch[1], 10);
+                    const startMin = parseInt(timeMatch[2], 10);
+                    const durationMins = parseInt(chosenExam.duration) || 90;
 
-                const examStartTotalMins = (startHour || 8) * 60 + (startMin || 0);
-                const examEndTotalMins = examStartTotalMins + durationMins;
-                const currentTotalMins = now.getHours() * 60 + now.getMinutes();
+                    const examStartTotalMins = startHour * 60 + startMin;
+                    const examEndTotalMins = examStartTotalMins + durationMins;
+                    const currentTotalMins = now.getHours() * 60 + now.getMinutes();
 
-                if (currentTotalMins > examEndTotalMins) {
-                    showNoticeModal("Waktu Ujian Telah Habis", `Jadwal ujian ${chosenExam.subject} (${chosenExam.startTime} WIB, durasi ${durationMins} menit) telah berakhir. Anda tidak dapat login lagi.`);
-                    return;
+                    if (currentTotalMins > examEndTotalMins) {
+                        showNoticeModal("Waktu Ujian Telah Habis", `Jadwal ujian ${chosenExam.subject} (Mulai: ${chosenExam.startTime}, Durasi: ${durationMins} menit) telah berakhir pada pukul ${Math.floor(examEndTotalMins / 60).toString().padStart(2, '0')}:${(examEndTotalMins % 60).toString().padStart(2, '0')}. Anda tidak dapat login lagi.`);
+                        return;
+                    }
                 }
             }
 
@@ -2460,7 +2449,6 @@
             showNoticeModal("Siswa Dihapus", `Siswa ${s.name} telah dihapus.`);
         }
 
-        // STAFF MANAGEMENT FUNCTIONS
         function renderAdminStaffTable() {
             const tbody = document.getElementById('adminStaffTableBody');
             if (!tbody) return;
