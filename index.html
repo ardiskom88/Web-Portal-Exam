@@ -111,7 +111,7 @@
                 <!-- Clock Badge -->
                 <div class="hidden sm:flex items-center gap-2 bg-slate-800/80 border border-slate-700/60 px-3 py-1.5 rounded-lg text-xs font-mono text-slate-300">
                     <i class="ph-bold ph-clock text-cyan-400"></i>
-                    <span id="realtimeClock">00:00:00 WITA</span>
+                    <span id="realtimeClock">00:00:00 WIB</span>
                 </div>
 
                 <!-- Role Switch Buttons -->
@@ -154,7 +154,7 @@
                         <i class="ph-bold ph-identification-card"></i>
                     </div>
                     <h2 class="text-2xl font-bold text-white mb-2">Masuk Ruang Ujian</h2>
-                    <p class="text-slate-400 text-sm">Masukkan NISN, pilih kelas, pilih mapel ujian hari ini berdasarkan Supabase, dan masukkan <strong>Token Ujian</strong> resmi dari pengawas.</p>
+                    <p class="text-slate-400 text-sm">Masukkan NISN, pilih kelas, pilih mapel ujian berdasarkan data sesi Supabase, dan masukkan <strong>Token Ujian</strong> resmi.</p>
                 </div>
 
                 <form id="studentLoginForm" onsubmit="handleStudentLogin(event)" class="space-y-4 max-w-md mx-auto">
@@ -185,16 +185,16 @@
                         </div>
                     </div>
 
-                    <!-- Exam Subject & Session Selector (Filtered by Student Class & Today's Date) -->
+                    <!-- Exam Subject & Session Selector (Filtered by Student Class) -->
                     <div>
                         <div class="flex items-center justify-between mb-2">
-                            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">Mata Pelajaran Ujian (Hari Ini)</label>
+                            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">Mata Pelajaran Ujian Tersedia</label>
                             <span id="examFilterNotice" class="text-[10px] text-cyan-400 font-mono">Disesuaikan untuk kelas Anda</span>
                         </div>
                         <div class="relative">
                             <i class="ph-bold ph-book-open absolute left-3.5 top-3.5 text-slate-500 text-lg"></i>
                             <select id="inputStudentExamSelect" onchange="onStudentExamChange(this)" required class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-11 pr-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500 transition-all">
-                                <!-- Populated dynamically matching student class & today's active exams -->
+                                <!-- Populated dynamically matching student class -->
                             </select>
                         </div>
                     </div>
@@ -1348,20 +1348,10 @@
             const noticeEl = document.getElementById('examFilterNotice');
             if (!select) return;
 
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const day = String(now.getDate()).padStart(2, '0');
-            const todayDateStr = `${year}-${month}-${day}`;
-
-            const activeExams = examsMaster.filter(e => {
-                const isAct = e.isActive !== false;
-                const examDate = e.examDate || todayDateStr;
-                return isAct;
-            });
+            const activeExams = examsMaster.filter(e => e.isActive !== false);
 
             if (activeExams.length === 0) {
-                select.innerHTML = `<option value="">-- Tidak ada ujian aktif untuk hari ini (${todayDateStr}) --</option>`;
+                select.innerHTML = `<option value="">-- Tidak ada ujian aktif tersimpan --</option>`;
                 if (noticeEl) noticeEl.innerText = 'Tidak ada jadwal ujian tersedia';
                 currentSelectedExamId = '';
                 return;
@@ -1388,7 +1378,7 @@
             filteredExams.forEach(e => {
                 const isSelected = (e.id === currentSelectedExamId) ? 'selected' : '';
                 if (isSelected) isCurrentStillValid = true;
-                optionsHtml += `<option value="${e.id}" ${isSelected}>${e.subject} - ${e.session} (${e.startTime}) [Target: ${e.targetClass}]</option>`;
+                optionsHtml += `<option value="${e.id}" ${isSelected}>${e.subject} - ${e.session} (${e.examDate || 'Hari Ini'} • ${e.startTime}) [Target: ${e.targetClass}]</option>`;
             });
 
             select.innerHTML = optionsHtml;
@@ -1750,38 +1740,31 @@
                 return;
             }
 
-            // --- STRICT EXAM SCHEDULE & TIME EXPIRATION VALIDATION ---
+            // --- STRICT EXAM SCHEDULE, EARLY EXAM & TIME EXPIRATION VALIDATION ---
             const now = new Date();
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const day = String(now.getDate()).padStart(2, '0');
-            const todayDateStr = `${year}-${month}-${day}`;
-            const examDateStr = chosenExam.examDate || todayDateStr;
+            const examDateStr = chosenExam.examDate || now.toISOString().split('T')[0];
+            const examStartTimeStr = chosenExam.startTime || '08:00';
+            const durationMins = parseInt(chosenExam.duration) || 90;
 
-            if (todayDateStr > examDateStr) {
-                showNoticeModal("Jadwal Ujian Telah Lewat", `Ujian mata pelajaran ${chosenExam.subject} dijadwalkan pada tanggal ${examDateStr}. Waktu ujian ini sudah terlewat.`);
-                return;
-            }
+            const timeMatch = examStartTimeStr.match(/(\d{1,2}):(\d{2})/);
+            if (timeMatch) {
+                const startHour = parseInt(timeMatch[1], 10);
+                const startMin = parseInt(timeMatch[2], 10);
 
-            if (todayDateStr === examDateStr && chosenExam.startTime) {
-                const rawStartTime = String(chosenExam.startTime).trim();
-                const timeMatch = rawStartTime.match(/(\d{1,2}):(\d{2})/);
-                
-                if (timeMatch) {
-                    const startHour = parseInt(timeMatch[1], 10);
-                    const startMin = parseInt(timeMatch[2], 10);
-                    const durationMins = parseInt(chosenExam.duration) || 90;
+                const examStartDateTime = new Date(`${examDateStr}T${String(startHour).padStart(2, '0')}:${String(startMin).padStart(2, '0')}:00`);
+                const examEndDateTime = new Date(examStartDateTime.getTime() + durationMins * 60000);
 
-                    const examStartTotalMins = startHour * 60 + startMin;
-                    const examEndTotalMins = examStartTotalMins + durationMins;
-                    const currentTotalMins = now.getHours() * 60 + now.getMinutes();
+                // 1. Cek apakah ujian belum dibuka / masih lama dari jadwal sistem
+                if (now < examStartDateTime) {
+                    const diffMins = Math.ceil((examStartDateTime - now) / 60000);
+                    showNoticeModal("Ujian Belum Dibuka", `Ujian mata pelajaran ${chosenExam.subject} dijadwalkan pada tanggal ${examDateStr} pukul ${examStartTimeStr}. Ujian belum dibuka karena belum waktunya (tersisa sekitar ${diffMins} menit lagi).`);
+                    return;
+                }
 
-                    if (currentTotalMins > examEndTotalMins) {
-                        const endHourStr = Math.floor(examEndTotalMins / 60).toString().padStart(2, '0');
-                        const endMinStr = (examEndTotalMins % 60).toString().padStart(2, '0');
-                        showNoticeModal("Waktu Ujian Telah Habis", `Jadwal ujian ${chosenExam.subject} (Mulai: ${chosenExam.startTime}, Durasi: ${durationMins} menit) telah berakhir pada pukul ${endHourStr}:${endMinStr}. Anda tidak dapat login lagi.`);
-                        return;
-                    }
+                // 2. Cek apakah waktu ujian sudah lewat / berakhir
+                if (now > examEndDateTime) {
+                    showNoticeModal("Waktu Ujian Telah Habis", `Jadwal ujian ${chosenExam.subject} (Mulai: ${examStartTimeStr}, Durasi: ${durationMins} menit) telah berakhir pada pukul ${examEndDateTime.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'})}. Anda tidak dapat login lagi.`);
+                    return;
                 }
             }
 
