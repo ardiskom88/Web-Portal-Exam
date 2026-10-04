@@ -1348,18 +1348,21 @@
             const noticeEl = document.getElementById('examFilterNotice');
             if (!select) return;
 
-            const todayDateStr = new Date().toISOString().split('T')[0];
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const todayDateStr = `${year}-${month}-${day}`;
 
             const activeExams = examsMaster.filter(e => {
                 const isAct = e.isActive !== false;
                 const examDate = e.examDate || todayDateStr;
-                const isToday = examDate === todayDateStr; 
-                return isAct && isToday;
+                return isAct;
             });
 
             if (activeExams.length === 0) {
                 select.innerHTML = `<option value="">-- Tidak ada ujian aktif untuk hari ini (${todayDateStr}) --</option>`;
-                if (noticeEl) noticeEl.innerText = 'Tidak ada jadwal ujian hari ini';
+                if (noticeEl) noticeEl.innerText = 'Tidak ada jadwal ujian tersedia';
                 currentSelectedExamId = '';
                 return;
             }
@@ -1370,11 +1373,11 @@
             });
 
             if (noticeEl) {
-                noticeEl.innerText = `Tersedia ${filteredExams.length} ujian hari ini untuk ${selectedClass || 'Siswa'}`;
+                noticeEl.innerText = `Tersedia ${filteredExams.length} ujian untuk ${selectedClass || 'Siswa'}`;
             }
 
             if (filteredExams.length === 0) {
-                select.innerHTML = `<option value="">-- Tidak ada jadwal ujian hari ini untuk kelas ${selectedClass} --</option>`;
+                select.innerHTML = `<option value="">-- Tidak ada jadwal ujian untuk kelas ${selectedClass} --</option>`;
                 currentSelectedExamId = '';
                 return;
             }
@@ -1747,7 +1750,7 @@
                 return;
             }
 
-            // --- STRICT DEVICE-BASED TIME & SCHEDULE EXPIRATION CHECK ---
+            // --- STRICT EXAM SCHEDULE & TIME EXPIRATION VALIDATION ---
             const now = new Date();
             const year = now.getFullYear();
             const month = String(now.getMonth() + 1).padStart(2, '0');
