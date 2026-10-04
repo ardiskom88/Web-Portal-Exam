@@ -79,7 +79,7 @@
             flex: 1 1 auto;
             width: 100%;
             height: 100%;
-            min-height: 75vh;
+            min-height: 80vh;
         }
         .gform-container iframe {
             width: 100%;
@@ -727,11 +727,11 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Jam Mulai Ujian</label>
-                        <input type="text" id="modalExamStartTime" required placeholder="08:00 WIB" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500">
+                        <input type="text" id="modalExamStartTime" required placeholder="08:00" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500 font-mono">
                     </div>
                     <div>
                         <label class="block font-semibold text-slate-300 uppercase tracking-wider mb-1">Durasi (Menit)</label>
-                        <input type="number" id="modalExamDuration" required value="90" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500">
+                        <input type="number" id="modalExamDuration" required value="90" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500 font-mono">
                     </div>
                 </div>
 
@@ -799,7 +799,7 @@
         </div>
     </div>
 
-    <!-- STAFF LOGIN MODAL -->
+    <!-- STAFF LOGIN MODAL (CLEAN CREDENTIALS HINTS REMOVED) -->
     <div id="staffLoginModal" class="hidden fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
             <button onclick="cancelStaffLogin()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl">
@@ -958,7 +958,7 @@
                 title: 'Ujian Akhir Semester Web Programming', 
                 examDate: new Date().toISOString().split('T')[0],
                 session: 'Sesi 1', 
-                startTime: '08:00 WIB', 
+                startTime: '08:00', 
                 targetClass: 'XII RPL 1, XII RPL 2, XII-2',
                 duration: 90, 
                 examToken: 'UASWEB2026',
@@ -971,7 +971,7 @@
                 title: 'PTS Matematika Wajib Semester 2', 
                 examDate: new Date().toISOString().split('T')[0],
                 session: 'Sesi 2', 
-                startTime: '10:00 WIB', 
+                startTime: '10:00', 
                 targetClass: 'Kelas XII',
                 duration: 90, 
                 examToken: 'MATXII',
@@ -1139,7 +1139,7 @@
                         title: e.exam_title,
                         examDate: e.exam_date || new Date().toISOString().split('T')[0],
                         session: e.session_name || e.session || 'Sesi 1',
-                        startTime: e.start_time || '08:00 WIB',
+                        startTime: e.start_time || '08:00',
                         targetClass: e.target_class || 'Semua Kelas',
                         duration: e.duration_minutes || 90,
                         examToken: e.exam_token || 'TOKEN123',
@@ -1402,7 +1402,7 @@
             filteredExams.forEach(e => {
                 const isSelected = (e.id === currentSelectedExamId) ? 'selected' : '';
                 if (isSelected) isCurrentStillValid = true;
-                optionsHtml += `<option value="${e.id}" ${isSelected}>${e.subject} - ${e.session} (${e.startTime}) [Target: ${e.targetClass}]</option>`;
+                optionsHtml += `<option value="${e.id}" ${isSelected}>${e.subject} - ${e.session} (${e.startTime} WIB) [Target: ${e.targetClass}]</option>`;
             });
 
             select.innerHTML = optionsHtml;
@@ -1762,6 +1762,30 @@
             if (!chosenExam) {
                 showNoticeModal("Ujian Tidak Valid", "Mata pelajaran yang dipilih tidak ditemukan.");
                 return;
+            }
+
+            // VALIDASI JADWAL HARI DAN JAM UJIAN
+            const now = new Date();
+            const todayDateStr = now.toISOString().split('T')[0];
+            const examDateStr = chosenExam.examDate || todayDateStr;
+
+            if (todayDateStr > examDateStr) {
+                showNoticeModal("Jadwal Ujian Telah Lewat", `Ujian mata pelajaran ${chosenExam.subject} dijadwalkan pada tanggal ${examDateStr}. Waktu ujian ini sudah terlewat.`);
+                return;
+            }
+
+            if (todayDateStr === examDateStr && chosenExam.startTime) {
+                const [startHour, startMin] = chosenExam.startTime.split(':').map(Number);
+                const durationMins = parseInt(chosenExam.duration) || 90;
+
+                const examStartTotalMins = (startHour || 8) * 60 + (startMin || 0);
+                const examEndTotalMins = examStartTotalMins + durationMins;
+                const currentTotalMins = now.getHours() * 60 + now.getMinutes();
+
+                if (currentTotalMins > examEndTotalMins) {
+                    showNoticeModal("Waktu Ujian Telah Habis", `Jadwal ujian ${chosenExam.subject} (${chosenExam.startTime} WIB, durasi ${durationMins} menit) telah berakhir. Anda tidak dapat login lagi.`);
+                    return;
+                }
             }
 
             const expectedToken = String(chosenExam.examToken || '').trim().toUpperCase();
@@ -2613,7 +2637,7 @@
                     <div class="bg-slate-900 border ${isAct ? 'border-cyan-500/40' : 'border-slate-800'} rounded-2xl p-5 flex flex-col justify-between gap-4 shadow-lg">
                         <div>
                             <div class="flex items-center justify-between mb-2">
-                                <span class="text-xs font-mono text-cyan-400 font-bold"><i class="ph-bold ph-calendar text-amber-400 mr-1"></i>${ex.examDate || '-'} | ${ex.session} • ${ex.startTime}</span>
+                                <span class="text-xs font-mono text-cyan-400 font-bold"><i class="ph-bold ph-calendar text-amber-400 mr-1"></i>${ex.examDate || '-'} | ${ex.session} • ${ex.startTime} WIB</span>
                                 ${statusBadge}
                             </div>
                             <h4 class="font-bold text-white text-base mb-1">${ex.subject}</h4>
@@ -2706,7 +2730,7 @@
 
                 document.getElementById('modalExamDate').value = ex.examDate || new Date().toISOString().split('T')[0];
                 document.getElementById('modalExamSession').value = ex.session || 'Sesi 1';
-                document.getElementById('modalExamStartTime').value = ex.startTime || '08:00 WIB';
+                document.getElementById('modalExamStartTime').value = ex.startTime || '08:00';
                 document.getElementById('modalExamDuration').value = ex.duration;
                 document.getElementById('modalExamToken').value = ex.examToken || '';
                 document.getElementById('modalExamGformUrl').value = ex.gformUrl;
@@ -2722,7 +2746,7 @@
                 
                 document.getElementById('modalExamDate').value = new Date().toISOString().split('T')[0];
                 document.getElementById('modalExamSession').value = 'Sesi 1';
-                document.getElementById('modalExamStartTime').value = '08:00 WIB';
+                document.getElementById('modalExamStartTime').value = '08:00';
                 document.getElementById('modalExamDuration').value = 90;
                 document.getElementById('modalExamToken').value = 'UAS' + Math.floor(1000 + Math.random() * 9000);
                 document.getElementById('modalExamGformUrl').value = 'https://docs.google.com/forms/d/e/.../viewform?embedded=true';
