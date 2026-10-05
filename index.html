@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Portal Ujian Online Anti-Cheat | Enterprise EdTech</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -69,10 +69,20 @@
             user-select: none;
             -webkit-touch-callout: none;
         }
-        /* Mobile Screenshot & Content Protection */
+        /* Mobile Screenshot & Content Protection (FLAG_SECURE emulation) */
         .secure-screen {
-            -webkit-text-security: disc; /* Fallback obfuscation */
-            filter: none;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            filter: contrast(100%);
+        }
+        /* Watermark Overlay anti-screenshot */
+        .screenshot-watermark {
+            pointer-events: none;
+            position: absolute;
+            inset: 0;
+            z-index: 45;
+            background-image: repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.015), rgba(255, 255, 255, 0.015) 120px, transparent 120px, transparent 240px);
         }
         html, body {
             height: 100%;
@@ -95,7 +105,10 @@
         }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col unselectable antialiased selection:bg-rose-500 selection:text-white">
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col unselectable antialiased selection:bg-rose-500 selection:text-white secure-screen">
+
+    <!-- Watermark anti-screenshot -->
+    <div class="screenshot-watermark"></div>
 
     <header class="bg-slate-900/90 backdrop-blur border-b border-slate-800 sticky top-0 z-40 px-4 py-3 shrink-0">
         <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
@@ -300,13 +313,20 @@
             <div id="studentWorkspace" class="hidden flex-1 flex flex-col w-full bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl relative h-[88vh]">
                 
                 <!-- Exam Floating Header Bar -->
-                <div class="bg-slate-950 px-4 py-3 border-b border-slate-800 flex items-center justify-between gap-4 shrink-0">
+                <div class="bg-slate-950 px-4 py-3 border-b border-slate-800 flex flex-wrap items-center justify-between gap-4 shrink-0">
                     <div class="flex items-center gap-3">
                         <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
                         <div>
                             <h3 id="activeStudentLabel" class="text-sm font-bold text-white">Siswa: -</h3>
                             <p class="text-[11px] text-slate-400 font-mono">Status Guard: <span class="text-emerald-400 font-semibold">ACTIVE SECURE</span></p>
                         </div>
+                    </div>
+
+                    <!-- Live Exam Countdown Timer -->
+                    <div class="flex items-center gap-2 bg-slate-900 border border-cyan-500/30 px-3 py-1 rounded-xl font-mono text-xs">
+                        <i class="ph-bold ph-hourglass-high text-cyan-400 animate-spin"></i>
+                        <span class="text-slate-400">Sisa Waktu:</span>
+                        <span id="examCountdownTimer" class="font-bold text-cyan-300">00:00:00</span>
                     </div>
 
                     <!-- Security Score Metrics -->
@@ -932,6 +952,8 @@
         let audioContext = null;
         let isSirenActive = false;
         let sirenOscillator = null;
+        let examCountdownInterval = null;
+        let examRemainingSeconds = 0;
 
         let activeSessions = [];
         let supabaseClient = null;
@@ -1373,11 +1395,11 @@
             });
 
             if (noticeEl) {
-                noticeEl.innerText = `Tersedia ${filteredExams.length} ujian hari ini untuk ${selectedClass || 'Siswa'}`;
+                noticeEl.innerText = `Tersedia ${filteredExams.length} ujian untuk ${selectedClass || 'Siswa'}`;
             }
 
             if (filteredExams.length === 0) {
-                select.innerHTML = `<option value="">-- Tidak ada jadwal ujian untuk kelas ${selectedClass} hari ini --</option>`;
+                select.innerHTML = `<option value="">-- Tidak ada jadwal ujian untuk kelas ${selectedClass} --</option>`;
                 currentSelectedExamId = '';
                 return;
             }
@@ -1788,6 +1810,7 @@
 
             cheatCount = 0;
             integrityScore = 100;
+            examRemainingSeconds = durationMins * 60;
 
             currentStudent = {
                 id: 'std_' + Date.now(),
@@ -1883,6 +1906,31 @@
             examStarted = true;
             setupAntiCheatListeners();
             startStudentHeartbeat();
+            startExamCountdown();
+        }
+
+        function startExamCountdown() {
+            if (examCountdownInterval) clearInterval(examCountdownInterval);
+            const timerEl = document.getElementById('examCountdownTimer');
+
+            examCountdownInterval = setInterval(() => {
+                if (!examStarted) {
+                    clearInterval(examCountdownInterval);
+                    return;
+                }
+
+                if (examRemainingSeconds > 0) {
+                    examRemainingSeconds--;
+                    const hrs = String(Math.floor(examRemainingSeconds / 3600)).padStart(2, '0');
+                    const mins = String(Math.floor((examRemainingSeconds % 3600) / 60)).padStart(2, '0');
+                    const secs = String(examRemainingSeconds % 60).padStart(2, '0');
+                    if (timerEl) timerEl.innerText = `${hrs}:${mins}:${secs}`;
+                } else {
+                    clearInterval(examCountdownInterval);
+                    showNoticeModal("Waktu Ujian Habis", "Durasi waktu pengerjaan ujian telah selesai. Lembar jawaban akan otomatis dikunci.");
+                    finishExamStudent();
+                }
+            }, 1000);
         }
 
         function reenterExamFullscreen() {
@@ -1918,7 +1966,6 @@
 
             window.addEventListener('resize', () => {
                 if (examStarted) {
-                    // Deteksi jika ukuran window berubah drastis (indikasi split-screen / multi-window / picture-in-picture)
                     const widthRatio = window.innerWidth / screen.width;
                     const heightRatio = window.innerHeight / screen.height;
                     if (widthRatio < 0.8 || heightRatio < 0.8) {
@@ -1930,12 +1977,18 @@
             // Prevent Mobile Screenshot / Screen Recording shortcuts & intents
             document.addEventListener('keyup', (e) => {
                 if (!examStarted) return;
-                // PrintScreen / Screenshot keys
                 if (e.key === 'PrintScreen' || e.keyCode === 44) {
                     navigator.clipboard.writeText("Screenshot Dilarang Saat Ujian!");
                     triggerCheatViolation("Mencoba Mengambil Screenshot Soal Ujian!");
                 }
             });
+
+            // Mobile specific touchstart multi-touch / screenshot gesture trap
+            document.addEventListener('touchstart', (e) => {
+                if (examStarted && e.touches.length > 1) {
+                    triggerCheatViolation("Terdeteksi Gestur Multi-Touch / Screenshot Menggunakan Jari!");
+                }
+            }, { passive: true });
 
             document.addEventListener('visibilitychange', () => {
                 if (document.hidden && examStarted) {
@@ -2045,6 +2098,7 @@
         async function lockStudentAccountAndKick(studentDbId, reasonText) {
             stopSirenSound();
             stopStudentHeartbeat();
+            if (examCountdownInterval) clearInterval(examCountdownInterval);
 
             if (supabaseClient && studentDbId) {
                 try {
@@ -2070,6 +2124,7 @@
         function forceKickStudentByLock(message) {
             stopSirenSound();
             stopStudentHeartbeat();
+            if (examCountdownInterval) clearInterval(examCountdownInterval);
             examStarted = false;
 
             document.getElementById('cheatAlarmOverlay').classList.add('hidden');
@@ -2088,6 +2143,7 @@
         async function finishExamStudent() {
             stopSirenSound();
             stopStudentHeartbeat();
+            if (examCountdownInterval) clearInterval(examCountdownInterval);
             
             if (supabaseClient && currentStudent && currentStudent.sessionUuid) {
                 try {
