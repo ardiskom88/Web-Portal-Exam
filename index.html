@@ -105,8 +105,6 @@
         #mobileLandscapeWarning {
             display: none;
         }
-
-        /* Responsive Orientation Control: Mobile Portrait Only, Computer Landscape Only */
         @media screen and (max-width: 768px) {
             @media screen and (orientation: landscape) {
                 body.is-mobile-device #mainAppContainer {
@@ -1910,69 +1908,7 @@
             setupAntiCheatListeners();
             startStudentHeartbeat();
             startExamCountdown();
-            startIframeContentScanner();
         }
-
-        function startIframeContentScanner() {
-            if (iframeScanInterval) clearInterval(iframeScanInterval);
-            
-            iframeScanInterval = setInterval(() => {
-                if (!examStarted) return;
-                try {
-                    const iframe = document.getElementById('gformIframe');
-                    if (!iframe || !iframe.contentWindow) return;
-                    
-                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                    if (!iframeDoc) return;
-
-                    const buttons = iframeDoc.querySelectorAll('button, a, div[role="button"], span');
-                    buttons.forEach(btn => {
-                        const text = (btn.innerText || btn.textContent || '').trim().toLowerCase();
-                        if (text.includes('lihat akurasi') || text.includes('view score') || text.includes('lihat skor')) {
-                            if (!btn.getAttribute('data-shield-intercepted')) {
-                                btn.setAttribute('data-shield-intercepted', 'true');
-                                
-                                // Intercept click & stop propagation to prevent opening new tab/page
-                                btn.addEventListener('click', (e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    triggerAccuracyWarningAndFinish();
-                                }, true);
-                                
-                                // Direct handler trigger
-                                btn.onclick = (e) => {
-                                    if(e) { e.preventDefault(); e.stopPropagation(); }
-                                    triggerAccuracyWarningAndFinish();
-                                };
-                            }
-                        }
-                    });
-                } catch(e) {
-                    // Cross-origin cross check handled via window open interceptors as well
-                }
-            }, 500);
-        }
-
-        function triggerAccuracyWarningAndFinish() {
-            showNoticeModal("Akses Ditolak", "Peringatan! Tombol Lihat Akurasi / Skor dilarang diakses selama ujian. Sesi ujian Anda langsung diakhiri.");
-            speakWarningTTS("Peringatan. Akses lihat akurasi dilarang. Ujian selesai.");
-            setTimeout(() => {
-                finishExamStudent();
-            }, 1200);
-        }
-
-        // Intercept window open attempts from iframe (e.g. clicking links opening new tabs)
-        window.addEventListener('blur', () => {
-            if (examStarted) {
-                setTimeout(() => {
-                    const iframe = document.getElementById('gformIframe');
-                    if (iframe && document.activeElement === iframe) {
-                        // User might have clicked accuracy link opening new window/tab
-                        triggerAccuracyWarningAndFinish();
-                    }
-                }, 300);
-            }
-        });
 
         function startExamCountdown() {
             if (examCountdownInterval) clearInterval(examCountdownInterval);
@@ -2175,7 +2111,6 @@
             stopSirenSound();
             stopStudentHeartbeat();
             if (examCountdownInterval) clearInterval(examCountdownInterval);
-            if (iframeScanInterval) clearInterval(iframeScanInterval);
 
             if (supabaseClient && studentDbId) {
                 try {
@@ -2205,7 +2140,6 @@
             stopSirenSound();
             stopStudentHeartbeat();
             if (examCountdownInterval) clearInterval(examCountdownInterval);
-            if (iframeScanInterval) clearInterval(iframeScanInterval);
             examStarted = false;
 
             document.getElementById('cheatAlarmOverlay').classList.add('hidden');
@@ -2225,7 +2159,6 @@
             stopSirenSound();
             stopStudentHeartbeat();
             if (examCountdownInterval) clearInterval(examCountdownInterval);
-            if (iframeScanInterval) clearInterval(iframeScanInterval);
             
             if (supabaseClient && currentStudent) {
                 try {
