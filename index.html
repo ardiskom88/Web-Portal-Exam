@@ -69,14 +69,12 @@
             user-select: none;
             -webkit-touch-callout: none;
         }
-        /* Mobile Screenshot & Content Protection */
         .secure-screen {
             -webkit-touch-callout: none;
             -webkit-user-select: none;
             user-select: none;
             filter: contrast(100%);
         }
-        /* Watermark Overlay anti-screenshot */
         .screenshot-watermark {
             pointer-events: none;
             position: absolute;
@@ -104,10 +102,6 @@
             flex: 1;
         }
         
-        /* Device Orientation Rules: 
-           - Mobile / Smartphone = Strict Portrait Only (Warning if landscape)
-           - Computer / Desktop = Landscape Only
-        */
         #mobileLandscapeWarning {
             display: none;
         }
@@ -125,10 +119,8 @@
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col unselectable antialiased selection:bg-rose-500 selection:text-white secure-screen">
 
-    <!-- Watermark anti-screenshot -->
     <div class="screenshot-watermark"></div>
 
-    <!-- MOBILE PORTRAIT REQUIREMENT WARNING BANNER -->
     <div id="mobileLandscapeWarning" class="fixed inset-0 bg-slate-950 z-50 flex-col items-center justify-center p-6 text-center">
         <div class="w-16 h-16 rounded-2xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex items-center justify-center text-3xl mb-4 animate-bounce">
             <i class="ph-bold ph-device-mobile-rotate"></i>
@@ -140,7 +132,6 @@
     <div id="mainAppContainer" class="flex-1 flex flex-col min-h-screen">
         <header class="bg-slate-900/90 backdrop-blur border-b border-slate-800 sticky top-0 z-40 px-4 py-3 shrink-0">
             <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
-                <!-- Brand Logo -->
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-600 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 text-white text-xl">
                         <i class="ph-bold ph-shield-checkered"></i>
@@ -153,15 +144,12 @@
                     </div>
                 </div>
 
-                <!-- View Role Switcher & Status Badges -->
                 <div class="flex items-center gap-3">
-                    <!-- Clock Badge -->
                     <div class="hidden sm:flex items-center gap-2 bg-slate-800/80 border border-slate-700/60 px-3 py-1.5 rounded-lg text-xs font-mono text-slate-300">
                         <i class="ph-bold ph-clock text-cyan-400"></i>
                         <span id="realtimeClock">00:00:00 WIB</span>
                     </div>
 
-                    <!-- Role Switch Buttons -->
                     <div class="bg-slate-800 p-1 rounded-xl border border-slate-700 flex text-xs font-medium">
                         <button id="btnRoleStudent" onclick="switchRole('student')" class="px-3 py-1.5 rounded-lg text-white bg-cyan-600 font-semibold shadow transition-all flex items-center gap-1.5">
                             <i class="ph-bold ph-user-graduate"></i>
@@ -177,7 +165,6 @@
                         </button>
                     </div>
 
-                    <!-- Logged Staff Badge & Logout -->
                     <div id="staffActiveBadge" class="hidden items-center gap-2 bg-slate-900 border border-cyan-500/30 px-2.5 py-1 rounded-xl">
                         <span id="staffRoleLabel" class="text-[11px] font-bold text-cyan-400 uppercase tracking-wider">ADMIN</span>
                         <button onclick="logoutStaff()" class="text-slate-400 hover:text-rose-400 text-xs ml-1" title="Keluar Mode Staf">
@@ -192,7 +179,6 @@
 
             <section id="studentView" class="flex-1 flex flex-col justify-center max-w-4xl w-full mx-auto">
                 
-                <!-- STEP 1: LOGIN & AUDIO HANDSHAKE CARD -->
                 <div id="studentLoginCard" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
                     <div class="absolute -top-24 -right-24 w-60 h-60 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
@@ -218,7 +204,6 @@
                             <div>
                                 <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Kelas</label>
                                 <select id="inputStudentClass" onchange="onStudentClassChange()" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500 transition-all">
-                                    <!-- Populated dynamically -->
                                 </select>
                             </div>
                         </div>
@@ -232,7 +217,6 @@
                             </div>
                         </div>
 
-                        <!-- Exam Subject & Session Selector (Filtered by Student Class & Schedule) -->
                         <div>
                             <div class="flex items-center justify-between mb-2">
                                 <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">Mata Pelajaran Ujian (Hari Ini)</label>
@@ -241,12 +225,10 @@
                             <div class="relative">
                                 <i class="ph-bold ph-book-open absolute left-3.5 top-3.5 text-slate-500 text-lg"></i>
                                 <select id="inputStudentExamSelect" onchange="onStudentExamChange(this)" required class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-11 pr-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500 transition-all">
-                                    <!-- Populated dynamically matching student class & schedule -->
                                 </select>
                             </div>
                         </div>
 
-                        <!-- Token Ujian Input -->
                         <div>
                             <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Token Ujian Resmi</label>
                             <div class="relative">
@@ -256,7 +238,6 @@
                             </div>
                         </div>
 
-                        <!-- Audio Autoplay Handshake Permission Card -->
                         <div class="bg-cyan-950/40 border border-cyan-800/50 rounded-xl p-4 text-xs text-cyan-200 flex items-start gap-3 mt-2">
                             <i class="ph-bold ph-speaker-high text-cyan-400 text-xl shrink-0 mt-0.5"></i>
                             <div>
@@ -272,7 +253,6 @@
                     </form>
                 </div>
 
-                <!-- STEP 2: PRE-EXAM RULES & FULLSCREEN ENFORCER -->
                 <div id="studentRulesCard" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl">
                     <div class="flex items-center gap-3 border-b border-slate-800 pb-4 mb-6">
                         <div class="w-12 h-12 bg-amber-500/10 text-amber-400 rounded-xl flex items-center justify-center text-2xl font-bold">
@@ -337,10 +317,8 @@
                     </button>
                 </div>
 
-                <!-- STEP 3: SECURED EXAM WORKSPACE -->
                 <div id="studentWorkspace" class="hidden flex-1 flex flex-col w-full bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl relative h-[88vh]">
                     
-                    <!-- Exam Floating Header Bar -->
                     <div class="bg-slate-950 px-4 py-3 border-b border-slate-800 flex flex-wrap items-center justify-between gap-4 shrink-0">
                         <div class="flex items-center gap-3">
                             <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
@@ -350,14 +328,12 @@
                             </div>
                         </div>
 
-                        <!-- Live Exam Countdown Timer -->
                         <div class="flex items-center gap-2 bg-slate-900 border border-cyan-500/30 px-3 py-1 rounded-xl font-mono text-xs">
                             <i class="ph-bold ph-hourglass-high text-cyan-400 animate-spin"></i>
                             <span class="text-slate-400">Sisa Waktu:</span>
                             <span id="examCountdownTimer" class="font-bold text-cyan-300">00:00:00</span>
                         </div>
 
-                        <!-- Security Score Metrics -->
                         <div class="flex items-center gap-3">
                             <div class="bg-slate-900 border border-slate-800 px-3 py-1 rounded-lg text-xs">
                                 <span class="text-slate-400">Pelanggaran:</span>
@@ -373,11 +349,9 @@
                         </div>
                     </div>
 
-                    <!-- Google Form Secure Frame Container -->
                     <div class="w-full bg-slate-950 relative gform-container flex-1">
                         <iframe id="gformIframe" src="about:blank" allow="autoplay" allowfullscreen></iframe>
 
-                        <!-- STRICT FULLSCREEN LOCK BARRIER OVERLAY -->
                         <div id="fullscreenLockOverlay" class="hidden absolute inset-0 bg-slate-950/95 backdrop-blur-xl z-50 flex flex-col items-center justify-center p-6 text-center">
                             <div class="w-20 h-20 rounded-full bg-rose-500/20 text-rose-500 border border-rose-500/30 flex items-center justify-center text-4xl mb-4 animate-pulse">
                                 <i class="ph-bold ph-lock-key text-rose-400"></i>
@@ -393,7 +367,6 @@
                         </div>
                     </div>
 
-                    <!-- ALARM OVERLAY -->
                     <div id="cheatAlarmOverlay" class="hidden absolute inset-0 bg-rose-950/90 backdrop-blur-md z-50 flex flex-col items-center justify-center p-6 text-center animate-siren-flash">
                         <div class="w-24 h-24 rounded-full bg-rose-600 text-white flex items-center justify-center text-5xl mb-4 shadow-2xl animate-bounce">
                             <i class="ph-bold ph-siren"></i>
@@ -416,7 +389,6 @@
 
             <section id="proctorView" class="hidden flex-1 flex flex-col gap-6">
                 
-                <!-- STAFF ROLE BANNER -->
                 <div id="proctorRoleHeader" class="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3">
                     <div class="flex items-center gap-3">
                         <div id="roleHeaderIcon" class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center text-xl font-bold">
@@ -431,7 +403,6 @@
                         </div>
                     </div>
 
-                    <!-- ADMIN EXCLUSIVE CONTROLS -->
                     <div id="adminExclusiveControls" class="hidden items-center gap-2">
                         <button onclick="toggleConfigModal()" class="flex items-center gap-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-semibold text-xs px-3.5 py-2 rounded-xl shadow-lg transition-all">
                             <span id="dbStatusDot" class="w-2 h-2 rounded-full bg-emerald-300 animate-pulse"></span>
@@ -441,7 +412,6 @@
                     </div>
                 </div>
 
-                <!-- PROCTOR TOP SUMMARY STATS -->
                 <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
                     <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl">
                         <div class="flex items-center justify-between text-slate-400 text-xs font-medium mb-1">
@@ -489,7 +459,6 @@
                     </div>
                 </div>
 
-                <!-- ADMIN TABS NAVIGATION -->
                 <div id="adminTabNav" class="hidden bg-slate-900 border border-slate-800 p-1.5 rounded-2xl flex flex-wrap items-center gap-2 text-xs font-medium">
                     <button id="btnAdminTabMonitoring" onclick="switchAdminTab('monitoring')" class="px-4 py-2 rounded-xl text-white bg-cyan-600 font-semibold shadow transition-all flex items-center gap-2">
                         <i class="ph-bold ph-desktop text-base"></i>
@@ -509,9 +478,7 @@
                     </button>
                 </div>
 
-                <!-- TAB 1: PROCTOR MONITORING REALTIME CONTAINER -->
                 <div id="adminSectionMonitoring" class="flex flex-col gap-6">
-                    <!-- PROCTOR TOOLBAR & SIMULATOR CONTROLS -->
                     <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex flex-wrap items-center justify-between gap-4">
                         <div class="flex items-center gap-3">
                             <div class="relative min-w-[240px]">
@@ -539,7 +506,6 @@
                         </div>
                     </div>
 
-                    <!-- MAIN GRID & AUDIT FEED -->
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div class="lg:col-span-2 flex flex-col gap-4">
                             <div class="flex items-center justify-between">
@@ -551,7 +517,6 @@
                             </div>
 
                             <div id="studentGridContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <!-- Student cards populated dynamically -->
                             </div>
                         </div>
 
@@ -566,7 +531,6 @@
 
                             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex-1 h-[520px] overflow-y-auto space-y-3 font-mono text-xs">
                                 <div id="proctorAuditFeed" class="space-y-2">
-                                    <!-- Live logs appear here -->
                                 </div>
                             </div>
                         </div>
@@ -574,7 +538,6 @@
                     </div>
                 </div>
 
-                <!-- TAB 2: KELOLA DATA SISWA & STATUS LOCK -->
                 <div id="adminSectionStudents" class="hidden flex-1 flex-col gap-4">
                     <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex flex-wrap items-center justify-between gap-4">
                         <div class="flex items-center gap-3">
@@ -602,14 +565,12 @@
                                     </tr>
                                 </thead>
                                 <tbody id="adminStudentsTableBody" class="divide-y divide-slate-800/60">
-                                    <!-- Student rows populated dynamically -->
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
 
-                <!-- TAB 3: KELOLA MAPEL, SESI & GFORM -->
                 <div id="adminSectionExams" class="hidden flex-1 flex-col gap-4">
                     <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex flex-wrap items-center justify-between gap-4">
                         <div>
@@ -626,11 +587,9 @@
                     </div>
 
                     <div id="adminExamsGridContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <!-- Exam cards populated dynamically -->
                     </div>
                 </div>
 
-                <!-- TAB 4: KELOLA AKUN GURU & PENGAWAS -->
                 <div id="adminSectionStaff" class="hidden flex-1 flex-col gap-4">
                     <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex flex-wrap items-center justify-between gap-4">
                         <div>
@@ -659,7 +618,6 @@
                                     </tr>
                                 </thead>
                                 <tbody id="adminStaffTableBody" class="divide-y divide-slate-800/60">
-                                    <!-- Staff rows populated dynamically -->
                                 </tbody>
                             </table>
                         </div>
@@ -671,7 +629,6 @@
         </main>
     </div>
 
-    <!-- MODAL: ADD / EDIT STUDENT -->
     <div id="studentModal" class="hidden fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl p-6 shadow-2xl relative">
             <button onclick="closeStudentModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl">
@@ -706,7 +663,6 @@
         </div>
     </div>
 
-    <!-- MODAL: ADD / EDIT EXAM -->
     <div id="examModal" class="hidden fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-2xl p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <button onclick="closeExamModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl">
@@ -729,7 +685,6 @@
                     <input type="text" id="modalExamTitle" required placeholder="Contoh: Ujian Akhir Semester Genap" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-500">
                 </div>
                 
-                <!-- Target Class Checkbox Multi-Select Picker -->
                 <div>
                     <div class="flex items-center justify-between mb-1.5">
                         <label class="block font-semibold text-slate-300 uppercase tracking-wider">Target Pilihan Kelas Ujian (Multi-Centang)</label>
@@ -740,7 +695,6 @@
                         </div>
                     </div>
 
-                    <!-- Quick Presets Badges -->
                     <div class="flex flex-wrap gap-2 mb-2 text-xs">
                         <label class="inline-flex items-center gap-1.5 bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800 cursor-pointer hover:border-cyan-500/50 transition-colors">
                             <input type="checkbox" id="chkTargetSemua" onchange="handleSemuaClassesToggle(this)" class="rounded text-cyan-600 focus:ring-cyan-500 bg-slate-900 border-slate-700">
@@ -757,11 +711,9 @@
                         </button>
                     </div>
 
-                    <!-- Dynamic Individual Classes Checkbox Grid -->
                     <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 max-h-36 overflow-y-auto space-y-2">
                         <p class="text-[10px] text-slate-500 uppercase font-mono tracking-wider mb-1">Pilih Spesifik Kelas dari Database Siswa:</p>
                         <div id="dynamicClassesCheckboxes" class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                            <!-- Populated dynamically from students master -->
                         </div>
                     </div>
                 </div>
@@ -809,7 +761,6 @@
         </div>
     </div>
 
-    <!-- MODAL: ADD / EDIT STAFF ACCOUNT -->
     <div id="staffModal" class="hidden fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl p-6 shadow-2xl relative">
             <button onclick="closeStaffModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl">
@@ -852,7 +803,6 @@
         </div>
     </div>
 
-    <!-- STAFF LOGIN MODAL (CLEAN WITH NO DEFAULT HINT BOX) -->
     <div id="staffLoginModal" class="hidden fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
             <button onclick="cancelStaffLogin()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl">
@@ -893,7 +843,6 @@
         </div>
     </div>
 
-    <!-- CONFIGURATION & SUPABASE SETTINGS MODAL -->
     <div id="configModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-2xl p-6 shadow-2xl">
             <div class="flex items-center justify-between pb-4 border-b border-slate-800 mb-4">
@@ -923,7 +872,6 @@
         </div>
     </div>
 
-    <!-- CUSTOM MESSAGE MODAL -->
     <div id="customNoticeModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 max-w-sm w-full rounded-2xl p-6 text-center shadow-2xl">
             <div id="noticeIconContainer" class="w-14 h-14 rounded-full bg-cyan-500/10 text-cyan-400 flex items-center justify-center text-3xl mx-auto mb-3">
@@ -995,6 +943,7 @@
         let examCountdownInterval = null;
         let examEndTimestamp = null;
         let hasWarnedFiveMinutes = false;
+        let iframeScanInterval = null;
 
         let activeSessions = [];
         let supabaseClient = null;
@@ -1428,12 +1377,16 @@
 
             const todayDateStr = new Date().toISOString().split('T')[0];
 
-            const filteredExams = activeExams.filter(e => {
+            let filteredExams = activeExams.filter(e => {
                 const target = e.targetClass || 'Semua Kelas';
                 const matchClass = isClassMatching(target, selectedClass);
                 const matchDate = (e.examDate === todayDateStr) || true;
                 return matchClass && matchDate;
             });
+
+            if (filteredExams.length === 0) {
+                filteredExams = activeExams.filter(e => isClassMatching(e.targetClass || 'Semua Kelas', selectedClass));
+            }
 
             if (noticeEl) {
                 noticeEl.innerText = `Tersedia ${filteredExams.length} ujian hari ini untuk ${selectedClass || 'Siswa'}`;
@@ -1814,7 +1767,6 @@
                 return;
             }
 
-            // --- STRICT EXAM SCHEDULE, EARLY EXAM & TIME EXPIRATION VALIDATION ---
             const now = new Date();
             const examDateStr = chosenExam.examDate || now.toISOString().split('T')[0];
             const examStartTimeStr = chosenExam.startTime || '08:00';
@@ -1828,7 +1780,6 @@
                 const examStartDateTime = new Date(`${examDateStr}T${String(startHour).padStart(2, '0')}:${String(startMin).padStart(2, '0')}:00`);
                 const examEndDateTime = new Date(examStartDateTime.getTime() + durationMins * 60000);
 
-                // 1. Cek apakah ujian belum dibuka (masih lama dari jadwal)
                 if (now < examStartDateTime) {
                     const diffMs = examStartDateTime - now;
                     const diffMins = Math.floor(diffMs / 60000);
@@ -1840,7 +1791,6 @@
                     return;
                 }
 
-                // 2. Cek apakah waktu ujian sudah lewat / berakhir
                 if (now > examEndDateTime) {
                     showNoticeModal("Waktu Ujian Telah Habis", `Jadwal ujian ${chosenExam.subject} (Mulai: ${examStartTimeStr}, Durasi: ${durationMins} menit) telah berakhir pada pukul ${examEndDateTime.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'})}. Anda tidak dapat login lagi.`);
                     return;
@@ -1958,6 +1908,40 @@
             setupAntiCheatListeners();
             startStudentHeartbeat();
             startExamCountdown();
+            startIframeContentScanner();
+        }
+
+        function startIframeContentScanner() {
+            if (iframeScanInterval) clearInterval(iframeScanInterval);
+            
+            iframeScanInterval = setInterval(() => {
+                if (!examStarted) return;
+                try {
+                    const iframe = document.getElementById('gformIframe');
+                    if (!iframe || !iframe.contentWindow) return;
+                    
+                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                    if (!iframeDoc) return;
+
+                    const buttons = iframeDoc.querySelectorAll('button, a, div[role="button"], span');
+                    buttons.forEach(btn => {
+                        const text = (btn.innerText || btn.textContent || '').trim().toLowerCase();
+                        if (text.includes('lihat akurasi') || text.includes('view score') || text.includes('lihat skor')) {
+                            if (!btn.getAttribute('data-shield-intercepted')) {
+                                btn.setAttribute('data-shield-intercepted', 'true');
+                                btn.addEventListener('click', (e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    finishExamStudent();
+                                }, true);
+                                btn.click();
+                            }
+                        }
+                    });
+                } catch(e) {
+                    // Cross-origin restrictions expected if Google Form is hosted externally, handled gracefully
+                }
+            }, 800);
         }
 
         function startExamCountdown() {
@@ -2161,6 +2145,7 @@
             stopSirenSound();
             stopStudentHeartbeat();
             if (examCountdownInterval) clearInterval(examCountdownInterval);
+            if (iframeScanInterval) clearInterval(iframeScanInterval);
 
             if (supabaseClient && studentDbId) {
                 try {
@@ -2190,6 +2175,7 @@
             stopSirenSound();
             stopStudentHeartbeat();
             if (examCountdownInterval) clearInterval(examCountdownInterval);
+            if (iframeScanInterval) clearInterval(iframeScanInterval);
             examStarted = false;
 
             document.getElementById('cheatAlarmOverlay').classList.add('hidden');
@@ -2209,6 +2195,7 @@
             stopSirenSound();
             stopStudentHeartbeat();
             if (examCountdownInterval) clearInterval(examCountdownInterval);
+            if (iframeScanInterval) clearInterval(iframeScanInterval);
             
             if (supabaseClient && currentStudent) {
                 try {
@@ -3053,7 +3040,6 @@
             await initSupabase(urlInput, keyInput);
         }
 
-        // Realtime Local Device Clock matching device timezone
         setInterval(() => {
             const now = new Date();
             const hours = String(now.getHours()).padStart(2, '0');
@@ -3077,7 +3063,6 @@
             const clockEl = document.getElementById('realtimeClock');
             if (clockEl) clockEl.innerText = timeStr;
 
-            // Detect Google Form submission redirect (e.g. formResponse page URL inside iframe)
             if (examStarted) {
                 try {
                     const iframe = document.getElementById('gformIframe');
@@ -3088,7 +3073,6 @@
                         }
                     }
                 } catch(e) {
-                    // Cross-origin iframe restrictions may throw, handled gracefully
                 }
             }
         }, 1000);
