@@ -104,7 +104,10 @@
             flex: 1;
         }
         
-        /* Device Orientation Rules: Mobile = Strict Portrait Only, Desktop = Landscape Recommended */
+        /* Device Orientation Rules: 
+           - Mobile / Smartphone = Strict Portrait Only (Warning if landscape)
+           - Computer / Desktop = Landscape Only
+        */
         #mobileLandscapeWarning {
             display: none;
         }
@@ -849,7 +852,7 @@
         </div>
     </div>
 
-    <!-- STAFF LOGIN MODAL -->
+    <!-- STAFF LOGIN MODAL (CLEAN WITH NO DEFAULT HINT BOX) -->
     <div id="staffLoginModal" class="hidden fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
             <button onclick="cancelStaffLogin()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl">
@@ -1386,7 +1389,7 @@
             const matchedStudent = studentsMaster.find(s => s.nisn === nisnInput);
             if (matchedStudent) {
                 if (matchedStudent.isLocked) {
-                    showNoticeModal("Akun Terkunci", "Akun siswa ini terkunci (Locked) akibat pelanggaran ujian. Hubungi Administrator untuk membuka akses.");
+                    showNoticeModal("Akun Terkunci", "Akun siswa ini terkunci (Locked) akibat pelanggaran ujian atau telah menyelesaikan ujian. Hubungi Administrator untuk membuka akses.");
                     return;
                 }
                 document.getElementById('inputStudentName').value = matchedStudent.name;
@@ -1433,11 +1436,11 @@
             });
 
             if (noticeEl) {
-                noticeEl.innerText = `Tersedia ${filteredExams.length} ujian untuk ${selectedClass || 'Siswa'}`;
+                noticeEl.innerText = `Tersedia ${filteredExams.length} ujian hari ini untuk ${selectedClass || 'Siswa'}`;
             }
 
             if (filteredExams.length === 0) {
-                select.innerHTML = `<option value="">-- Tidak ada jadwal ujian untuk kelas ${selectedClass} --</option>`;
+                select.innerHTML = `<option value="">-- Tidak ada ujian aktif untuk hari ini (${todayDateStr}) --</option>`;
                 currentSelectedExamId = '';
                 return;
             }
@@ -1801,7 +1804,7 @@
 
             const matchedMasterStd = studentsMaster.find(s => s.nisn === nisn);
             if (matchedMasterStd && matchedMasterStd.isLocked) {
-                showNoticeModal("Akun Terkunci (Locked)", "Akun Anda telah dikunci karena terdeteksi kecurangan melebihi batas. Silakan hubungi Administrator untuk membuka kembali akses.");
+                showNoticeModal("Akun Terkunci (Locked)", "Akun Anda telah dikunci karena terdeteksi kecurangan atau telah menyelesaikan ujian. Silakan hubungi Administrator untuk membuka kembali akses.");
                 return;
             }
 
@@ -1825,10 +1828,15 @@
                 const examStartDateTime = new Date(`${examDateStr}T${String(startHour).padStart(2, '0')}:${String(startMin).padStart(2, '0')}:00`);
                 const examEndDateTime = new Date(examStartDateTime.getTime() + durationMins * 60000);
 
-                // 1. Cek apakah ujian belum dibuka
+                // 1. Cek apakah ujian belum dibuka (masih lama dari jadwal)
                 if (now < examStartDateTime) {
-                    const diffMins = Math.ceil((examStartDateTime - now) / 60000);
-                    showNoticeModal("Ujian Belum Dibuka", `Ujian mata pelajaran ${chosenExam.subject} dijadwalkan pada tanggal ${examDateStr} pukul ${examStartTimeStr}. Ujian belum dibuka karena belum jamnya (tersisa sekitar ${diffMins} menit lagi).`);
+                    const diffMs = examStartDateTime - now;
+                    const diffMins = Math.floor(diffMs / 60000);
+                    const diffHrs = Math.floor(diffMins / 60);
+                    const remMins = diffMins % 60;
+                    
+                    let timeRemainingDesc = diffHrs > 0 ? `${diffHrs} jam ${remMins} menit lagi` : `${diffMins} menit lagi`;
+                    showNoticeModal("Ujian Belum Dibuka", `Ujian mata pelajaran ${chosenExam.subject} belum dibuka karena belum jamnya (Jadwal: ${examStartTimeStr}, tersisa sekitar ${timeRemainingDesc}).`);
                     return;
                 }
 
@@ -1857,7 +1865,7 @@
 
             currentStudent = {
                 id: 'std_' + Date.now(),
-                dbUuid: null,
+                dbUuid: matchedMasterStd ? matchedMasterStd.id : null,
                 sessionUuid: null,
                 name: name,
                 nisn: nisn,
@@ -1881,7 +1889,7 @@
 
                     if (stdRes) {
                         if (stdRes.is_locked) {
-                            showNoticeModal("Akun Terkunci", "Akun siswa ini terkunci di database. Hubungi Admin.");
+                            showNoticeModal("Akun Terkunci", "Akun siswa ini terkunci di database.");
                             return;
                         }
                         currentStudent.dbUuid = stdRes.id;
@@ -1975,7 +1983,7 @@
 
                     if (totalSecs <= 300 && !hasWarnedFiveMinutes) {
                         hasWarnedFiveMinutes = true;
-                        showNoticeModal("Peringatan Waktu", "Waktu tersisa 5 menit dan segera untuk mengirimkan jawabannya!");
+                        showNoticeModal("Peringatan Waktu", "Waktu sisa 5 menit dan segera untuk mengirimkan jawabannya!");
                         speakWarningTTS("Perhatian! Waktu ujian tersisa lima menit lagi. Segera periksa dan kirimkan jawaban Anda.");
                     }
                 } else {
@@ -2164,6 +2172,9 @@
                 } catch(err) {
                     console.error("Error locking student account:", err);
                 }
+            } else if (currentStudent) {
+                const master = studentsMaster.find(m => m.id === currentStudent.dbUuid || m.nisn === currentStudent.nisn);
+                if (master) master.isLocked = true;
             }
 
             examStarted = false;
@@ -2199,18 +2210,26 @@
             stopStudentHeartbeat();
             if (examCountdownInterval) clearInterval(examCountdownInterval);
             
-            if (supabaseClient && currentStudent && currentStudent.sessionUuid) {
+            if (supabaseClient && currentStudent) {
                 try {
-                    await supabaseClient.from('active_sessions').delete().eq('id', currentStudent.sessionUuid);
+                    if (currentStudent.sessionUuid) {
+                        await supabaseClient.from('active_sessions').delete().eq('id', currentStudent.sessionUuid);
+                    }
+                    if (currentStudent.dbUuid) {
+                        await supabaseClient.from('students').update({ is_locked: true }).eq('id', currentStudent.dbUuid);
+                    }
                 } catch(err) {
-                    console.warn("Error removing finished session:", err);
+                    console.warn("Error finishing exam and locking student:", err);
                 }
+            } else if (currentStudent) {
+                const master = studentsMaster.find(m => m.id === currentStudent.dbUuid || m.nisn === currentStudent.nisn);
+                if (master) master.isLocked = true;
             }
 
             examStarted = false;
             document.getElementById('studentWorkspace').classList.add('hidden');
             document.getElementById('studentLoginCard').classList.remove('hidden');
-            showNoticeModal("Ujian Selesai", "Terima kasih! Lembar jawaban ujian Anda telah berhasil dikirim. Aplikasi ujian ditutup otomatis untuk mencegah peninjauan kembali.");
+            showNoticeModal("Ujian Selesai", "Terima kasih! Lembar jawaban ujian Anda telah berhasil dikirim dan akun Anda kini dikunci (locked) untuk mencegah peninjauan kembali.");
         }
 
         function renderProctorGrid() {
