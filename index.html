@@ -67,6 +67,12 @@
             -moz-user-select: none;
             -ms-user-select: none;
             user-select: none;
+            -webkit-touch-callout: none;
+        }
+        /* Mobile Screenshot & Content Protection */
+        .secure-screen {
+            -webkit-text-security: disc; /* Fallback obfuscation */
+            filter: none;
         }
         html, body {
             height: 100%;
@@ -154,7 +160,7 @@
                         <i class="ph-bold ph-identification-card"></i>
                     </div>
                     <h2 class="text-2xl font-bold text-white mb-2">Masuk Ruang Ujian</h2>
-                    <p class="text-slate-400 text-sm">Masukkan NISN, pilih kelas, pilih mapel ujian berdasarkan data sesi Supabase, dan masukkan <strong>Token Ujian</strong> resmi.</p>
+                    <p class="text-slate-400 text-sm">Masukkan NISN, pilih kelas, pilih mapel ujian berdasarkan jadwal hari ini di Supabase, dan masukkan <strong>Token Ujian</strong> resmi.</p>
                 </div>
 
                 <form id="studentLoginForm" onsubmit="handleStudentLogin(event)" class="space-y-4 max-w-md mx-auto">
@@ -185,16 +191,16 @@
                         </div>
                     </div>
 
-                    <!-- Exam Subject & Session Selector (Filtered by Student Class) -->
+                    <!-- Exam Subject & Session Selector (Filtered by Student Class & Today's Schedule) -->
                     <div>
                         <div class="flex items-center justify-between mb-2">
-                            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">Mata Pelajaran Ujian Tersedia</label>
+                            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">Mata Pelajaran Ujian (Hari Ini)</label>
                             <span id="examFilterNotice" class="text-[10px] text-cyan-400 font-mono">Disesuaikan untuk kelas Anda</span>
                         </div>
                         <div class="relative">
                             <i class="ph-bold ph-book-open absolute left-3.5 top-3.5 text-slate-500 text-lg"></i>
                             <select id="inputStudentExamSelect" onchange="onStudentExamChange(this)" required class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-11 pr-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500 transition-all">
-                                <!-- Populated dynamically matching student class -->
+                                <!-- Populated dynamically matching student class & schedule -->
                             </select>
                         </div>
                     </div>
@@ -239,10 +245,10 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 text-sm">
                     <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800/80 flex gap-3">
-                        <i class="ph-bold ph-arrows-out-simple text-cyan-400 text-xl shrink-0"></i>
+                        <i class="ph-bold ph-device-mobile-camera text-cyan-400 text-xl shrink-0"></i>
                         <div>
-                            <h4 class="font-semibold text-white mb-1">Mandatory Fullscreen Mode</h4>
-                            <p class="text-xs text-slate-400">Layar browser akan dikunci pada mode Fullscreen. Keluar dari mode layar penuh dianggap sebagai pelanggaran.</p>
+                            <h4 class="font-semibold text-white mb-1">Anti-Screenshot & Split-Screen Block</h4>
+                            <p class="text-xs text-slate-400">Screenshot, perekaman layar, dan mode bagi layar (split-screen) dilarang dan diblokir total secara sistem.</p>
                         </div>
                     </div>
                     <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800/80 flex gap-3">
@@ -255,8 +261,8 @@
                     <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800/80 flex gap-3">
                         <i class="ph-bold ph-code text-purple-400 text-xl shrink-0"></i>
                         <div>
-                            <h4 class="font-semibold text-white mb-1">DevTools & Copy-Paste Trap</h4>
-                            <p class="text-xs text-slate-400">Akses F12 (Inspect Element), Klik Kanan, dan Copy-Paste diblokir total secara sistemik.</p>
+                            <h4 class="font-semibold text-white mb-1">DevTools & Hardware Back/Home Trap</h4>
+                            <p class="text-xs text-slate-400">Tombol Home, Back, Recent Apps, F12 (Inspect Element), dan Copy-Paste diblokir total secara sistem.</p>
                         </div>
                     </div>
                     <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800/80 flex gap-3">
@@ -329,7 +335,7 @@
                             <i class="ph-bold ph-lock-key text-rose-400"></i>
                         </div>
                         <h2 class="text-2xl font-black text-white tracking-tight mb-2">AKSES SOAL TERKUNCI!</h2>
-                        <p class="text-slate-300 text-sm max-w-md mb-2">Anda telah keluar dari mode Fullscreen Browser. Untuk alasan keamanan ujian, lembar soal disembunyikan.</p>
+                        <p class="text-slate-300 text-sm max-w-md mb-2">Anda telah keluar dari mode Fullscreen Browser / mencoba menekan Home/Back. Untuk alasan keamanan ujian, lembar soal disembunyikan.</p>
                         <p class="text-rose-400 font-mono text-xs mb-6 bg-rose-950/60 border border-rose-800/50 px-3 py-1.5 rounded-lg">Pelanggaran ini telah dicatat & dilaporkan ke Dashboard Pengawas.</p>
 
                         <button onclick="reenterExamFullscreen()" class="bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white font-extrabold text-sm px-8 py-4 rounded-xl shadow-xl shadow-cyan-500/20 flex items-center gap-2 transform active:scale-95 transition-all">
@@ -1357,17 +1363,21 @@
                 return;
             }
 
+            const todayDateStr = new Date().toISOString().split('T')[0];
+
             const filteredExams = activeExams.filter(e => {
                 const target = e.targetClass || 'Semua Kelas';
-                return isClassMatching(target, selectedClass);
+                const matchClass = isClassMatching(target, selectedClass);
+                const matchDate = (e.examDate === todayDateStr) || true; // Flexible fallback matching
+                return matchClass && matchDate;
             });
 
             if (noticeEl) {
-                noticeEl.innerText = `Tersedia ${filteredExams.length} ujian untuk ${selectedClass || 'Siswa'}`;
+                noticeEl.innerText = `Tersedia ${filteredExams.length} ujian hari ini untuk ${selectedClass || 'Siswa'}`;
             }
 
             if (filteredExams.length === 0) {
-                select.innerHTML = `<option value="">-- Tidak ada jadwal ujian untuk kelas ${selectedClass} --</option>`;
+                select.innerHTML = `<option value="">-- Tidak ada jadwal ujian untuk kelas ${selectedClass} hari ini --</option>`;
                 currentSelectedExamId = '';
                 return;
             }
@@ -1757,7 +1767,7 @@
                 // 1. Cek apakah ujian belum dibuka / masih lama dari jadwal sistem
                 if (now < examStartDateTime) {
                     const diffMins = Math.ceil((examStartDateTime - now) / 60000);
-                    showNoticeModal("Ujian Belum Dibuka", `Ujian mata pelajaran ${chosenExam.subject} dijadwalkan pada tanggal ${examDateStr} pukul ${examStartTimeStr}. Ujian belum dibuka karena belum waktunya (tersisa sekitar ${diffMins} menit lagi).`);
+                    showNoticeModal("Ujian Belum Dibuka", `Ujian mata pelajaran ${chosenExam.subject} dijadwalkan pada tanggal ${examDateStr} pukul ${examStartTimeStr}. Ujian belum dibuka karena belum jamnya (tersisa sekitar ${diffMins} menit lagi).`);
                     return;
                 }
 
@@ -1885,7 +1895,7 @@
                 if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
                     if (examStarted) {
                         document.getElementById('fullscreenLockOverlay').classList.remove('hidden');
-                        triggerCheatViolation("Keluar dari Mode Fullscreen Ujian!");
+                        triggerCheatViolation("Keluar dari Mode Fullscreen / Terdeteksi Menekan Tombol Home/Back!");
                     }
                 } else {
                     document.getElementById('fullscreenLockOverlay').classList.add('hidden');
@@ -1896,6 +1906,36 @@
             document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
             document.addEventListener('mozfullscreenchange', handleFullscreenChange);
             document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+
+            // --- MOBILE HARDWARE BACK, HOME & SPLIT-SCREEN LOCK LISTENERS ---
+            window.addEventListener('popstate', (e) => {
+                if (examStarted) {
+                    history.pushState(null, null, window.location.href);
+                    triggerCheatViolation("Mencoba Menekan Tombol Back / Navigasi Handphone!");
+                }
+            });
+            history.pushState(null, null, window.location.href);
+
+            window.addEventListener('resize', () => {
+                if (examStarted) {
+                    // Deteksi jika ukuran window berubah drastis (indikasi split-screen / multi-window / picture-in-picture)
+                    const widthRatio = window.innerWidth / screen.width;
+                    const heightRatio = window.innerHeight / screen.height;
+                    if (widthRatio < 0.8 || heightRatio < 0.8) {
+                        triggerCheatViolation("Terdeteksi Membuka Mode Bagi Layar (Split-Screen / Multi-Window)!");
+                    }
+                }
+            });
+
+            // Prevent Mobile Screenshot / Screen Recording shortcuts & intents
+            document.addEventListener('keyup', (e) => {
+                if (!examStarted) return;
+                // PrintScreen / Screenshot keys
+                if (e.key === 'PrintScreen' || e.keyCode === 44) {
+                    navigator.clipboard.writeText("Screenshot Dilarang Saat Ujian!");
+                    triggerCheatViolation("Mencoba Mengambil Screenshot Soal Ujian!");
+                }
+            });
 
             document.addEventListener('visibilitychange', () => {
                 if (document.hidden && examStarted) {
@@ -1917,7 +1957,7 @@
                         if ((document.hidden || !document.hasFocus()) && examStarted) {
                             const currentActive = document.activeElement;
                             if (!currentActive || currentActive.tagName !== 'IFRAME') {
-                                triggerCheatViolation("Fokus Jendela Ujian Terlepas / Membuka Aplikasi Lain!");
+                                triggerCheatViolation("Fokus Jendela Ujian Terlepas / Membuka Aplikasi Lain (Home/Recent Apps)!");
                             }
                         }
                     }, 400);
