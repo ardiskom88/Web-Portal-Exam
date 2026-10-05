@@ -102,15 +102,32 @@
             flex: 1;
         }
         
-        #mobileLandscapeWarning {
+        #mobilePortraitWarning {
             display: none;
         }
+        #desktopLandscapeWarning {
+            display: none;
+        }
+
+        /* Mobile Smartphone: Wajib Portrait */
         @media screen and (max-width: 768px) {
             @media screen and (orientation: landscape) {
                 body.is-mobile-device #mainAppContainer {
                     display: none !important;
                 }
-                body.is-mobile-device #mobileLandscapeWarning {
+                body.is-mobile-device #mobilePortraitWarning {
+                    display: flex !important;
+                }
+            }
+        }
+
+        /* Komputer / Desktop: Wajib Landscape */
+        @media screen and (min-width: 769px) {
+            @media screen and (orientation: portrait) {
+                body:not(.is-mobile-device) #mainAppContainer {
+                    display: none !important;
+                }
+                body:not(.is-mobile-device) #desktopLandscapeWarning {
                     display: flex !important;
                 }
             }
@@ -121,12 +138,20 @@
 
     <div class="screenshot-watermark"></div>
 
-    <div id="mobileLandscapeWarning" class="fixed inset-0 bg-slate-950 z-50 flex-col items-center justify-center p-6 text-center">
+    <div id="mobilePortraitWarning" class="fixed inset-0 bg-slate-950 z-50 flex-col items-center justify-center p-6 text-center">
         <div class="w-16 h-16 rounded-2xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex items-center justify-center text-3xl mb-4 animate-bounce">
             <i class="ph-bold ph-device-mobile-rotate"></i>
         </div>
-        <h2 class="text-xl font-bold text-white mb-2">Posisikan Perangkat ke Portrait (Tegak)</h2>
-        <p class="text-xs text-slate-400 max-w-xs">Demi keamanan dan kepatuhan protokol ujian, akses via smartphone wajib menggunakan posisi tegak (portrait).</p>
+        <h2 class="text-xl font-bold text-white mb-2">Posisikan Smartphone ke Portrait (Tegak)</h2>
+        <p class="text-xs text-slate-400 max-w-xs">Demi keamanan dan protokol ujian, akses via smartphone wajib menggunakan posisi tegak (portrait).</p>
+    </div>
+
+    <div id="desktopLandscapeWarning" class="fixed inset-0 bg-slate-950 z-50 flex-col items-center justify-center p-6 text-center">
+        <div class="w-16 h-16 rounded-2xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex items-center justify-center text-3xl mb-4 animate-bounce">
+            <i class="ph-bold ph-desktop"></i>
+        </div>
+        <h2 class="text-xl font-bold text-white mb-2">Posisikan Komputer ke Landscape (Mendatar)</h2>
+        <p class="text-xs text-slate-400 max-w-xs">Akses via komputer atau laptop wajib menggunakan posisi layar mendatar (landscape).</p>
     </div>
 
     <div id="mainAppContainer" class="flex-1 flex flex-col min-h-screen">
@@ -1649,7 +1674,8 @@
             } else {
                 studentView.classList.add('hidden');
                 proctorView.classList.remove('hidden');
-                document.getElementById('mobileLandscapeWarning').style.display = 'none';
+                document.getElementById('mobilePortraitWarning').style.display = 'none';
+                document.getElementById('desktopLandscapeWarning').style.display = 'none';
 
                 const adminTabNav = document.getElementById('adminTabNav');
                 const adminControls = document.getElementById('adminExclusiveControls');
