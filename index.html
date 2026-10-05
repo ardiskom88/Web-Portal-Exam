@@ -105,6 +105,8 @@
         #mobileLandscapeWarning {
             display: none;
         }
+
+        /* Responsive Orientation Control: Mobile Portrait Only, Computer Landscape Only */
         @media screen and (max-width: 768px) {
             @media screen and (orientation: landscape) {
                 body.is-mobile-device #mainAppContainer {
@@ -1929,20 +1931,48 @@
                         if (text.includes('lihat akurasi') || text.includes('view score') || text.includes('lihat skor')) {
                             if (!btn.getAttribute('data-shield-intercepted')) {
                                 btn.setAttribute('data-shield-intercepted', 'true');
+                                
+                                // Intercept click & stop propagation to prevent opening new tab/page
                                 btn.addEventListener('click', (e) => {
                                     e.preventDefault();
                                     e.stopPropagation();
-                                    finishExamStudent();
+                                    triggerAccuracyWarningAndFinish();
                                 }, true);
-                                btn.click();
+                                
+                                // Direct handler trigger
+                                btn.onclick = (e) => {
+                                    if(e) { e.preventDefault(); e.stopPropagation(); }
+                                    triggerAccuracyWarningAndFinish();
+                                };
                             }
                         }
                     });
                 } catch(e) {
-                    // Cross-origin restrictions expected if Google Form is hosted externally, handled gracefully
+                    // Cross-origin cross check handled via window open interceptors as well
                 }
-            }, 800);
+            }, 500);
         }
+
+        function triggerAccuracyWarningAndFinish() {
+            showNoticeModal("Akses Ditolak", "Peringatan! Tombol Lihat Akurasi / Skor dilarang diakses selama ujian. Sesi ujian Anda langsung diakhiri.");
+            speakWarningTTS("Peringatan. Akses lihat akurasi dilarang. Ujian selesai.");
+            setTimeout(() => {
+                finishExamStudent();
+            }, 1200);
+        }
+
+        // Intercept window open attempts from iframe (e.g. clicking links opening new tabs)
+        window.addEventListener('blur', () => {
+            if (examStarted) {
+                setTimeout(() => {
+                    const iframe = document.getElementById('gformIframe');
+                    if (iframe && document.activeElement === iframe) {
+                        // User might have clicked accuracy link opening new window/tab
+                        triggerAccuracyWarningAndFinish();
+                    }
+                }, 300);
+            }
+        });
 
         function startExamCountdown() {
             if (examCountdownInterval) clearInterval(examCountdownInterval);
