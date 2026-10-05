@@ -104,7 +104,7 @@
             flex: 1;
         }
         
-        /* Device Orientation Lockdown: Mobile = Portrait Only, Desktop = Landscape Recommended */
+        /* Device Orientation Rules: Mobile = Strict Portrait Only, Desktop = Landscape Recommended */
         #mobileLandscapeWarning {
             display: none;
         }
@@ -125,13 +125,13 @@
     <!-- Watermark anti-screenshot -->
     <div class="screenshot-watermark"></div>
 
-    <!-- MOBILE LANDSCAPE WARNING BANNER -->
+    <!-- MOBILE PORTRAIT REQUIREMENT WARNING BANNER -->
     <div id="mobileLandscapeWarning" class="fixed inset-0 bg-slate-950 z-50 flex-col items-center justify-center p-6 text-center">
         <div class="w-16 h-16 rounded-2xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex items-center justify-center text-3xl mb-4 animate-bounce">
             <i class="ph-bold ph-device-mobile-rotate"></i>
         </div>
-        <h2 class="text-xl font-bold text-white mb-2">Posisikan Perangkat ke Portrait (Berdiri)</h2>
-        <p class="text-xs text-slate-400 max-w-xs">Demi keamanan dan kenyamanan ujian, akses via smartphone wajib menggunakan posisi tegak (portrait).</p>
+        <h2 class="text-xl font-bold text-white mb-2">Posisikan Perangkat ke Portrait (Tegak)</h2>
+        <p class="text-xs text-slate-400 max-w-xs">Demi keamanan dan kepatuhan protokol ujian, akses via smartphone wajib menggunakan posisi tegak (portrait).</p>
     </div>
 
     <div id="mainAppContainer" class="flex-1 flex flex-col min-h-screen">
@@ -2210,7 +2210,7 @@
             examStarted = false;
             document.getElementById('studentWorkspace').classList.add('hidden');
             document.getElementById('studentLoginCard').classList.remove('hidden');
-            showNoticeModal("Ujian Selesai", "Terima kasih! Lembar ujian Anda telah terkirim dengan aman.");
+            showNoticeModal("Ujian Selesai", "Terima kasih! Lembar jawaban ujian Anda telah berhasil dikirim. Aplikasi ujian ditutup otomatis untuk mencegah peninjauan kembali.");
         }
 
         function renderProctorGrid() {
@@ -3057,6 +3057,21 @@
             const timeStr = `${hours}:${minutes}:${seconds} ${tzLabel}`;
             const clockEl = document.getElementById('realtimeClock');
             if (clockEl) clockEl.innerText = timeStr;
+
+            // Detect Google Form submission redirect (e.g. formResponse page URL inside iframe)
+            if (examStarted) {
+                try {
+                    const iframe = document.getElementById('gformIframe');
+                    if (iframe && iframe.contentWindow) {
+                        const iframeUrl = iframe.contentWindow.location.href;
+                        if (iframeUrl && (iframeUrl.includes('formResponse') || iframeUrl.includes('viewanalytics') || iframeUrl.includes('score'))) {
+                            finishExamStudent();
+                        }
+                    }
+                } catch(e) {
+                    // Cross-origin iframe restrictions may throw, handled gracefully
+                }
+            }
         }, 1000);
 
         window.onload = async function() {
